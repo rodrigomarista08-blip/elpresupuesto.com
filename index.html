@@ -195,9 +195,6 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
 .scale{position:relative;height:16px;margin:-4px 0 8px;font-size:11px;color:var(--ink-2)}
 .scale span{position:absolute;transform:translateX(-50%)}
 .lvl{margin-top:8px}
-.welcome{border:2px solid var(--accent)}
-.welrow{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
-.welrow>div{flex:1 1 180px}
 .alertbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));width:min(560px,calc(100% - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.28);z-index:30;display:grid;gap:6px}
 .alertbar.lvl75{border-left-color:var(--warn)}
 .alertbar.lvl100{border-left-color:var(--bad)}
@@ -232,6 +229,32 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
 .bv{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
 .tips3{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
 @media (max-width:480px){.stat{padding:10px 8px}.stat .v{font-size:1.05rem;white-space:nowrap}}
+
+.wrap{gap:16px}
+.card{padding:16px}
+.stack.split{height:24px;margin:4px 0 14px}
+.stack.split .seg{display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--surface);font-size:11px;white-space:nowrap}
+.stack.split b{font-weight:700}
+.tabs button .ti{margin-right:6px}
+@media (max-width:420px){.tabs button{padding:10px 10px;font-size:14px}.tabs button .ti{margin-right:3px}}
+details.fold{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+details.fold>summary{cursor:pointer;padding:14px 18px;font-family:var(--display);font-weight:600;font-size:1.05rem;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::after,.tip>summary::after{content:'+';color:var(--ink-2);font-size:1.3rem;line-height:1;margin-left:auto}
+details.fold[open]>summary::after,.tip[open]>summary::after{content:'–'}
+details.fold>.foldbody{padding:0 18px 16px}
+.reco details.fold{margin-top:14px;background:var(--surface-2);border:0}
+.tipgrid{align-items:start}
+.tip{padding:0}
+.tip>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:13px 16px;font-family:var(--display);font-weight:600;font-size:1rem}
+.tip>summary::-webkit-details-marker{display:none}
+.tip .ico{font-size:1.25rem;line-height:1}
+.tip>p{padding:0 16px 14px}
+.hint{margin-bottom:8px}
+.cats{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.cat{padding:12px 14px}
+.cat .nums strong{font-size:1.35rem}
+.cat.add{min-height:90px}
 </style>
 
 <div class="wrap">
@@ -250,9 +273,9 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
   </header>
 
   <div class="tabs" role="tablist" aria-label="Secciones">
-    <button type="button" role="tab" id="tabbtn-money" data-tab="money" aria-selected="true" aria-controls="pane-money">Mi dinero</button>
-    <button type="button" role="tab" id="tabbtn-save" data-tab="save" aria-selected="false" tabindex="-1" aria-controls="pane-save">Ahorro</button>
-    <button type="button" role="tab" id="tabbtn-tips" data-tab="tips" aria-selected="false" tabindex="-1" aria-controls="pane-tips">Consejos</button>
+    <button type="button" role="tab" id="tabbtn-money" data-tab="money" aria-selected="true" aria-controls="pane-money"><span class="ti" aria-hidden="true">💶</span>Mi dinero</button>
+    <button type="button" role="tab" id="tabbtn-save" data-tab="save" aria-selected="false" tabindex="-1" aria-controls="pane-save"><span class="ti" aria-hidden="true">🐷</span>Ahorro</button>
+    <button type="button" role="tab" id="tabbtn-tips" data-tab="tips" aria-selected="false" tabindex="-1" aria-controls="pane-tips"><span class="ti" aria-hidden="true">💡</span>Consejos</button>
   </div>
 
   <div class="pane" id="pane-money" role="tabpanel" aria-labelledby="tabbtn-money">
@@ -262,15 +285,14 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
     <button class="btn" id="endDemo" type="button">Empezar con mis datos</button>
   </div>
 
-  <section class="card welcome" id="welcome" hidden>
-    <h2>Empieza en un minuto</h2>
-    <p class="lead">Dinos cuánto dinero tienes cada mes y te lo repartimos entre necesarios, ocio, proyectos y ahorro. Después puedes cambiar los nombres y las cantidades, y añadir tus propias partidas.</p>
-    <div class="welrow">
-      <div><label for="w-total">Mi dinero al mes (€)</label><input id="w-total" inputmode="decimal" autocomplete="off" placeholder="120"></div>
-      <button class="btn primary" id="w-go" type="button">Repartirlo por mí</button>
-      <button class="btn" id="w-skip" type="button">Lo ajusto yo</button>
+  <section class="card">
+    <h2>Ajustar el reparto</h2>
+    <div class="settotal">
+      <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
+      <span class="pill neutral" id="sumCheck"></span>
     </div>
-    <p class="msg" id="w-msg" role="alert"></p>
+    <div id="splitbar"></div>
+    <div class="setgrid" id="setgrid"></div>
   </section>
 
   <div class="toprow">
@@ -304,7 +326,7 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
   </div>
 
   <div>
-    <p class="fine" style="margin-bottom:10px">Pulsa el nombre de una partida marcada con ✎ para ponerle el tuyo, o añade las tuyas con «Añadir partida». Ocio y Ahorro son fijas.</p>
+    <p class="fine hint">Toca ✎ para cambiar un nombre · Ocio y Ahorro son fijas</p>
     <section class="cats" id="cats" aria-label="Partidas del mes"></section>
     <form class="card addcat" id="addCatForm" hidden novalidate style="margin-top:14px">
       <h2>Nueva partida</h2>
@@ -322,46 +344,33 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
     <div id="moves"></div>
   </section>
 
-  <section class="card">
-    <h2>Ajustar el reparto</h2>
-    <p class="lead">Cambia las cantidades cuando tu situación cambie. Las partidas deberían sumar el total del mes.</p>
-    <div class="settotal">
-      <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
-      <span class="pill neutral" id="sumCheck"></span>
+  <details class="fold">
+    <summary>Copia de seguridad</summary>
+    <div class="foldbody">
+      <p class="lead">Tus datos se guardan solo en este dispositivo. Cópialos para cambiar de móvil o por si borras el navegador.</p>
+      <div class="btnrow">
+        <button class="btn" id="copyData" type="button">Copiar mis datos</button>
+        <button class="btn" id="restoreData" type="button">Restaurar desde lo pegado</button>
+      </div>
+      <label for="dataBox">Datos</label>
+      <textarea id="dataBox" spellcheck="false" autocomplete="off"></textarea>
+      <p class="msg" id="backupMsg" role="status"></p>
     </div>
-    <div class="setgrid" id="setgrid"></div>
-    <div class="autorow">
-      <button class="btn" id="autoSplit" type="button">Repartir el total automáticamente</button>
-      <p class="fine">Reparte lo que no tengas asignado a tus partidas propias: un 25 % para ocio, un 12,5 % para proyectos, un 17 % para ahorro y el resto para necesarios. Después puedes retocar cada cantidad.</p>
-    </div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>Copia de seguridad</h2>
-    <p class="lead">Tus datos se guardan solo en este dispositivo. Si cambias de móvil o borras los datos del navegador, se pierden. Copia tus datos y pégalos en el otro dispositivo para restaurarlos.</p>
-    <div class="btnrow">
-      <button class="btn" id="copyData" type="button">Copiar mis datos</button>
-      <button class="btn" id="restoreData" type="button">Restaurar desde lo pegado</button>
+  <details class="fold">
+    <summary>Cómo usarlo cada mes</summary>
+    <div class="foldbody rules">
+      <p><strong>El día 1, reparte.</strong> Mueve el ahorro a una cuenta de ahorro aparte (mira la pestaña Ahorro) y en el día a día queda solo lo que vas a gastar.</p>
+      <p><strong>Cada domingo, mira el ocio.</strong> Compáralo con tu tope semanal: corregir un domingo cuesta poco, corregir el día 28 no.</p>
+      <p><strong>A fin de mes, lo que sobre va al colchón.</strong> Cada euro de ocio de más es un euro menos para ahorrar.</p>
     </div>
-    <label for="dataBox">Datos</label>
-    <textarea id="dataBox" spellcheck="false" autocomplete="off"></textarea>
-    <p class="msg" id="backupMsg" role="status"></p>
-  </section>
-
-  <section class="card">
-    <h2>Cómo usarlo cada mes</h2>
-    <div class="rules">
-      <p><strong>El día 1, reparte.</strong> Mueve el ahorro a una cuenta de ahorro aparte (mira la pestaña Ahorro) el mismo día que recibes el dinero. En la cuenta del día a día queda solo lo que vas a gastar este mes, así no gastas sin querer lo que ya tenía otro destino.</p>
-      <p><strong>Cada domingo, mira el ocio.</strong> Apunta lo de la semana y compáralo con el tope semanal que ves arriba. Corregir un domingo con margen cuesta poco; corregir el día 28 con la partida vacía no deja opciones.</p>
-      <p><strong>A fin de mes, lo que sobra de ocio va al colchón.</strong> Cada euro de ocio de más es un euro menos para ahorro o proyectos: ese es el coste de oportunidad de cada gasto.</p>
-    </div>
-  </section>
+  </details>
   </div>
 
   <div class="pane" id="pane-save" role="tabpanel" aria-labelledby="tabbtn-save" hidden>
     <section class="card">
       <h2>Tu ahorro</h2>
-      <p class="lead">Cambia lo que apartas cada mes, el plazo y lo que ya tienes guardado. Las dos secciones de abajo se calculan solas.</p>
       <div class="fields">
         <div><label for="a-aho">Cada mes aparto (€)</label><input id="a-aho" data-alloc="aho" inputmode="decimal" autocomplete="off"></div>
         <div><label for="p-months">Durante (meses)</label><input id="p-months" type="number" min="1" max="120" step="1"></div>
@@ -369,31 +378,34 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
         <div><label for="p-goal">Mi meta (€, opcional)</label><input id="p-goal" inputmode="decimal" autocomplete="off" placeholder="Ej. 600"></div>
       </div>
       <div class="presets" id="presets" aria-label="Plazos habituales"></div>
-      <p class="fine" style="margin-top:10px">Lo que apartas cada mes es la misma cantidad de Ahorro que ves en Mi dinero: si cambias una, cambia la otra.</p>
+      <p class="fine" style="margin-top:10px">«Cada mes aparto» es el mismo Ahorro de Mi dinero.</p>
     </section>
 
     <section class="card">
       <h2>1 · Cuánto ahorrarías</h2>
-      <p class="lead">Solo lo que tú apartas, sin intereses: esto es lo mínimo que tendrás si cumples.</p>
+      <p class="lead">Solo lo que tú apartas, sin intereses.</p>
       <div id="saveCalc"></div>
     </section>
 
     <section class="card reco" aria-labelledby="reco-title">
       <span class="reco-badge">★ Recomendado</span>
       <h2 id="reco-title">2 · Ponlo en una cuenta de ahorro</h2>
-      <p class="lead">Lo más recomendable es no dejar el ahorro parado en la cuenta del día a día: abre una cuenta de ahorro con tu banco. El dinero sigue siendo tuyo y se revaloriza solo, porque el banco te paga un interés por tenerlo allí. Pon abajo el interés que te da tu banco y verás cuánto ganas de verdad.</p>
+      <p class="lead">No dejes el ahorro parado en la cuenta del día a día: abre una cuenta de ahorro con tu banco y tu dinero se revaloriza solo. Pon la TAE de tu banco y mira lo que ganas de verdad.</p>
       <div class="fields two">
         <div><label for="p-rate">Interés de tu banco (TAE, %)</label><input id="p-rate" type="number" min="0" max="30" step="0.1"></div>
         <div><label class="chk" for="p-tax" style="margin-top:26px"><input type="checkbox" id="p-tax" checked> Descontar impuestos (19 %)</label></div>
       </div>
       <div id="recoCalc"></div>
-      <div class="rules tips3">
-        <p><strong>Compara la TAE.</strong> Es el interés real de un año e incluye todo. Si no sabes cuál es la de tu banco, mira su web o pregúntaselo.</p>
-        <p><strong>Lee las condiciones.</strong> Algunas cuentas piden domiciliar la nómina, solo pagan interés hasta cierto saldo o tienen un tipo alto únicamente los primeros meses.</p>
-        <p><strong>Es seguro.</strong> En entidades españolas tu dinero está garantizado hasta 100.000 € por titular y entidad.</p>
-        <p><strong>Tributa.</strong> Los intereses se declaran en el IRPF. Hasta 6.000 € de intereses al año el tipo es del 19 %, y el banco ya retiene ese 19 % al pagártelos.</p>
-        <p class="fine">Esto es educación financiera general, no asesoramiento ni la recomendación de un banco o producto concreto.</p>
-      </div>
+      <details class="fold">
+        <summary>Qué mirar al elegir cuenta</summary>
+        <div class="foldbody rules">
+          <p><strong>La TAE.</strong> Es el interés real de un año. Mira la de tu banco en su web.</p>
+          <p><strong>Las condiciones.</strong> Algunas piden nómina, limitan el saldo o el tipo alto dura pocos meses.</p>
+          <p><strong>Seguridad.</strong> Garantizado hasta 100.000 € por titular y entidad.</p>
+          <p><strong>Impuestos.</strong> Hasta 6.000 € de intereses al año tributan al 19 %, y el banco ya lo retiene.</p>
+          <p class="fine">Educación financiera general, no la recomendación de un banco concreto.</p>
+        </div>
+      </details>
     </section>
   </div>
 
@@ -410,7 +422,7 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
 
     <section class="card">
       <h2>Pregunta tus dudas</h2>
-      <p class="lead">Escribe cualquier duda sobre cómo gestionar tu dinero. <span id="aiMode"></span></p>
+      <p class="lead">Pregunta lo que quieras sobre tu dinero. <span id="aiMode"></span></p>
       <div class="chips" id="chips"></div>
       <div class="chat" id="chat" aria-live="polite"></div>
       <form id="askForm" novalidate>
@@ -421,7 +433,7 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
           <button class="btn primary" id="askBtn" type="submit">Preguntar</button>
         </div>
       </form>
-      <p class="fine" style="margin-top:12px">Esto es educación financiera general, no asesoramiento. Para decisiones importantes sobre inversión, impuestos o deudas, consulta a un profesional.</p>
+      <p class="fine" style="margin-top:12px">Educación financiera general, no asesoramiento. Para decisiones importantes, consulta a un profesional.</p>
     </section>
   </div>
 </div>
@@ -469,7 +481,7 @@ var DEMO=[[2,'aho',20,'Aportación al colchón'],[2,'nec',15,'Recarga del bus'],
   return {id:'demo'+i,cat:r[1],amt:r[2],note:r[3],date:nowYM+'-'+pad(Math.min(r[0],now.getDate()))};
 });
 
-var state={names:{},extras:[],editing:null,adding:false,confirmDel:null,alert:null,fired:{},welcome:false,tab:'money',chat:[],asking:false,total:120,alloc:{nec:55,oci:30,pro:15,aho:20},rate:2,months:36,saved0:0,goal:0,tax:true,ym:nowYM,cache:{},demo:false,loaded:true,mode:'local',pending:0,error:false,undo:null};
+var state={names:{},extras:[],editing:null,adding:false,confirmDel:null,alert:null,fired:{},showAll:false,tab:'money',chat:[],asking:false,total:100,alloc:{nec:45,oci:25,pro:10,aho:20},rate:2,months:36,saved0:0,goal:0,tax:true,ym:nowYM,cache:{},demo:false,loaded:true,mode:'local',pending:0,error:false,undo:null};
 rebuildCats();
 
 /* ---------- datos ---------- */
@@ -541,7 +553,6 @@ function loadMonth(ym){
 }
 function savePlan(){
   lsSet('plan',JSON.stringify(planObj()));
-  state.welcome=false;var w=$('#welcome');if(w)w.hidden=true;
   renderStatus();
 }
 function saveMonth(ym){
@@ -603,7 +614,6 @@ function renderHeader(){
   $('#today').hidden=(state.ym===nowYM);
   $('#banner').hidden=!(state.demo&&state.ym===nowYM);
   $('#movesTitle').textContent='Movimientos de '+monthName(state.ym);
-  $('#welcome').hidden=!state.welcome;
 }
 function renderSummary(){
   var L=list(),s=sums(L),A=state.alloc,ids=spendIds();
@@ -628,22 +638,22 @@ function renderSummary(){
     if(s.oci>A.oci)pill='<span class="pill bad">Ocio superado por '+fmt(r2(s.oci-A.oci))+'</span>';
     else if(s.oci>expected+1)pill='<span class="pill warn">Ocio por delante del ritmo</span>';
     else pill='<span class="pill ok">Ocio en ritmo</span>';
-    pace=pill+'<p>Llevas '+fmt(s.oci)+' de '+fmt(A.oci)+' en ocio. Tu tope semanal es '+fmt(cap)+' y esta semana van '+fmt(wk)+'.</p>';
-    if(left>0){var dl=dim-now.getDate()+1;perDay=' Hasta fin de mes te salen unos '+fmt(left/dl)+' al día.'}
+    pace=pill+'<p>Ocio '+fmt(s.oci)+' de '+fmt(A.oci)+' · tope semanal '+fmt(cap)+' (esta semana '+fmt(wk)+')</p>';
+    if(left>0){var dl=dim-now.getDate()+1;perDay=' Unos '+fmt(left/dl)+' al día.'}
   }else if(state.ym<nowYM){
-    pace='<span class="pill neutral">Mes cerrado</span><p>De ocio quedaron sin gastar '+fmt(Math.max(0,r2(A.oci-s.oci)))+', que pasan al colchón.</p>';
+    pace='<span class="pill neutral">Mes cerrado</span><p>Del ocio sobraron '+fmt(Math.max(0,r2(A.oci-s.oci)))+' (al colchón)</p>';
   }else{
-    pace='<span class="pill neutral">Mes futuro</span><p>Todavía no hay gastos. El reparto es el que tienes ajustado abajo.</p>';
+    pace='<span class="pill neutral">Mes futuro</span><p>Aún no hay gastos.</p>';
   }
   var pct=gastable>0?gastado/gastable*100:(gastado>0?100:0);
   $('#summary').innerHTML=
     '<p class="eyebrow">Para gastar en '+esc(monthName(state.ym))+'</p>'+
     '<p class="big'+(over?' bad':'')+'">'+(over?'Te has pasado '+fmt(-left):'Te quedan '+fmt(left))+'</p>'+
-    '<p class="sub">de '+fmt(gastable)+' para gastar. Aparte, '+fmt(A.aho)+' se apartan para el ahorro.'+perDay+'</p>'+
+    '<p class="sub">de '+fmt(gastable)+' para gastar · '+fmt(A.aho)+' al ahorro.'+perDay+'</p>'+
     '<div class="stack" role="img" aria-label="Gastado '+fmt(gastado)+' de '+fmt(gastable)+'">'+segs+'<i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i></div>'+
     '<div class="scale" aria-hidden="true"><span style="left:50%">50 %</span><span style="left:75%">75 %</span></div>'+
     '<div class="legend">'+leg+'</div>'+
-    '<p class="fine lvl">Has gastado el '+Math.round(pct)+' % de tu dinero para gastar'+(pct>=100?(left<0?': límite superado.':': límite alcanzado.'):pct>=75?': ojo, ya queda poco.':pct>=50?': vas por la mitad.':'.')+'</p>'+
+    '<p class="fine lvl">Gastado: '+Math.round(pct)+' %'+(pct>=100?' · límite '+(left<0?'superado':'alcanzado'):pct>=75?' · ojo, queda poco':pct>=50?' · vas por la mitad':'')+'</p>'+
     '<div class="pace">'+pace+'</div>';
 }
 function renderCats(){
@@ -652,13 +662,12 @@ function renderCats(){
     var sp=s[c.id],al=A[c.id]||0,pct=al>0?sp/al:(sp>0?1:0),rem=r2(al-sp),msg,cls='';
     if(c.spend){if(rem<0){msg='Te has pasado '+fmt(-rem);cls='over'}else msg='Quedan '+fmt(rem)}
     else{if(rem<=0){msg='Completo';cls='done'}else msg='Faltan '+fmt(rem)+' por apartar'}
-    var nm=cname(c.id),renamed=!!(c.edit&&state.names[c.id]);
+    var nm=cname(c.id);
     var title=!c.edit?esc(nm):(state.editing===c.id
       ?'<input class="nameinput" id="nameInput" data-cat="'+c.id+'" maxlength="24" value="'+esc(nm)+'" aria-label="Nombre de la partida">'
       :'<button class="namebtn" type="button" data-edit="'+c.id+'" aria-label="Cambiar el nombre de la partida '+esc(nm)+'">'+esc(nm)+' <span aria-hidden="true">✎</span></button>');
     var rm=(c.extra&&state.editing!==c.id&&state.confirmDel!==c.id)
       ?'<button class="rm" type="button" data-rm="'+c.id+'" aria-label="Quitar la partida '+esc(nm)+'">Quitar</button>':'';
-    var desc=(c.extra||renamed)?'Partida personalizada.':c.desc;
     var body;
     if(state.confirmDel===c.id){
       body='<p class="desc">¿Quitar «'+esc(nm)+'»? Sus gastos y sus '+fmt(al)+' pasarán a «'+esc(cname('nec'))+'».</p>'+
@@ -667,7 +676,6 @@ function renderCats(){
       body='<p class="nums"><strong>'+fmt(sp)+'</strong> '+c.verb+' de '+fmt(al)+'</p>'+
         '<div class="bar"><span style="width:'+Math.min(pct,1)*100+'%"></span></div>'+
         '<p class="rem '+cls+'">'+msg+'</p>'+
-        '<p class="desc">'+desc+'</p>'+
         (c.id==='aho'?'<button class="linkbtn" type="button" data-go="save">Ver cuánto crecerá →</button>':'');
     }
     return '<article class="cat" style="--cc:'+cv(c.id)+'"><header><span class="dot"></span><h3>'+title+'</h3>'+rm+'</header>'+body+'</article>';
@@ -684,7 +692,8 @@ function renderMoves(){
       (state.ym===nowYM?'<button class="btn" id="showDemo" type="button">Ver cómo queda con un ejemplo</button>':'')+'</div>';
     return;
   }
-  $('#moves').innerHTML='<ul class="moves">'+L.map(function(e){
+  var total=L.length,vis=state.showAll?L:L.slice(0,5);
+  $('#moves').innerHTML='<ul class="moves">'+vis.map(function(e){
     var q=e.date.split('-').map(Number);
     var dd=new Date(q[0],q[1]-1,q[2]).toLocaleDateString('es-ES',{day:'numeric',month:'short'});
     var name=e.note?esc(e.note):esc(cname(e.cat));
@@ -692,7 +701,7 @@ function renderMoves(){
       '<span class="n">'+name+'<span class="chip"><i style="background:'+cv(e.cat)+'"></i>'+esc(cname(e.cat))+'</span></span>'+
       '<span class="a">'+fmt(e.amt)+'</span>'+
       '<button class="x" type="button" data-del="'+esc(e.id)+'" aria-label="Eliminar '+fmt(e.amt)+' de '+esc(e.note||cname(e.cat))+'"'+(isDemo?' hidden':'')+'>×</button></li>';
-  }).join('')+'</ul>';
+  }).join('')+'</ul>'+(total>5?'<button class="linkbtn" id="moreMoves" type="button" style="margin-top:8px">'+(state.showAll?'Ver menos':'Ver todos ('+total+')')+'</button>':'');
 }
 function renderCheck(){
   var sum=allocSum(),diff=r2(state.total-sum),el=$('#sumCheck');
@@ -776,9 +785,9 @@ function renderRecoCalc(){
     goalHtml+
     '<div class="keyline" aria-hidden="true"><span><i style="background:var(--ink-2);opacity:.55"></i>Lo que apartas</span><span><i style="background:var(--accent)"></i>Intereses</span></div>'+
     '<div class="bars">'+rows+'</div>'+
-    '<p class="fine">Cálculo con una aportación al final de cada mes y un interés TAE del '+state.rate.toLocaleString('es-ES',{maximumFractionDigits:2})+' %, '+
-    (state.tax?'descontando el 19 % de impuestos sobre los intereses':'sin descontar impuestos')+
-    '. Es una estimación: el tipo real, cuándo se pagan los intereses y las condiciones de tu banco pueden cambiarla.</p>';
+    '<p class="fine">Estimación con TAE del '+state.rate.toLocaleString('es-ES',{maximumFractionDigits:2})+' %, '+
+    (state.tax?'descontando el 19 % de impuestos':'sin descontar impuestos')+
+    '. El tipo real depende de tu banco.</p>';
 }
 function renderSavings(){renderPresets();renderSaveCalc();renderRecoCalc()}
 
@@ -804,7 +813,15 @@ function renderNames(){
   sel.innerHTML=CATS.map(function(c){return '<option value="'+c.id+'">'+esc(cname(c.id))+(c.id==='aho'?' (apartado)':'')+'</option>'}).join('');
   if(cur&&CAT[cur])sel.value=cur;
 }
-function renderAll(){renderHeader();renderSummary();renderCats();renderMoves();renderCheck();renderSavings();renderNames();renderAlert();renderStatus();if(state.tab==='tips')renderRef()}
+function renderSplit(){
+  var sum=allocSum(),el=$('#splitbar');
+  if(!(sum>0)){el.innerHTML='';return}
+  el.innerHTML='<div class="stack split" role="img" aria-label="Cómo se reparte tu dinero">'+CATS.map(function(c){
+    var v=state.alloc[c.id]||0,w=v/sum*100;
+    return v>0?'<span class="seg" style="width:'+w+'%;background:'+cv(c.id)+'" title="'+esc(cname(c.id))+' '+Math.round(w)+' %">'+(w>=9?'<b>'+Math.round(w)+' %</b>':'')+'</span>':'';
+  }).join('')+'</div>';
+}
+function renderAll(){renderHeader();renderSummary();renderSplit();renderCats();renderMoves();renderCheck();renderSavings();renderNames();renderAlert();renderStatus();if(state.tab==='tips')renderRef()}
 
 function setDateBounds(){
   var p=state.ym.split('-').map(Number),dim=new Date(p[0],p[1],0).getDate(),el=$('#date');
@@ -887,6 +904,7 @@ $('#alertOk').addEventListener('click',function(){state.alert=null;renderAlert()
 function goMonth(delta){
   var p=state.ym.split('-').map(Number),d=new Date(p[0],p[1]-1+delta,1);
   state.ym=d.getFullYear()+'-'+pad(d.getMonth()+1);
+  state.showAll=false;
   loadMonth(state.ym);
   setDateBounds();renderAll();
 }
@@ -896,6 +914,7 @@ $('#today').addEventListener('click',function(){state.ym=nowYM;loadMonth(nowYM);
 $('#endDemo').addEventListener('click',function(){state.demo=false;renderAll()});
 $('#moves').addEventListener('click',function(e){
   if(e.target.closest('#showDemo')){state.demo=true;renderAll();return}
+  if(e.target.closest('#moreMoves')){state.showAll=!state.showAll;renderMoves();return}
   var b=e.target.closest('[data-del]');if(!b)return;
   var arr=state.cache[state.ym]||[],i=arr.findIndex(function(x){return x.id===b.getAttribute('data-del')});
   if(i<0)return;
@@ -966,22 +985,6 @@ $('#presets').addEventListener('click',function(e){
   var b=e.target.closest('[data-m]');if(!b)return;
   state.months=+b.getAttribute('data-m');savePlan();syncInputs();renderSavings();
 });
-
-/* bienvenida (solo la primera vez, cuando todavía no hay un reparto guardado) */
-function doAutoSplit(){
-  var t=state.total,ex=0;
-  state.extras.forEach(function(x){ex+=state.alloc[x.id]||0});
-  var rem=Math.max(0,r2(t-ex)),oci=Math.round(rem*0.25),pro=Math.round(rem*0.125),aho=Math.round(rem/6);
-  state.alloc.oci=oci;state.alloc.pro=pro;state.alloc.aho=aho;
-  state.alloc.nec=Math.max(0,r2(rem-oci-pro-aho));
-}
-$('#w-go').addEventListener('click',function(){
-  var n=parseNum($('#w-total').value),m=$('#w-msg');
-  if(n==null||!(n>0)||n>99999){m.textContent='Escribe cuánto dinero tienes al mes, por ejemplo 150.';$('#w-total').focus();return}
-  m.textContent='';state.total=n;doAutoSplit();savePlan();syncInputs();renderAll();
-});
-$('#w-skip').addEventListener('click',function(){savePlan();renderAll()});
-$('#w-total').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('#w-go').click()}});
 
 /* ---------- pestañas ---------- */
 var TABS=['money','save','tips'];
@@ -1084,7 +1087,7 @@ $('#ac-cancel').addEventListener('click',function(){$('#addCatForm').hidden=true
 /* ---------- consejos ---------- */
 var TIPS=[
   {t:"Págate a ti primero",p:"Aparta el ahorro el mismo día que recibes el dinero, antes de gastar nada. Lo que queda es lo que puedes gastar, y así el ahorro deja de depender de la fuerza de voluntad a final de mes."},
-  {t:"Empieza por un colchón pequeño",p:"El objetivo habitual es reunir entre tres y seis meses de gastos básicos, pero con un presupuesto ajustado conviene empezar por una meta pequeña, como un mes de necesarios. Ese colchón evita que un imprevisto acabe convirtiéndose en una deuda."},
+  {t:"Empieza por un colchón pequeño",p:"El objetivo habitual es reunir entre tres y seis meses de gastos básicos, pero con un presupuesto ajustado conviene empezar por una meta pequeña, como un mes de gastos básicos. Ese colchón evita que un imprevisto acabe convirtiéndose en una deuda."},
   {t:"Vigila los gastos hormiga",p:"Un café, un snack o una suscripción que ya no usas parecen poco, pero sumados pueden superar tu partida de ocio. Apunta todo durante un mes y repasa las suscripciones: verás enseguida cuáles no echarías de menos."},
   {t:"Pagar a plazos tiene un coste",p:"Antes de fraccionar una compra, mira el importe total que pagarás al final y la TAE, no solo la cuota. Algunas promociones son al 0 %, pero fuera de ellas los intereses de las tarjetas de crédito suelen ser altos, y una cuota fija durante años recorta tu margen cada mes."},
   {t:"El interés compuesto juega a tu favor",p:"Cuanto antes empiezas a ahorrar, más tiempo trabajan los intereses sobre los intereses. Con cantidades pequeñas el efecto es modesto, como verás en la pestaña Ahorro, pero el hábito que creas es lo que de verdad importa."},
@@ -1094,7 +1097,8 @@ var TIPS=[
   {t:"Si empiezas a ganar dinero, infórmate de los impuestos",p:"Cuando tus proyectos empiecen a dar ingresos, pregunta en la Agencia Tributaria o a una gestoría qué obligaciones tienes. Es mucho mejor saberlo desde el primer euro que descubrirlo después."}
 ];
 function renderTipGrid(){
-  $('#tipgrid').innerHTML=TIPS.map(function(x){return '<article class="tip"><h3>'+esc(x.t)+'</h3><p>'+esc(x.p)+'</p></article>'}).join('');
+  var ICO=['💸','🛟','☕','🧾','📈','🎈','🚩','🏦','🏛️'];
+  $('#tipgrid').innerHTML=TIPS.map(function(x,i){return '<details class="tip"><summary><span class="ico" aria-hidden="true">'+(ICO[i]||'💡')+'</span>'+esc(x.t)+'</summary><p>'+esc(x.p)+'</p></details>'}).join('');
 }
 function renderRef(){
   var A=state.alloc,sum=allocSum(),el=$('#refcmp');
@@ -1105,8 +1109,8 @@ function renderRef(){
   }).join('');
   var msg=((A.aho||0)/sum>=0.2)
     ?'Tu ahorro está en la referencia del 20 % o por encima.'
-    :'Tu ahorro está por debajo de la referencia del 20 %. Con tus '+fmt(sum)+', el 20 % serían '+fmt(sum*0.2)+' al mes.';
-  el.innerHTML='<div class="stats four">'+stats+'</div><p class="fine">'+msg+' La regla 50/30/20 es solo una pauta: 50 % para necesidades, 30 % para deseos y 20 % para ahorro. Con poco dinero es normal que las necesidades pesen más, y lo importante es que cada euro tenga un destino.</p>';
+    :'Tu ahorro está por debajo del 20 %. Con tus '+fmt(sum)+', el 20 % serían '+fmt(sum*0.2)+' al mes.';
+  el.innerHTML='<div class="stats four">'+stats+'</div><p class="fine">'+msg+' Pauta 50/30/20: 50 % necesidades, 30 % deseos, 20 % ahorro. Con poco dinero las necesidades pesan más; lo importante es que cada euro tenga destino.</p>';
 }
 
 /* ---------- asistente de dudas ---------- */
@@ -1190,9 +1194,9 @@ function buildMessages(q,share,raw){
 }
 function renderAIMode(){
   var t;
-  if(aiMode==='claude')t='Te responde Claude. Al preguntar, recibe tu pregunta y, si lo dejas marcado, tu reparto y lo gastado por partida, nunca tus conceptos.';
+  if(aiMode==='claude')t='Te responde Claude. Si lo dejas marcado, recibe tu reparto, nunca tus conceptos.';
   else if(aiMode==='endpoint')t='Te responde un asistente de IA. Al preguntar, recibe tu pregunta y, si lo dejas marcado, tu reparto y lo gastado por partida.';
-  else t='Te responde la guía integrada, que busca en los consejos. No es una IA.';
+  else t='Te responde la guía integrada. No es una IA.';
   $('#aiMode').textContent=t;
   $('#shareRow').hidden=(aiMode==='guide');
 }
@@ -1309,11 +1313,8 @@ $('#restoreData').addEventListener('click',function(){
   if(n<0)setBackupMsg('No reconozco esos datos. Pega el texto que copiaste con "Copiar mis datos".',false);
   else setBackupMsg('Restaurado: '+n+' '+(n===1?'mes':'meses')+'.',true);
 });
-$('#autoSplit').addEventListener('click',function(){
-  doAutoSplit();syncInputs();renderAll();savePlan();checkAlerts(nowYM,true);
-});
 
-loadPlan();state.welcome=(lsGet('plan')===null);loadMonth(state.ym);setDateBounds();renderSettings();getFired(nowYM);renderAll();renderTipGrid();renderChips();renderChat();renderAIMode();initAI();
+loadPlan();loadMonth(state.ym);setDateBounds();renderSettings();getFired(nowYM);renderAll();renderTipGrid();renderChips();renderChat();renderAIMode();initAI();
 })();
 </script>
 <script>
