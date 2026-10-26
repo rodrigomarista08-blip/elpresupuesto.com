@@ -255,6 +255,31 @@ details.fold>.foldbody{padding:0 18px 16px}
 .cat{padding:12px 14px}
 .cat .nums strong{font-size:1.35rem}
 .cat.add{min-height:90px}
+
+.hrow{display:flex;align-items:center;gap:8px;margin-bottom:12px;min-width:0}
+.card .hrow h2,.hrow .sectionhead{margin-bottom:0}
+.hrow.hint{margin-bottom:8px}
+.qbtn{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font-weight:700;font-size:14px;line-height:1;cursor:pointer;padding:0}
+.qbtn:hover,.qbtn[aria-expanded="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.helptxt{background:var(--surface-2);border-radius:8px;padding:10px 12px;margin:0 0 12px;font-size:14px;color:var(--ink-2);max-width:66ch}
+.objs{display:grid;gap:12px;margin-bottom:16px}
+.obj{border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:8px;min-width:0;--cc:var(--c-aho)}
+.obj header{display:flex;align-items:baseline;gap:8px;min-width:0}
+.obj h3{font-family:var(--display);font-weight:600;font-size:1.05rem;overflow-wrap:anywhere;min-width:0}
+.obj header .rm{margin-left:auto;flex:none;border:0;background:transparent;color:var(--ink-2);cursor:pointer;font-size:13px;text-decoration:underline;padding:4px 2px}
+.obj header .rm:hover{color:var(--bad)}
+.obj .bar{height:12px;border-radius:6px}
+.obj .nums{font-variant-numeric:tabular-nums;color:var(--ink-2);font-size:13px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px}
+.obj .nums strong{font-family:var(--display);font-size:1.3rem;color:var(--ink);font-weight:600}
+.obj .eta{font-size:14px}
+.obj .eta.done{color:var(--ok);font-weight:600}
+.obj .btnrow{margin:0}
+.obj form{display:flex;flex-wrap:wrap;gap:8px;align-items:end}
+.obj form>div{flex:1 1 140px;min-width:0}
+.obj .msg{flex-basis:100%;margin:0}
+.obj .msg:empty{display:none}
+.newobj{display:grid;gap:12px;grid-template-columns:2fr 1fr auto;align-items:end}
+@media (max-width:560px){.newobj{grid-template-columns:1fr}}
 </style>
 
 <div class="wrap">
@@ -286,7 +311,8 @@ details.fold>.foldbody{padding:0 18px 16px}
   </div>
 
   <section class="card">
-    <h2>Ajustar el reparto</h2>
+    <div class="hrow"><h2>Ajustar el reparto</h2><button class="qbtn" type="button" data-help="h-split" aria-expanded="false" aria-controls="h-split" aria-label="Qué es Ajustar el reparto">?</button></div>
+    <p class="helptxt" id="h-split" hidden>Aquí pones cuánto dinero tienes este mes y cuánto va a cada partida. Lo ideal es repartirlo todo, hasta que ponga «Reparto exacto».</p>
     <div class="settotal">
       <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
       <span class="pill neutral" id="sumCheck"></span>
@@ -296,10 +322,15 @@ details.fold>.foldbody{padding:0 18px 16px}
   </section>
 
   <div class="toprow">
-    <section class="card hero" id="summary" aria-live="polite"></section>
+    <section class="card hero">
+      <div class="hrow" style="margin-bottom:0"><p class="eyebrow" id="sumEyebrow"></p><button class="qbtn" type="button" data-help="h-sum" aria-expanded="false" aria-controls="h-sum" aria-label="Qué es el resumen del mes">?</button></div>
+      <p class="helptxt" id="h-sum" hidden style="margin-top:8px">Te dice cuánto te queda para gastar este mes, contando todas las partidas menos el ahorro. La barra se llena a medida que gastas.</p>
+      <div id="summary" aria-live="polite"></div>
+    </section>
 
     <section class="card">
-      <h2>Apuntar un gasto</h2>
+      <div class="hrow"><h2>Apuntar un gasto</h2><button class="qbtn" type="button" data-help="h-add" aria-expanded="false" aria-controls="h-add" aria-label="Qué es Apuntar un gasto">?</button></div>
+      <p class="helptxt" id="h-add" hidden>Escribe aquí cada cosa que pagues y elige su partida. Así la app lo descuenta y sabes cuánto te queda.</p>
       <form id="addForm" novalidate>
         <div class="row">
           <div>
@@ -326,7 +357,8 @@ details.fold>.foldbody{padding:0 18px 16px}
   </div>
 
   <div>
-    <p class="fine hint">Toca ✎ para cambiar un nombre · Ocio y Ahorro son fijas</p>
+    <div class="hrow hint"><p class="fine">Toca ✎ para cambiar un nombre · Ocio y Ahorro son fijas</p><button class="qbtn" type="button" data-help="h-cats" aria-expanded="false" aria-controls="h-cats" aria-label="Qué son las partidas">?</button></div>
+    <p class="helptxt" id="h-cats" hidden>Cada partida es un bolsillo con su propio dinero para el mes. Su barra muestra cuánto has gastado de ese bolsillo.</p>
     <section class="cats" id="cats" aria-label="Partidas del mes"></section>
     <form class="card addcat" id="addCatForm" hidden novalidate style="margin-top:14px">
       <h2>Nueva partida</h2>
@@ -340,7 +372,8 @@ details.fold>.foldbody{padding:0 18px 16px}
   </div>
 
   <section class="card">
-    <h2 id="movesTitle">Movimientos</h2>
+    <div class="hrow"><h2 id="movesTitle">Movimientos</h2><button class="qbtn" type="button" data-help="h-moves" aria-expanded="false" aria-controls="h-moves" aria-label="Qué son los movimientos">?</button></div>
+    <p class="helptxt" id="h-moves" hidden>Es la lista de todo lo que has apuntado en el mes. Si te equivocas en uno, bórralo con la ×.</p>
     <div id="moves"></div>
   </section>
 
@@ -370,7 +403,8 @@ details.fold>.foldbody{padding:0 18px 16px}
 
   <div class="pane" id="pane-save" role="tabpanel" aria-labelledby="tabbtn-save" hidden>
     <section class="card">
-      <h2>Tu ahorro</h2>
+      <div class="hrow"><h2>Tu ahorro</h2><button class="qbtn" type="button" data-help="h-save" aria-expanded="false" aria-controls="h-save" aria-label="Qué es Tu ahorro">?</button></div>
+      <p class="helptxt" id="h-save" hidden>Pon cuánto apartas cada mes y lo que ya tienes guardado. Con esos datos se hacen todas las cuentas de esta pestaña.</p>
       <div class="fields">
         <div><label for="a-aho">Cada mes aparto (€)</label><input id="a-aho" data-alloc="aho" inputmode="decimal" autocomplete="off"></div>
         <div><label for="p-months">Durante (meses)</label><input id="p-months" type="number" min="1" max="120" step="1"></div>
@@ -382,14 +416,31 @@ details.fold>.foldbody{padding:0 18px 16px}
     </section>
 
     <section class="card">
-      <h2>1 · Cuánto ahorrarías</h2>
+      <div class="hrow"><h2>Mis objetivos</h2><button class="qbtn" type="button" data-help="h-goals" aria-expanded="false" aria-controls="h-goals" aria-label="Qué es Mis objetivos">?</button></div>
+      <p class="helptxt" id="h-goals" hidden>Ponle nombre y precio a algo para lo que ahorras, como un viaje. Cada vez que guardes dinero para ello pulsa «Añadir ahorro» y verás cuánto te falta y cuándo lo tendrás.</p>
+      <div id="goals"></div>
+      <form id="goalForm" novalidate>
+        <div class="newobj">
+          <div><label for="g-name">Nuevo objetivo</label><input id="g-name" maxlength="40" autocomplete="off" placeholder="Viaje a Roma"></div>
+          <div><label for="g-amt">Cuánto cuesta (€)</label><input id="g-amt" inputmode="decimal" autocomplete="off" placeholder="600"></div>
+          <button class="btn primary" type="submit">Crear objetivo</button>
+        </div>
+        <p class="msg" id="g-msg" role="alert"></p>
+      </form>
+      <p class="fine" id="goalMax" hidden>Ya tienes 5 objetivos, el máximo. Borra uno para crear otro.</p>
+    </section>
+
+    <section class="card">
+      <div class="hrow"><h2>1 · Cuánto ahorrarías</h2><button class="qbtn" type="button" data-help="h-calc" aria-expanded="false" aria-controls="h-calc" aria-label="Qué es Cuánto ahorrarías">?</button></div>
+      <p class="helptxt" id="h-calc" hidden>Suma lo que apartas cada mes durante el plazo que elijas, sin contar intereses. Así ves hasta dónde llegas solo con constancia.</p>
       <p class="lead">Solo lo que tú apartas, sin intereses.</p>
       <div id="saveCalc"></div>
     </section>
 
     <section class="card reco" aria-labelledby="reco-title">
       <span class="reco-badge">★ Recomendado</span>
-      <h2 id="reco-title">2 · Ponlo en una cuenta de ahorro</h2>
+      <div class="hrow"><h2 id="reco-title">2 · Ponlo en una cuenta de ahorro</h2><button class="qbtn" type="button" data-help="h-reco" aria-expanded="false" aria-controls="h-reco" aria-label="Qué es la cuenta de ahorro">?</button></div>
+      <p class="helptxt" id="h-reco" hidden>Compara guardar el dinero sin más con tenerlo en una cuenta que te paga intereses. Pon la TAE de tu banco para ver cuánto ganarías de más.</p>
       <p class="lead">No dejes el ahorro parado en la cuenta del día a día: abre una cuenta de ahorro con tu banco y tu dinero se revaloriza solo. Pon la TAE de tu banco y mira lo que ganas de verdad.</p>
       <div class="fields two">
         <div><label for="p-rate">Interés de tu banco (TAE, %)</label><input id="p-rate" type="number" min="0" max="30" step="0.1"></div>
@@ -411,17 +462,20 @@ details.fold>.foldbody{padding:0 18px 16px}
 
   <div class="pane" id="pane-tips" role="tabpanel" aria-labelledby="tabbtn-tips" hidden>
     <section class="card">
-      <h2>Tu reparto frente a la regla 50/30/20</h2>
+      <div class="hrow"><h2>Tu reparto frente a la regla 50/30/20</h2><button class="qbtn" type="button" data-help="h-ref" aria-expanded="false" aria-controls="h-ref" aria-label="Qué es la regla 50/30/20">?</button></div>
+      <p class="helptxt" id="h-ref" hidden>Compara tu reparto con una regla muy conocida: 50 % para lo necesario, 30 % para caprichos y 20 % para ahorrar. Es una guía, no una obligación.</p>
       <div id="refcmp"></div>
     </section>
 
     <section>
-      <h2 class="sectionhead">Consejos para empezar</h2>
+      <div class="hrow"><h2 class="sectionhead">Consejos para empezar</h2><button class="qbtn" type="button" data-help="h-tips" aria-expanded="false" aria-controls="h-tips" aria-label="Qué son los consejos">?</button></div>
+      <p class="helptxt" id="h-tips" hidden>Ideas básicas para manejar mejor tu dinero. Toca cada una para leerla.</p>
       <div class="tipgrid" id="tipgrid"></div>
     </section>
 
     <section class="card">
-      <h2>Pregunta tus dudas</h2>
+      <div class="hrow"><h2>Pregunta tus dudas</h2><button class="qbtn" type="button" data-help="h-ask" aria-expanded="false" aria-controls="h-ask" aria-label="Qué es Pregunta tus dudas">?</button></div>
+      <p class="helptxt" id="h-ask" hidden>Escribe cualquier pregunta sobre dinero y te responderá la guía o la IA. Es información general, no un consejo profesional.</p>
       <p class="lead">Pregunta lo que quieras sobre tu dinero. <span id="aiMode"></span></p>
       <div class="chips" id="chips"></div>
       <div class="chat" id="chat" aria-live="polite"></div>
@@ -458,7 +512,7 @@ var now=new Date();
 var nowYM=now.getFullYear()+'-'+pad(now.getMonth()+1);
 var todayStr=dstr(now);
 
-var MAXX=6,TAXR=0.19;
+var MAXX=6,MAXG=5,TAXR=0.19;
 var BASE=[
   {id:'nec',name:'Necesarios',edit:true,verb:'gastado',spend:true,desc:'Transporte, móvil, material de clase.'},
   {id:'oci',name:'Ocio',verb:'gastado',spend:true,desc:'Salidas, cafés, caprichos.'},
@@ -481,7 +535,7 @@ var DEMO=[[2,'aho',20,'Aportación al colchón'],[2,'nec',15,'Recarga del bus'],
   return {id:'demo'+i,cat:r[1],amt:r[2],note:r[3],date:nowYM+'-'+pad(Math.min(r[0],now.getDate()))};
 });
 
-var state={names:{},extras:[],editing:null,adding:false,confirmDel:null,alert:null,fired:{},showAll:false,tab:'money',chat:[],asking:false,total:100,alloc:{nec:45,oci:25,pro:10,aho:20},rate:2,months:36,saved0:0,goal:0,tax:true,ym:nowYM,cache:{},demo:false,loaded:true,mode:'local',pending:0,error:false,undo:null};
+var state={names:{},extras:[],goals:[],goalAdd:null,goalDel:null,editing:null,adding:false,confirmDel:null,alert:null,fired:{},showAll:false,tab:'money',chat:[],asking:false,total:100,alloc:{nec:45,oci:25,pro:10,aho:20},rate:2,months:36,saved0:0,goal:0,tax:true,ym:nowYM,cache:{},demo:false,loaded:true,mode:'local',pending:0,error:false,undo:null};
 rebuildCats();
 
 /* ---------- datos ---------- */
@@ -503,7 +557,8 @@ function nextCi(){
 function planObj(){
   var al={};CATS.forEach(function(c){al[c.id]=state.alloc[c.id]||0});
   return {total:state.total,alloc:al,rate:state.rate,months:state.months,saved0:state.saved0,goal:state.goal,tax:state.tax,names:state.names,
-    extras:state.extras.map(function(x){return {id:x.id,ci:x.ci}})};
+    extras:state.extras.map(function(x){return {id:x.id,ci:x.ci}}),
+    goals:state.goals.map(function(g){return {id:g.id,name:g.name,target:g.target,saved:g.saved}})};
 }
 function applyPlan(d){
   if(!d||typeof d!=='object')return;
@@ -530,6 +585,17 @@ function applyPlan(d){
   if(num(d.saved0)&&d.saved0>=0&&d.saved0<=9999999)state.saved0=d.saved0;
   if(num(d.goal)&&d.goal>=0&&d.goal<=9999999)state.goal=d.goal;
   if(typeof d.tax==='boolean')state.tax=d.tax;
+  /* Los planes guardados antes de existir los objetivos no traen "goals": se quedan con la lista vacía. */
+  if(Array.isArray(d.goals)){
+    var gs=[];
+    d.goals.forEach(function(g){
+      if(!g||typeof g.id!=='string'||!/^g[a-z0-9]{3,16}$/.test(g.id)||gs.length>=MAXG||gs.some(function(y){return y.id===g.id}))return;
+      var nm=typeof g.name==='string'?g.name.trim().slice(0,40):'';
+      if(!nm||!num(g.target)||!(g.target>0)||g.target>9999999)return;
+      gs.push({id:g.id,name:nm,target:r2(g.target),saved:(num(g.saved)&&g.saved>=0&&g.saved<=9999999)?r2(g.saved):0});
+    });
+    state.goals=gs;
+  }
 }
 /* Si un gasto apunta a una partida propia que ya no está en el plan, se recupera en vez de perderlo. */
 function adoptCats(arr){
@@ -646,8 +712,8 @@ function renderSummary(){
     pace='<span class="pill neutral">Mes futuro</span><p>Aún no hay gastos.</p>';
   }
   var pct=gastable>0?gastado/gastable*100:(gastado>0?100:0);
+  $('#sumEyebrow').textContent='Para gastar en '+monthName(state.ym);
   $('#summary').innerHTML=
-    '<p class="eyebrow">Para gastar en '+esc(monthName(state.ym))+'</p>'+
     '<p class="big'+(over?' bad':'')+'">'+(over?'Te has pasado '+fmt(-left):'Te quedan '+fmt(left))+'</p>'+
     '<p class="sub">de '+fmt(gastable)+' para gastar · '+fmt(A.aho)+' al ahorro.'+perDay+'</p>'+
     '<div class="stack" role="img" aria-label="Gastado '+fmt(gastado)+' de '+fmt(gastable)+'">'+segs+'<i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i></div>'+
@@ -789,7 +855,40 @@ function renderRecoCalc(){
     (state.tax?'descontando el 19 % de impuestos':'sin descontar impuestos')+
     '. El tipo real depende de tu banco.</p>';
 }
-function renderSavings(){renderPresets();renderSaveCalc();renderRecoCalc()}
+/* ---------- objetivos de ahorro ---------- */
+function goalById(id){return state.goals.find(function(g){return g.id===id})}
+function renderGoals(){
+  var dep=state.alloc.aho||0,el=$('#goals'),full=state.goals.length>=MAXG;
+  $('#goalForm').hidden=full;$('#goalMax').hidden=!full;
+  if(!state.goals.length){el.innerHTML='<p class="fine" style="margin-bottom:12px">Aún no tienes objetivos. Crea el primero aquí debajo.</p>';return}
+  var html=state.goals.map(function(g){
+    var rem=r2(g.target-g.saved),pct=Math.min(1,g.saved/g.target),nm=esc(g.name),body;
+    if(state.goalDel===g.id){
+      body='<p class="fine">¿Borrar «'+nm+'»? Se pierde lo que llevas apuntado ('+fmt(g.saved)+'). Tu dinero no se toca.</p>'+
+        '<div class="btnrow"><button class="btn" type="button" data-gdelyes="'+g.id+'">Sí, borrar</button><button class="btn" type="button" data-gdelno="1">Cancelar</button></div>';
+    }else{
+      var eta;
+      if(rem<=0)eta='<p class="eta done">¡Objetivo conseguido!</p>';
+      else if(!(dep>0))eta='<p class="eta">Pon cuánto apartas al mes arriba para calcular cuándo lo tendrás.</p>';
+      else{
+        var m=Math.ceil(rem/dep),d=new Date(now.getFullYear(),now.getMonth()+m,1);
+        eta='<p class="eta">A tu ritmo de '+fmt(dep)+' al mes, lo tendrás hacia <strong>'+esc(d.toLocaleDateString('es-ES',{month:'long',year:'numeric'}))+'</strong> (en '+esc(span(m))+').</p>';
+      }
+      var add=state.goalAdd===g.id
+        ?'<form data-gform="'+g.id+'" novalidate><div><label for="ga-'+g.id+'">Cuánto has guardado (€)</label><input id="ga-'+g.id+'" inputmode="decimal" autocomplete="off" placeholder="20"></div>'+
+          '<button class="btn primary" type="submit">Guardar</button><button class="btn" type="button" data-gaddno="1">Cancelar</button><p class="msg" role="alert"></p></form>'
+        :'<div class="btnrow"><button class="btn primary" type="button" data-gadd="'+g.id+'">Añadir ahorro</button></div>';
+      body='<div class="bar" role="img" aria-label="'+Math.round(pct*100)+' % conseguido"><span style="width:'+pct*100+'%"></span></div>'+
+        '<p class="nums"><span><strong>'+fmt(g.saved)+'</strong> de '+fmt(g.target)+' · '+Math.floor(pct*100)+' %</span><span>'+(rem>0?'Faltan '+fmt(rem):(rem<0?'Sobran '+fmt(-rem):'Completo'))+'</span></p>'+
+        eta+add;
+    }
+    var rm=state.goalDel===g.id?'':'<button class="rm" type="button" data-gdel="'+g.id+'" aria-label="Borrar el objetivo '+nm+'">Borrar</button>';
+    return '<article class="obj"><header><h3>'+nm+'</h3>'+rm+'</header>'+body+'</article>';
+  }).join('');
+  el.innerHTML='<div class="objs">'+html+'</div>'+
+    (state.goals.length>1&&dep>0?'<p class="fine" style="margin:-4px 0 14px">Cada fecha supone que todo tu ahorro del mes va a ese objetivo.</p>':'');
+}
+function renderSavings(){renderPresets();renderSaveCalc();renderRecoCalc();renderGoals()}
 
 function syncInputs(){
   var map={'s-total':state.total,'a-aho':state.alloc.aho,'p-months':state.months,'p-rate':state.rate,'p-saved':state.saved0||'','p-goal':state.goal||''};
@@ -923,6 +1022,7 @@ $('#moves').addEventListener('click',function(e){
 });
 $('#toastBtn').addEventListener('click',function(){
   var u=state.undo;if(!u)return;
+  if(u.fn){state.undo=null;$('#toast').hidden=true;u.fn();return}
   (state.cache[u.ym]=state.cache[u.ym]||[]).push(u.exp);
   state.undo=null;saveMonth(u.ym);$('#toast').hidden=true;renderAll();checkAlerts(u.ym,true);
 });
@@ -984,6 +1084,63 @@ $('#p-tax').addEventListener('change',function(){state.tax=this.checked;savePlan
 $('#presets').addEventListener('click',function(e){
   var b=e.target.closest('[data-m]');if(!b)return;
   state.months=+b.getAttribute('data-m');savePlan();syncInputs();renderSavings();
+});
+
+/* objetivos */
+$('#goalForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=$('#g-name').value.trim().slice(0,40),n=parseNum($('#g-amt').value),m=$('#g-msg');
+  if(!name){m.textContent='Ponle un nombre, por ejemplo «Viaje a Roma».';$('#g-name').focus();return}
+  if(n==null||!(n>0)||n>9999999){m.textContent='Escribe cuánto cuesta, por ejemplo 600.';$('#g-amt').focus();return}
+  if(state.goals.length>=MAXG){m.textContent='Ya tienes el máximo de '+MAXG+' objetivos.';return}
+  m.textContent='';
+  state.goals.push({id:'g'+uid8(),name:name,target:r2(n),saved:0});
+  savePlan();
+  $('#g-name').value='';$('#g-amt').value='';
+  renderGoals();toast('Objetivo «'+name+'» creado',false);
+});
+$('#goals').addEventListener('click',function(e){
+  var t=e.target,b;
+  if((b=t.closest('[data-gadd]'))){
+    state.goalAdd=b.getAttribute('data-gadd');state.goalDel=null;renderGoals();
+    var inp=$('#ga-'+state.goalAdd);if(inp)inp.focus();return;
+  }
+  if(t.closest('[data-gaddno]')){state.goalAdd=null;renderGoals();return}
+  if((b=t.closest('[data-gdel]'))){state.goalDel=b.getAttribute('data-gdel');state.goalAdd=null;renderGoals();return}
+  if(t.closest('[data-gdelno]')){state.goalDel=null;renderGoals();return}
+  if((b=t.closest('[data-gdelyes]'))){
+    var id=b.getAttribute('data-gdelyes'),i=state.goals.findIndex(function(g){return g.id===id});
+    state.goalDel=null;
+    if(i<0)return;
+    var gone=state.goals.splice(i,1)[0];
+    savePlan();renderGoals();
+    state.undo={fn:function(){if(state.goals.length<MAXG){state.goals.splice(Math.min(i,state.goals.length),0,gone);savePlan();renderGoals()}}};
+    toast('Objetivo «'+gone.name+'» borrado',true);
+  }
+});
+$('#goals').addEventListener('submit',function(e){
+  var f=e.target.closest('[data-gform]');if(!f)return;
+  e.preventDefault();
+  var g=goalById(f.getAttribute('data-gform'));if(!g)return;
+  var inp=f.querySelector('input'),raw=inp.value.trim().replace(',','.');
+  if(!/^\d+(\.\d{1,2})?$/.test(raw)||!(parseFloat(raw)>0)||g.saved+parseFloat(raw)>9999999){
+    f.querySelector('.msg').textContent='Escribe una cantidad mayor que 0, por ejemplo 20.';inp.focus();return;
+  }
+  var add=r2(parseFloat(raw)),id=g.id;
+  g.saved=r2(g.saved+add);state.goalAdd=null;
+  savePlan();renderGoals();
+  state.undo={fn:function(){var x=goalById(id);if(x){x.saved=Math.max(0,r2(x.saved-add));savePlan();renderGoals()}}};
+  toast(g.saved>=g.target?'¡Conseguido! Ya tienes «'+g.name+'»':'Añadidos '+fmt(add)+' a «'+g.name+'»',true);
+});
+$('#goals').addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&state.goalAdd){state.goalAdd=null;renderGoals()}
+});
+
+/* ---------- explicaciones: los botones «?» muestran u ocultan el texto de su sección ---------- */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-help]');if(!b)return;
+  var p=document.getElementById(b.getAttribute('data-help'));if(!p)return;
+  p.hidden=!p.hidden;b.setAttribute('aria-expanded',p.hidden?'false':'true');
 });
 
 /* ---------- pestañas ---------- */
