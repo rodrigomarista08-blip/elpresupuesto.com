@@ -22,7 +22,7 @@
   color-scheme:light;
   --c-nec:#2f5d9e; --c-aho:#12807a; --c-oci:#c8620f; --c-pro:#7b4fa0;
   --c-x1:#b8456b; --c-x2:#6f7a1f; --c-x3:#8a5a3c; --c-x4:#5d6b7a; --c-x5:#a07a00; --c-x6:#1f7f9e;
-  --ok:#1d7a4a; --ok-bg:#dff1e6; --warn:#8f5200; --warn-bg:#fbefd9; --bad:#b3261e; --bad-bg:#fbe3e0;
+  --ok:#1d7a4a; --ok-bg:#dff1e6; --warn:#8f5200; --warn-bg:#fbefd9; --bad:#b3261e; --bad-bg:#fbe3e0; --calm:#44569e; --calm-bg:#e9edfa;
   --display:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
   --body:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
 }
@@ -34,7 +34,7 @@
     --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
     --c-nec:#7aa4e6; --c-aho:#4fc9bf; --c-oci:#f09a52; --c-pro:#b997dc;
     --c-x1:#ee8fb0; --c-x2:#c0cc66; --c-x3:#d6a47f; --c-x4:#a9b8c7; --c-x5:#e8c24f; --c-x6:#66c4e3;
-    --ok:#6fd49b; --ok-bg:#17331f; --warn:#f0b45a; --warn-bg:#3a2c12; --bad:#ff8c82; --bad-bg:#3d1b18;
+    --ok:#6fd49b; --ok-bg:#17331f; --warn:#f0b45a; --warn-bg:#3a2c12; --bad:#ff8c82; --bad-bg:#3d1b18; --calm:#aebcf2; --calm-bg:#1e2540;
     color-scheme:dark;
   }
 }
@@ -45,7 +45,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
   --c-nec:#7aa4e6; --c-aho:#4fc9bf; --c-oci:#f09a52; --c-pro:#b997dc;
     --c-x1:#ee8fb0; --c-x2:#c0cc66; --c-x3:#d6a47f; --c-x4:#a9b8c7; --c-x5:#e8c24f; --c-x6:#66c4e3;
-  --ok:#6fd49b; --ok-bg:#17331f; --warn:#f0b45a; --warn-bg:#3a2c12; --bad:#ff8c82; --bad-bg:#3d1b18;
+  --ok:#6fd49b; --ok-bg:#17331f; --warn:#f0b45a; --warn-bg:#3a2c12; --bad:#ff8c82; --bad-bg:#3d1b18; --calm:#aebcf2; --calm-bg:#1e2540;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -84,7 +84,7 @@ h1{font-family:var(--display);font-weight:700;font-size:1.9rem;line-height:1.1;t
 @media (min-width:800px){.toprow{grid-template-columns:1.25fr 1fr;align-items:start}}
 
 .hero .big{font-family:var(--display);font-weight:600;font-size:2.7rem;line-height:1.05;font-variant-numeric:tabular-nums;margin:4px 0 2px}
-.hero .big.bad{color:var(--bad)}
+.hero .big.bad{color:var(--calm)}
 .hero .sub{color:var(--ink-2)}
 .stack{display:flex;height:14px;background:var(--surface-2);border-radius:7px;overflow:hidden;margin:16px 0 10px}
 .stack .seg{display:block;height:100%}
@@ -95,7 +95,7 @@ h1{font-family:var(--display);font-weight:700;font-size:1.9rem;line-height:1.1;t
 .pill{display:inline-block;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:600;white-space:nowrap}
 .pill.ok{background:var(--ok-bg);color:var(--ok)}
 .pill.warn{background:var(--warn-bg);color:var(--warn)}
-.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.pill.bad{background:var(--calm-bg);color:var(--calm)}
 .pill.neutral{background:var(--surface-2);color:var(--ink-2)}
 
 form .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
@@ -115,7 +115,7 @@ input:focus,select:focus{border-color:var(--accent)}
 .bar{height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden}
 .bar span{display:block;height:100%;background:var(--cc);border-radius:4px}
 .cat .rem{font-weight:600;font-variant-numeric:tabular-nums}
-.cat .rem.over{color:var(--bad)} .cat .rem.done{color:var(--ok)}
+.cat .rem.over{color:var(--calm)} .cat .rem.done{color:var(--ok)}
 .cat .desc{font-size:13px;color:var(--ink-2)}
 
 .empty{padding:18px;border:1px dashed var(--line);border-radius:8px;color:var(--ink-2);display:grid;gap:10px;justify-items:start}
@@ -203,7 +203,7 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
 .lvl{margin-top:8px}
 .alertbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));width:min(560px,calc(100% - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.28);z-index:30;display:grid;gap:6px}
 .alertbar.lvl75{border-left-color:var(--warn)}
-.alertbar.lvl100{border-left-color:var(--bad)}
+.alertbar.lvl100{border-left-color:var(--calm)}
 .alertbar h3{font-family:var(--display);font-weight:600;font-size:1.05rem}
 .alertbar p{color:var(--ink-2)}
 .alertbar .btn{justify-self:end}
@@ -307,7 +307,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .card.hero{background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:#fff;
   --ink:#fff;--ink-2:rgba(255,255,255,.82);--surface-2:rgba(255,255,255,.18);--line:rgba(255,255,255,.22)}
 .hero .eyebrow{color:rgba(255,255,255,.85)}
-.hero .big.bad{color:#ffd9d4}
+.hero .big.bad{color:#fff}
 .hero .stack{background:rgba(255,255,255,.9)}
 .hero .stack .tick{background:rgba(20,30,50,.25)}
 .hero .legend i{box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
@@ -375,6 +375,46 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .qform>div{flex:1;min-width:0}
 .onb .sheet{gap:0}
 .toast{width:max-content}
+.fab{box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 38%,transparent)}
+
+/* Aviso suave al pasarse y sugerencia para compensar */
+.cat.isover{box-shadow:var(--shadow),inset 0 0 0 1.5px color-mix(in srgb,var(--calm) 40%,transparent)}
+.cat.isover .bar span{background:var(--calm)}
+.compensa{margin-top:12px;background:var(--calm-bg);color:var(--ink);border-radius:18px;padding:14px 16px;display:grid;gap:8px}
+.compensa .ctitle{font-family:var(--display);font-weight:700;color:var(--calm)}
+.compensa ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.compensa li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;background:var(--surface);border-radius:12px;padding:8px 12px}
+.compensa li span{flex:1;min-width:0}
+.compensa li strong{font-variant-numeric:tabular-nums}
+.compensa li small{flex-basis:100%;color:var(--ink-2);font-size:12px}
+.banner.soft{background:var(--calm-bg);color:var(--ink)}
+.banner.soft .btnrow{margin:0}
+
+/* Cabecera: botones de copia y ajustes */
+.top .tools{display:flex;gap:8px;align-items:center;margin-left:auto}
+.top>div:first-child{flex:1 1 200px}
+@media (max-width:699px){.top>div:first-child{flex:1 1 0}.top .tools{align-self:flex-start}.monthnav{flex-basis:100%}}
+@media (max-width:480px){.top .tlabel{display:none}.top .tools .btn{width:40px;padding:0}}
+
+/* Ajustes */
+.setsec{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.setsec:first-of-type{border-top:0;margin-top:4px;padding-top:0}
+.setsec h3{font-family:var(--display);font-weight:700;font-size:1rem;margin-bottom:10px}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.swatch{border:2px solid transparent;border-radius:14px;background:var(--surface-2);padding:8px 4px;cursor:pointer;display:grid;justify-items:center;gap:6px;font-size:12px;color:var(--ink-2)}
+.swatch i{width:30px;height:30px;border-radius:50%;display:block}
+.swatch[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:600}
+.fontopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fontopt{border:2px solid transparent;border-radius:14px;background:var(--surface-2);padding:10px 12px;cursor:pointer;text-align:left;display:grid;gap:2px}
+.fontopt b{font-size:1.35rem;line-height:1.1}
+.fontopt span{font-size:13px;color:var(--ink-2)}
+.fontopt[aria-pressed="true"]{border-color:var(--ink)}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface-2);border-radius:999px;padding:4px;gap:4px}
+.seg3 button{border:0;background:transparent;border-radius:999px;padding:8px 6px;cursor:pointer;font-weight:600;color:var(--ink-2)}
+.seg3 button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(20,30,50,.15)}
+.bkbtns{display:grid;gap:8px}
+.bkbtns .btn{width:100%;min-height:46px}
+.sheet .fine{margin-top:6px}
 @media (min-width:700px){.wrap{padding-bottom:100px}}
 @media (max-width:699px){
   .fab{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
@@ -384,6 +424,63 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   .sheet{border-radius:22px 22px 0 0;width:100%;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
 }
 </style>
+<script>
+/* Ajustes de aspecto (color, letra y tema). Se guardan aparte del plan y se aplican antes de pintar, para que no parpadee. */
+(function(){
+  var KEY='presupuesto:v1:prefs';
+  var ACCENTS={
+    teal:{n:'Verde azulado',l:'#0e7a66',d:'#4fc2a8'},
+    blue:{n:'Azul',l:'#2160c4',d:'#7fa9f2'},
+    indigo:{n:'Índigo',l:'#4f46c8',d:'#a7a1f3'},
+    purple:{n:'Morado',l:'#8137a8',d:'#cf9bef'},
+    pink:{n:'Rosa',l:'#bf2f72',d:'#f28dbd'},
+    coral:{n:'Coral',l:'#be3f2b',d:'#f59580'},
+    orange:{n:'Naranja',l:'#a35000',d:'#f4a65c'},
+    green:{n:'Verde',l:'#2b7a30',d:'#86d18a'}
+  };
+  var FONTS={
+    jakarta:{n:'Moderna',f:"'Plus Jakarta Sans'",q:null},
+    nunito:{n:'Redondeada',f:"'Nunito'",q:'Nunito:wght@400;500;600;700;800'},
+    atkinson:{n:'Muy legible',f:"'Atkinson Hyperlegible'",q:'Atkinson+Hyperlegible:wght@400;700'},
+    lora:{n:'Clásica',f:"'Lora'",q:'Lora:wght@400;500;600;700'}
+  };
+  var p={accent:'teal',font:'jakarta',theme:'auto',protectSavings:true};
+  try{
+    var s=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(s&&typeof s==='object'){
+      if(ACCENTS[s.accent])p.accent=s.accent;
+      if(FONTS[s.font])p.font=s.font;
+      if(/^(auto|light|dark)$/.test(s.theme))p.theme=s.theme;
+      if(typeof s.protectSavings==='boolean')p.protectSavings=s.protectSavings;
+    }
+  }catch(e){}
+  function loadFont(k){
+    var f=FONTS[k];if(!f||!f.q||document.getElementById('font-'+k))return;
+    var l=document.createElement('link');l.id='font-'+k;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+f.q+'&display=swap';
+    document.head.appendChild(l);
+  }
+  function apply(){
+    var r=document.documentElement,a=ACCENTS[p.accent],f=FONTS[p.font],css='';
+    if(p.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',p.theme);
+    if(p.accent!=='teal'){
+      var lt='--accent:'+a.l+';--accent-ink:#fff;--hero-a:'+a.l+';--hero-b:color-mix(in srgb,'+a.l+' 62%,#1d3f8f);';
+      var dk='--accent:'+a.d+';--accent-ink:#0b1220;--hero-a:color-mix(in srgb,'+a.l+' 72%,#000);--hero-b:color-mix(in srgb,'+a.l+' 45%,#0d1b3a);';
+      css+=':root{'+lt+'}@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){'+dk+'}}:root[data-theme="dark"]{'+dk+'}';
+    }
+    if(f.q){
+      loadFont(p.font);
+      css+=':root{--display:'+f.f+",'Segoe UI',system-ui,sans-serif;--body:"+f.f+",'Segoe UI',system-ui,sans-serif}";
+    }
+    var st=document.getElementById('userTheme');
+    if(!st){st=document.createElement('style');st.id='userTheme';document.head.appendChild(st)}
+    st.textContent=css;
+    var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=a.l;
+  }
+  apply();
+  window.appPrefs={p:p,ACCENTS:ACCENTS,FONTS:FONTS,apply:apply,loadFont:loadFont,
+    save:function(){try{localStorage.setItem(KEY,JSON.stringify(p));return true}catch(e){return false}}};
+})();
+</script>
 
 <div class="wrap">
   <header class="top">
@@ -391,6 +488,10 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
       <p class="eyebrow">Presupuesto mensual</p>
       <h1>Mi presupuesto</h1>
       <p class="status" id="status"><i></i><span>Cargando…</span></p>
+    </div>
+    <div class="tools">
+      <button class="btn" id="openBackup" type="button" aria-haspopup="dialog" aria-label="Copia de seguridad"><span aria-hidden="true">💾</span><span class="tlabel"> Copia</span></button>
+      <button class="btn icon" id="openSettings" type="button" aria-haspopup="dialog" aria-label="Ajustes"><span aria-hidden="true">⚙️</span></button>
     </div>
     <nav class="monthnav" aria-label="Cambiar de mes">
       <button class="btn icon" id="prev" aria-label="Mes anterior">‹</button>
@@ -411,6 +512,11 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   <div class="banner" id="banner" hidden>
     <span>Estás viendo datos de ejemplo. No se guardan.</span>
     <button class="btn" id="endDemo" type="button">Empezar con mis datos</button>
+  </div>
+
+  <div class="banner soft" id="bkBanner" hidden>
+    <span><span aria-hidden="true">💾</span> Hace un mes que no guardas una copia de tus datos. ¿La descargas ahora? Solo tarda un segundo.</span>
+    <div class="btnrow"><button class="btn primary" id="bkNow" type="button">Descargar copia</button><button class="btn" id="bkLater" type="button">Ahora no</button></div>
   </div>
 
   <div class="toprow">
@@ -453,6 +559,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <div class="hrow hint"><p class="fine">Toca ✎ para cambiar un nombre · Ocio y Ahorro son fijas</p><button class="qbtn" type="button" data-help="h-cats" aria-expanded="false" aria-controls="h-cats" aria-label="Qué son las secciones">?</button></div>
     <p class="helptxt" id="h-cats" hidden>Cada sección es un bolsillo con su propio dinero para el mes. Su barra muestra cuánto has gastado de ese bolsillo.</p>
     <section class="cats" id="cats" aria-label="Secciones del mes"></section>
+    <div class="compensa" id="compensa" aria-live="polite" hidden></div>
     <form class="card addcat" id="addCatForm" hidden novalidate style="margin-top:14px">
       <div class="hrow"><span class="cico" id="ac-ico" aria-hidden="true">📌</span><h2>Nueva sección</h2></div>
       <div class="row2">
@@ -624,6 +731,36 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   </div>
 </div>
 
+<div class="sheetwrap" id="settings" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="set-title">
+    <div class="sheethead"><h2 id="set-title">Ajustes</h2><button class="btn icon" type="button" data-close="settings" aria-label="Cerrar">×</button></div>
+    <section class="setsec"><h3 id="set-accent">Color principal</h3><div class="swatches" id="swatches" role="group" aria-labelledby="set-accent"></div></section>
+    <section class="setsec"><h3 id="set-font">Letra</h3><div class="fontopts" id="fontopts" role="group" aria-labelledby="set-font"></div></section>
+    <section class="setsec"><h3 id="set-theme">Modo</h3><div class="seg3" id="themeopts" role="group" aria-labelledby="set-theme">
+      <button type="button" data-theme-opt="auto">Automático</button><button type="button" data-theme-opt="light">Claro</button><button type="button" data-theme-opt="dark">Oscuro</button>
+    </div><p class="fine">Automático sigue el modo de tu móvil u ordenador.</p></section>
+    <section class="setsec"><h3>Si te pasas en una sección</h3>
+      <label class="chk" for="set-protect"><input type="checkbox" id="set-protect"> Proteger el ahorro: no sugerir recortarlo</label>
+    </section>
+    <section class="setsec"><h3>Tus datos</h3><button class="btn" type="button" id="setToBackup" style="width:100%"><span aria-hidden="true">💾</span> Copia de seguridad</button></section>
+  </div>
+</div>
+
+<div class="sheetwrap" id="backup" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="bk-title">
+    <div class="sheethead"><h2 id="bk-title">Copia de seguridad</h2><button class="btn icon" type="button" data-close="backup" aria-label="Cerrar">×</button></div>
+    <p class="fine" style="margin:0 0 12px">Tus datos solo están en este dispositivo. Descarga una copia de vez en cuando y guárdala en un sitio seguro, por ejemplo en tu nube.</p>
+    <p class="fine" id="bkLast" style="margin:0 0 12px"></p>
+    <div class="bkbtns">
+      <button class="btn primary" type="button" id="bkDownload"><span aria-hidden="true">⬇️</span> Descargar copia</button>
+      <button class="btn" type="button" id="bkImport"><span aria-hidden="true">⬆️</span> Importar una copia</button>
+      <input type="file" id="bkFile" accept=".json,application/json" hidden>
+    </div>
+    <p class="msg" id="bkMsg" role="status"></p>
+    <p class="fine">Al importar se sustituyen tu reparto, tus ajustes de secciones y los meses que vengan en la copia.</p>
+  </div>
+</div>
+
 <div class="sheetwrap onb" id="onboard" hidden>
   <form class="sheet" id="onbForm" role="dialog" aria-modal="true" aria-labelledby="onb-title" novalidate>
     <p class="eyebrow">Primeros pasos</p>
@@ -642,6 +779,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 <script>
 (function(){
 'use strict';
+var prefs=window.appPrefs.p;
 var $=function(s){return document.querySelector(s)};
 var eur=new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'});
 function fmt(n){return eur.format(n)}
@@ -884,7 +1022,7 @@ function renderSummary(){
     var ms=dstr(mon),wk=0;
     L.forEach(function(e){if(e.cat==='oci'&&e.date>=ms&&e.date<=todayStr)wk=r2(wk+e.amt)});
     var pill;
-    if(s.oci>A.oci)pill='<span class="pill bad">Ocio superado por '+fmt(r2(s.oci-A.oci))+'</span>';
+    if(s.oci>A.oci)pill='<span class="pill bad">Ocio: '+fmt(r2(s.oci-A.oci))+' por encima</span>';
     else if(s.oci>expected+1)pill='<span class="pill warn">Ocio por delante del ritmo</span>';
     else pill='<span class="pill ok">Ocio en ritmo</span>';
     pace=pill+'<p>Ocio '+fmt(s.oci)+' de '+fmt(A.oci)+' · tope semanal '+fmt(cap)+' (esta semana '+fmt(wk)+')</p>';
@@ -898,8 +1036,8 @@ function renderSummary(){
     eyebrow='Semana del '+d0+' al '+d1+' de '+mo;
     var hasta=lastWeek?'hasta fin de mes (día '+dim+')':'hasta el domingo '+d1;
     if(over){
-      head='Te has pasado '+fmt(-left);
-      sub='Este mes ya has gastado más de lo que tenías para gastar ('+fmt(gastable)+').';
+      head='<span class="lbl">Vas</span> '+fmt(-left)+' <span class="lbl">por encima</span>';
+      sub='de los '+fmt(gastable)+' para gastar este mes. No pasa nada: abajo tienes ideas para compensarlo.';
     }else if(can>0){
       head='<span class="lbl">Puedes gastar</span> '+fmt(can)+' <span class="lbl">esta semana</span>';
       sub='Es tu margen '+hasta+(sem>0?' · esta semana llevas '+fmt(sem):'')+'.'+(lastWeek?'':' Para todo el mes te quedan '+fmt(left)+'.');
@@ -912,7 +1050,7 @@ function renderSummary(){
     }
   }else if(state.ym<nowYM){
     pace='<span class="pill neutral">Mes cerrado</span><p>Del ocio sobraron '+fmt(Math.max(0,r2(A.oci-s.oci)))+' (al colchón)</p>';
-    head=over?'Te pasaste '+fmt(-left):'<span class="lbl">Te sobraron</span> '+fmt(left);
+    head=over?'<span class="lbl">Gastaste</span> '+fmt(-left)+' <span class="lbl">de más</span>':'<span class="lbl">Te sobraron</span> '+fmt(left);
     sub='de '+fmt(gastable)+' para gastar · '+fmt(A.aho)+' al ahorro.';
   }else{
     pace='<span class="pill neutral">Mes futuro</span><p>Aún no hay gastos.</p>';
@@ -999,7 +1137,7 @@ function renderCats(){
   var s=sums(list()),A=state.alloc;
   var html=CATS.map(function(c){
     var sp=s[c.id],al=A[c.id]||0,pct=al>0?sp/al:(sp>0?1:0),rem=r2(al-sp),msg,cls='';
-    if(c.spend){if(rem<0){msg='Te has pasado '+fmt(-rem);cls='over'}else msg='Quedan '+fmt(rem)}
+    if(c.spend){if(rem<0){msg=fmt(-rem)+' por encima de lo previsto';cls='over'}else msg='Quedan '+fmt(rem)}
     else{if(rem<=0){msg='Completo';cls='done'}else msg='Faltan '+fmt(rem)+' por apartar'}
     var nm=cname(c.id);
     var title=!c.edit?esc(nm):(state.editing===c.id
@@ -1017,11 +1155,38 @@ function renderCats(){
         '<p class="rem '+cls+'">'+msg+'</p>'+
         (c.id==='aho'?'<button class="linkbtn" type="button" data-go="save">Ver cuánto crecerá →</button>':'');
     }
-    return '<article class="cat" style="--cc:'+cv(c.id)+'"><header><span class="cico" aria-hidden="true">'+catIcon(c)+'</span><h3>'+title+'</h3>'+rm+'</header>'+body+'</article>';
+    return '<article class="cat'+(cls==='over'?' isover':'')+'" style="--cc:'+cv(c.id)+'"><header><span class="cico" aria-hidden="true">'+catIcon(c)+'</span><h3>'+title+'</h3>'+rm+'</header>'+body+'</article>';
   }).join('');
   if(state.extras.length<MAXX)html+='<button class="cat add" type="button" id="addCatBtn"><span aria-hidden="true">＋</span> Añadir sección</button>';
   $('#cats').innerHTML=html;
   if(state.editing){var inp=$('#nameInput');if(inp){inp.focus();inp.select()}}
+  renderCompensa(s);
+}
+/* Si una sección se pasa, propone recortar el resto en proporción a lo que le queda a cada una.
+   El ahorro no entra salvo que se desproteja en Ajustes. */
+function renderCompensa(s){
+  var A=state.alloc,el=$('#compensa'),overs=[],pool=[],over=0,R=0;
+  CATS.forEach(function(c){
+    var rem=r2((A[c.id]||0)-s[c.id]);
+    if(c.spend&&rem<0){overs.push(c.id);over=r2(over-rem)}
+    else if(rem>0&&(c.spend||(c.id==='aho'&&!prefs.protectSavings))){pool.push({id:c.id,rem:rem});R=r2(R+rem)}
+  });
+  if(!overs.length){el.hidden=true;el.innerHTML='';return}
+  var names=overs.map(function(id){return '«'+esc(cname(id))+'»'}).join(' y ');
+  var html='<p class="ctitle"><span aria-hidden="true">🧭</span> '+names+(overs.length>1?' van':' va')+' '+fmt(over)+' por encima. Así puedes compensarlo</p>';
+  if(!(R>0)){
+    html+='<p>Ya no queda margen en las otras secciones. Lo que falte puede salir del colchón o del mes que viene, sin agobios.</p>';
+  }else{
+    var cover=Math.min(over,R);
+    html+='<p>Para seguir dentro de tu dinero del mes, recorta en el resto lo que te queda en proporción:</p><ul>'+
+      pool.map(function(p){
+        var cut=r2(cover*p.rem/R);
+        return cut>0?'<li><span>'+esc(cname(p.id))+'</span><strong>−'+fmt(cut)+'</strong><small>te quedarían '+fmt(r2(p.rem-cut))+'</small></li>':'';
+      }).join('')+'</ul>';
+    if(over>R)html+='<p>Aun recortando todo, faltarían '+fmt(r2(over-R))+'. Puedes cubrirlos con el colchón o con el mes que viene.</p>';
+  }
+  html+='<p class="fine">'+(prefs.protectSavings?'Tu ahorro queda fuera: no se toca. ':'Incluye lo que te queda por apartar al ahorro. ')+'Puedes cambiarlo en Ajustes.</p>';
+  el.innerHTML=html;el.hidden=false;
 }
 function renderMoves(){
   var L=list().slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0});
@@ -1258,13 +1423,13 @@ function renderAlert(){
   }else{
     lvl='lvl100';
     if(left<0){
-      title='Has superado el límite';
-      txt='Te has pasado '+fmt(-left)+' del dinero para gastar de este mes. Lo que gastes ahora le quita dinero al ahorro o al mes que viene.';
+      title='Te has pasado un poco';
+      txt='Llevas '+fmt(-left)+' más de lo previsto para gastar este mes. No pasa nada: puedes compensarlo el mes que viene o tirar un poco del colchón.';
     }else{
       title='Has llegado al límite';
       txt='Ya has gastado todo el dinero para gastar de este mes. Intenta no gastar más hasta fin de mes.';
     }
-    if(over.length)txt+=' Secciones pasadas: '+over.join(', ')+'.';
+    if(over.length)txt+=' Por encima: '+over.join(', ')+'.';
   }
   if(al.t<100&&mpct+10<pct)txt+=' Vas más rápido que el calendario: llevas el '+Math.round(mpct)+' % del mes.';
   el.className='alertbar '+lvl;el.hidden=false;
@@ -1891,7 +2056,7 @@ $('#askInput').addEventListener('keydown',function(e){
 function setBackupMsg(t,ok){var m=$('#backupMsg');m.textContent=t;m.className='msg'+(ok?' okmsg':'')}
 $('#copyData').addEventListener('click',function(){
   var box=$('#dataBox');box.value=JSON.stringify(exportAll());
-  function done(){setBackupMsg('Datos copiados. Pégalos en el otro dispositivo y pulsa Restaurar.',true)}
+  function done(){markBackup();setBackupMsg('Datos copiados. Pégalos en el otro dispositivo y pulsa Restaurar.',true)}
   function fail(){box.focus();box.select();setBackupMsg('No se pudo copiar solo. Copia a mano el texto seleccionado.',false)}
   try{
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(box.value).then(done,fail);
@@ -1904,12 +2069,115 @@ $('#restoreData').addEventListener('click',function(){
   else setBackupMsg('Restaurado: '+n+' '+(n===1?'mes':'meses')+'.',true);
 });
 
+/* ---------- hojas: ajustes y copia de seguridad ---------- */
+var sheetFrom={};
+function openSheet(id){
+  sheetFrom[id]=document.activeElement;
+  $('#'+id).hidden=false;
+  var c=$('#'+id+' [data-close]');if(c)c.focus();
+}
+function closeSheet(id){
+  $('#'+id).hidden=true;
+  var f=sheetFrom[id];if(f&&f.focus&&document.contains(f))f.focus();
+}
+['settings','backup'].forEach(function(id){
+  $('#'+id).addEventListener('click',function(e){if(e.target===this||e.target.closest('[data-close]'))closeSheet(id)});
+});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  ['backup','settings'].some(function(id){if(!$('#'+id).hidden){e.preventDefault();closeSheet(id);return true}});
+});
+
+/* ajustes de aspecto */
+var AP=window.appPrefs;
+function renderSettingsSheet(){
+  $('#swatches').innerHTML=Object.keys(AP.ACCENTS).map(function(k){
+    var a=AP.ACCENTS[k];
+    return '<button class="swatch" type="button" data-accent="'+k+'" aria-pressed="'+(prefs.accent===k)+'"><i style="background:'+a.l+'"></i>'+esc(a.n)+'</button>';
+  }).join('');
+  $('#fontopts').innerHTML=Object.keys(AP.FONTS).map(function(k){
+    var f=AP.FONTS[k];
+    return '<button class="fontopt" type="button" data-font="'+k+'" aria-pressed="'+(prefs.font===k)+'" style="font-family:'+f.f.replace(/"/g,'&quot;')+',system-ui,sans-serif"><b>Aa 123 €</b><span>'+esc(f.n)+'</span></button>';
+  }).join('');
+  document.querySelectorAll('[data-theme-opt]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-opt')===prefs.theme))});
+  $('#set-protect').checked=prefs.protectSavings;
+}
+function savePrefs(){AP.apply();AP.save();renderSettingsSheet()}
+$('#openSettings').addEventListener('click',function(){
+  Object.keys(AP.FONTS).forEach(AP.loadFont);
+  renderSettingsSheet();openSheet('settings');
+});
+$('#settings').addEventListener('click',function(e){
+  var b;
+  if((b=e.target.closest('[data-accent]'))){prefs.accent=b.getAttribute('data-accent');savePrefs();return}
+  if((b=e.target.closest('[data-font]'))){prefs.font=b.getAttribute('data-font');savePrefs();return}
+  if((b=e.target.closest('[data-theme-opt]'))){prefs.theme=b.getAttribute('data-theme-opt');savePrefs();return}
+  if(e.target.closest('#setToBackup')){closeSheet('settings');openBackup()}
+});
+$('#set-protect').addEventListener('change',function(){prefs.protectSavings=this.checked;AP.save();renderCats()});
+
+/* copia de seguridad: descargar, importar y recordatorio cada 30 días */
+var DAY=86400000,BK_EVERY=30*DAY;
+function bkMeta(){
+  var m=null;try{m=JSON.parse(lsGet('backup')||'null')}catch(e){}
+  m=(m&&typeof m==='object')?m:{};
+  return {last:num(m.last)?m.last:null,first:num(m.first)?m.first:null,snooze:num(m.snooze)?m.snooze:null};
+}
+function setBkMeta(m){lsSet('backup',JSON.stringify(m))}
+function markBackup(){var m=bkMeta();m.last=Date.now();setBkMeta(m);renderBkBanner()}
+function renderBkBanner(){
+  var m=bkMeta(),ref=Math.max(m.last||m.first||Date.now(),m.snooze||0);
+  $('#bkBanner').hidden=!(lsGet('plan')!==null&&Date.now()-ref>=BK_EVERY);
+}
+function renderBkLast(){
+  var m=bkMeta(),t;
+  if(!m.last)t='Aún no has descargado ninguna copia.';
+  else{
+    var d=Math.floor((Date.now()-m.last)/DAY);
+    t='Última copia: '+(d<1?'hoy':d===1?'ayer':'hace '+d+' días')+'.';
+  }
+  $('#bkLast').textContent=t;
+}
+function openBackup(){$('#bkMsg').textContent='';$('#bkMsg').className='msg';renderBkLast();openSheet('backup')}
+function downloadBackup(){
+  try{
+    var blob=new Blob([JSON.stringify(exportAll())],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='presupuesto-copia-'+todayStr+'.json';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);
+    markBackup();return true;
+  }catch(e){return false}
+}
+$('#openBackup').addEventListener('click',openBackup);
+$('#bkDownload').addEventListener('click',function(){
+  var ok=downloadBackup(),m=$('#bkMsg');
+  m.className='msg'+(ok?' okmsg':'');
+  m.textContent=ok?'Copia descargada. Guárdala en un sitio seguro.':'No se pudo descargar. Prueba con «Copiar mis datos» en Mi dinero.';
+  renderBkLast();
+});
+$('#bkImport').addEventListener('click',function(){$('#bkFile').value='';$('#bkFile').click()});
+$('#bkFile').addEventListener('change',function(){
+  var f=this.files&&this.files[0],m=$('#bkMsg');if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    var n=importAll(String(rd.result||''));
+    m.className='msg'+(n<0?'':' okmsg');
+    m.textContent=n<0?'Ese archivo no parece una copia de esta app.':'Copia importada: '+n+' '+(n===1?'mes':'meses')+'.';
+  };
+  rd.onerror=function(){m.className='msg';m.textContent='No se pudo leer el archivo.'};
+  rd.readAsText(f);
+});
+$('#bkNow').addEventListener('click',function(){if(downloadBackup())toast('Copia descargada. Guárdala en un sitio seguro.',false)});
+$('#bkLater').addEventListener('click',function(){var m=bkMeta();m.snooze=Date.now();setBkMeta(m);renderBkBanner()});
+
 var fresh=isNewUser();
+(function(){var m=bkMeta();if(!m.first){m.first=Date.now();setBkMeta(m)}})();
 loadPlan();loadMonth(state.ym);
 var autoFixed=applyFixed(nowYM);
 setDateBounds();renderSettings();getFired(nowYM);
 if(autoFixed)checkAlerts(nowYM,true);
 renderAll();
+renderBkBanner();
 if(fresh){$('#fab').hidden=true;$('#onboard').hidden=false;$('#onb-amt').focus()}
 else if(autoFixed)toast(autoFixed===1?'Se ha apuntado 1 gasto fijo de este mes.':'Se han apuntado '+autoFixed+' gastos fijos de este mes.',false);renderTipGrid();renderChips();renderChat();renderAIMode();initAI();
 })();
