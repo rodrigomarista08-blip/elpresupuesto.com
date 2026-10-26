@@ -321,7 +321,8 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px))}
 
 .cat{border-top:0;padding:14px 16px}
-.cat .cico{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;line-height:1;background:color-mix(in srgb,var(--cc) 16%,transparent)}
+.cat .cico,.addcat .cico{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;line-height:1;background:color-mix(in srgb,var(--cc) 16%,transparent)}
+.addcat{--cc:var(--accent)}
 .cat.add{border:2px dashed var(--line);box-shadow:none;border-radius:18px}
 
 .tabs{justify-self:start;border:0;background:var(--surface-2);padding:4px;border-radius:999px;gap:2px}
@@ -420,7 +421,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <p class="helptxt" id="h-cats" hidden>Cada sección es un bolsillo con su propio dinero para el mes. Su barra muestra cuánto has gastado de ese bolsillo.</p>
     <section class="cats" id="cats" aria-label="Secciones del mes"></section>
     <form class="card addcat" id="addCatForm" hidden novalidate style="margin-top:14px">
-      <h2>Nueva sección</h2>
+      <div class="hrow"><span class="cico" id="ac-ico" aria-hidden="true">📌</span><h2>Nueva sección</h2></div>
       <div class="row2">
         <div><label for="ac-name">Nombre</label><input id="ac-name" maxlength="24" autocomplete="off" placeholder="Gimnasio"></div>
         <div><label for="ac-amt">Cantidad al mes (€)</label><input id="ac-amt" inputmode="decimal" autocomplete="off" placeholder="15"></div>
@@ -784,27 +785,69 @@ function renderSummary(){
     '<div class="pace">'+pace+'</div>';
 }
 var CICO={nec:'🧾',oci:'🎉',pro:'🚀',aho:'🐷'};
-/* Icono según el nombre de la sección: la primera palabra clave que encaje gana. */
+/* Icono según el nombre de la sección: la primera palabra clave que encaje gana, así que lo más concreto va antes
+   (por ejemplo «amazon music» antes que «prime video» y este antes que «amazon» a secas). */
 var NICO=[
-  ['🏋️',['gym','gimnasio','deporte','crossfit','fitness','pesas']],['⚽',['futbol','padel','tenis','baloncesto']],
-  ['❤️',['mujer','marido','novia','novio','pareja','amor','esposa','esposo','cita']],['🧸',['hijo','hija','bebe','nino','nina','peque']],
-  ['🐾',['mascota','perro','gato','veterinario']],['🛒',['super','mercadona','compra','comida','alimenta']],
-  ['🍽️',['restaurante','cena','comer fuera','delivery','glovo']],['☕',['cafe','desayuno']],['🍻',['fiesta','copas','bar','cerveza','salir']],
-  ['🏠',['casa','alquiler','hogar','piso','hipoteca','comunidad']],['💡',['luz','agua','butano','factura','suministro']],
-  ['📱',['movil','telefono','internet','fibra','tarifa']],['🚌',['transporte','bus','metro','tren','abono']],
-  ['🚗',['coche','gasolina','parking','taller','itv']],['🛵',['moto']],['🚲',['bici']],['✈️',['viaje','vacacion','vuelo','hotel','escapada']],
-  ['👕',['ropa','zapatilla','calzado','moda']],['💇',['peluqueria','belleza','estetica','maquillaje','cosmetic']],
-  ['💊',['salud','medico','farmacia','dentista','psicolog','seguro medico']],['📚',['estudio','clase','universidad','libro','curso','academia','colegio','master']],
-  ['🎮',['juego','videojuego','playstation','consola','steam']],['📺',['serie','netflix','streaming','hbo','disney']],['🎵',['musica','spotify','concierto']],
-  ['🎁',['regalo','cumple','navidad']],['💳',['deuda','prestamo','tarjeta','credito','plazo']],['📈',['inversion','invertir','bolsa','cripto']],
-  ['🛡️',['seguro']],['🤝',['donacion','ong','solidari']],['💼',['trabajo','negocio','empresa']],['💻',['ordenador','tecnologia','software','dominio','web']]
+  /* plataformas y entretenimiento digital */
+  ['🎵',['musica','spotify','apple music','amazon music','youtube music','tidal','deezer','soundcloud','concierto']],
+  ['📺',['serie','pelicula','peli','streaming','plataforma','netflix','hbo','max','disney','prime video','amazon prime','filmin','movistar plus','movistar+',
+    'skyshowtime','sky showtime','apple tv','atresplayer','atres player','rakuten','dazn','crunchyroll','mubi','pluto','paramount','flixole','rtve play',
+    'mitele','youtube','twitch','tivify','lovestv','fubo','hulu','peacock','acorn','starzplay','lionsgate','television']],
+  ['🎮',['juego','videojuego','gaming','playstation','ps plus','ps5','xbox','game pass','nintendo','switch','consola','steam','epic','fortnite','roblox','twitch drops']],
+  ['🤖',['chatgpt','openai','claude','gemini','copilot','midjourney','inteligencia artificial']],
+  ['☁️',['icloud','google one','dropbox','onedrive','nube','almacenamiento']],
+  ['🔁',['suscripci','membresia','cuota mensual']],
+  /* deporte y cuidado personal */
+  ['🧘',['yoga','pilates','meditacion','mindfulness']],['🏊',['piscina','natacion','nadar']],
+  ['🏋️',['gym','gimnasio','deporte','crossfit','fitness','pesas','entreno','basic fit','basic-fit','mcfit','altafit','vivagym','anytime']],
+  ['⚽',['futbol','padel','tenis','baloncesto','basket','voley','rugby','boxeo','escalada','running','correr']],['⛷️',['esqui','snow','nieve']],
+  ['💇',['peluqueria','barberia','barbero','belleza','estetica','maquillaje','cosmetic','unas','manicura','pedicura','depilacion','perfume']],
+  ['👓',['gafas','optica','lentillas']],['💊',['salud','medic','farmacia','dentista','psicolog','fisio','hospital','seguro medico','sanitas','adeslas']],
+  /* personas */
+  ['💍',['boda','bodas','anillo']],['❤️',['mujer','marido','novia','novio','pareja','amor','esposa','esposo','cita','san valentin']],
+  ['🧸',['hijo','hija','bebe','nino','nina','peque','guarderia','juguete','panal']],['👨‍👩‍👧',['familia','padres','madre','padre','abuel','hermano','hermana']],
+  ['🐾',['mascota','perro','gato','veterinario','pienso']],
+  /* comida y bebida */
+  ['🍕',['pizza','telepizza','dominos']],['🍔',['hamburguesa','burger','mcdonald','kfc','comida rapida','fast food']],['🍣',['sushi','japones']],
+  ['🛵',['uber eats','just eat','glovo','delivery','a domicilio']],
+  ['🛒',['super','mercadona','lidl','carrefour','aldi','alcampo','eroski','consum','hipercor','compra','comida','alimenta']],
+  ['🍽️',['restaurante','cena','comer fuera','menu','tapas']],['☕',['cafe','desayuno','starbucks','merienda']],
+  ['🍷',['vino','bodega']],['🍻',['fiesta','copas','bar','bares','cerveza','salir','discoteca','botellon']],
+  ['🚬',['tabaco','vaper','vapeo','cigarro']],['🎰',['apuesta','loteria','casino','quiniela']],
+  /* casa */
+  ['🛋️',['mueble','ikea','decoracion','sofa']],['🔧',['reparacion','arreglo','bricolaje','leroy','ferreteria','fontanero']],
+  ['🧹',['limpieza','drogueria','asistenta']],['🌱',['planta','jardin','huerto']],['💐',['flores','floristeria']],
+  ['🏠',['casa','alquiler','hogar','piso','hipoteca','comunidad','habitacion']],['💡',['luz','electricidad','agua','butano','factura','suministro','calefaccion']],
+  ['📱',['movil','telefono','internet','fibra','tarifa','vodafone','orange','movistar','yoigo','pepephone','lowi','simyo']],
+  /* moverse y viajar */
+  ['🚕',['taxi','uber','cabify','bolt','freenow']],['🚆',['renfe','ouigo','iryo','cercanias']],
+  ['🚌',['transporte','bus','autobus','metro','tren','abono','alsa','tranvia']],
+  ['⛽',['gasolina','gasoil','diesel','combustible','repsol','cepsa']],['🚗',['coche','parking','aparcamiento','taller','itv','peaje']],
+  ['🏍️',['moto']],['🚲',['bici','patinete']],
+  ['🏖️',['playa','verano']],['🏕️',['camping','excursion','acampada','senderismo']],
+  ['✈️',['viaje','vacacion','vuelo','avion','hotel','escapada','ryanair','vueling','airbnb','booking']],
+  /* compras y ocio */
+  ['📦',['amazon','aliexpress','shein','temu','wallapop','vinted','envio','paquete']],
+  ['👕',['ropa','zapatilla','calzado','moda','zara','primark','pull','bershka','mango']],
+  ['🎬',['cine','teatro','espectaculo','entrada','musical']],['🎟️',['festival','evento','feria']],
+  ['🎸',['guitarra','piano','instrumento','bateria']],['📷',['foto','camara']],['🎨',['arte','pintura','manualidad','dibujo','hobby','aficion']],
+  ['📖',['libro','comic','manga','kindle','audible','revista','periodico','prensa']],
+  ['📚',['estudio','clase','universidad','matricula','curso','academia','colegio','instituto','master','idioma','ingles','autoescuela','carnet']],
+  ['🎁',['regalo','cumple','navidad','reyes','amigo invisible']],
+  /* dinero */
+  ['🧾',['impuesto','hacienda','irpf','autonomo','gestoria','multa']],['🏦',['banco','comision']],
+  ['🐷',['hucha','colchon','emergencia','imprevisto']],
+  ['💳',['deuda','prestamo','tarjeta','credito','plazo','financiacion','klarna']],['📈',['inversion','invertir','bolsa','cripto','bitcoin','fondo','indexado','etf']],
+  ['🛡️',['seguro']],['🤝',['donacion','ong','solidari','cruz roja']],['💼',['trabajo','negocio','empresa','freelance']],
+  ['💻',['ordenador','portatil','tecnologia','software','dominio','web','hosting','app']]
 ].map(function(e){return {i:e[0],re:e[1].map(kwRegex)}});
+function nameIcon(name,fallback){
+  var n=norm(name);
+  for(var j=0;j<NICO.length;j++)if(NICO[j].re.some(function(r){return r.test(n)}))return NICO[j].i;
+  return fallback;
+}
 function catIcon(c){
-  if(c.edit){
-    var n=norm(cname(c.id));
-    for(var j=0;j<NICO.length;j++)if(NICO[j].re.some(function(r){return r.test(n)}))return NICO[j].i;
-  }
-  return CICO[c.id]||'📌';
+  return c.edit?nameIcon(cname(c.id),CICO[c.id]||'📌'):CICO[c.id];
 }
 function renderCats(){
   var s=sums(list()),A=state.alloc;
@@ -1289,7 +1332,7 @@ function openAddCat(){
   var f=$('#addCatForm'),rest=Math.max(0,r2(state.total-allocSum()));
   f.hidden=false;
   $('#ac-amt').value=rest?String(rest).replace('.',','):'';
-  $('#ac-name').value='';$('#ac-msg').textContent='';
+  $('#ac-name').value='';$('#ac-msg').textContent='';$('#ac-ico').textContent='📌';
   $('#ac-name').focus();
 }
 $('#cats').addEventListener('click',function(e){
@@ -1323,6 +1366,7 @@ $('#addCatForm').addEventListener('submit',function(e){
   renderSettings();renderAll();
   toast('Sección «'+name+'» añadida',false);
 });
+$('#ac-name').addEventListener('input',function(){$('#ac-ico').textContent=nameIcon(this.value,'📌')});
 $('#ac-cancel').addEventListener('click',function(){$('#addCatForm').hidden=true});
 
 /* ---------- consejos ---------- */
