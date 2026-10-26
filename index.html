@@ -519,6 +519,17 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <div class="btnrow"><button class="btn primary" id="bkNow" type="button">Descargar copia</button><button class="btn" id="bkLater" type="button">Ahora no</button></div>
   </div>
 
+  <section class="card">
+    <div class="hrow"><h2>Ajustar el reparto</h2><button class="qbtn" type="button" data-help="h-split" aria-expanded="false" aria-controls="h-split" aria-label="Qué es Ajustar el reparto">?</button></div>
+    <p class="helptxt" id="h-split" hidden>Aquí pones cuánto dinero tienes este mes y cuánto va a cada sección. Lo ideal es repartirlo todo, hasta que ponga «Reparto exacto».</p>
+    <div class="settotal">
+      <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
+      <span class="pill neutral" id="sumCheck"></span>
+    </div>
+    <div id="splitbar"></div>
+    <div class="setgrid" id="setgrid"></div>
+  </section>
+
   <div class="toprow">
     <section class="card hero">
       <div class="hrow" style="margin-bottom:0"><p class="eyebrow" id="sumEyebrow"></p><button class="qbtn" type="button" data-help="h-sum" aria-expanded="false" aria-controls="h-sum" aria-label="Qué es el resumen del mes">?</button></div>
@@ -581,17 +592,6 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <div class="hrow"><h2>Gastos fijos</h2><button class="qbtn" type="button" data-help="h-fixed" aria-expanded="false" aria-controls="h-fixed" aria-label="Qué son los gastos fijos">?</button></div>
     <p class="helptxt" id="h-fixed" hidden>Son los gastos que pagas todos los meses, como el abono o una suscripción. Se apuntan solos al empezar cada mes, así no tienes que acordarte.</p>
     <div id="fixed"></div>
-  </section>
-
-  <section class="card">
-    <div class="hrow"><h2>Ajustar el reparto</h2><button class="qbtn" type="button" data-help="h-split" aria-expanded="false" aria-controls="h-split" aria-label="Qué es Ajustar el reparto">?</button></div>
-    <p class="helptxt" id="h-split" hidden>Aquí pones cuánto dinero tienes este mes y cuánto va a cada sección. Lo ideal es repartirlo todo, hasta que ponga «Reparto exacto».</p>
-    <div class="settotal">
-      <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
-      <span class="pill neutral" id="sumCheck"></span>
-    </div>
-    <div id="splitbar"></div>
-    <div class="setgrid" id="setgrid"></div>
   </section>
 
   <details class="fold">
