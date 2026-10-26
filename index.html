@@ -11,23 +11,27 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Presupuesto mensual</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: resumen del mes arriba junto al formulario de gastos, cuatro partidas en fila, luego movimientos, ajuste del reparto, proyección del ahorro y reglas. Una sola columna en móvil. */
 :root{
-  --bg:#f2f5f3; --surface:#ffffff; --surface-2:#e7eee9; --ink:#16231e; --ink-2:#4a5b54; --line:#d3ddd7;
-  --accent:#0f6b5c; --accent-ink:#ffffff;
+  --bg:#f3f5f9; --surface:#ffffff; --surface-2:#eef1f6; --ink:#1b2333; --ink-2:#5d6779; --line:#e2e6ee;
+  --accent:#0e7a66; --accent-ink:#ffffff;
+  --hero-a:#0e7a66; --hero-b:#1f6fb2;
+  --shadow:0 1px 2px rgba(20,30,50,.05),0 8px 24px rgba(20,30,50,.07);
   color-scheme:light;
   --c-nec:#2f5d9e; --c-aho:#12807a; --c-oci:#c8620f; --c-pro:#7b4fa0;
   --c-x1:#b8456b; --c-x2:#6f7a1f; --c-x3:#8a5a3c; --c-x4:#5d6b7a; --c-x5:#a07a00; --c-x6:#1f7f9e;
   --ok:#1d7a4a; --ok-bg:#dff1e6; --warn:#8f5200; --warn-bg:#fbefd9; --bad:#b3261e; --bad-bg:#fbe3e0;
-  --display:'Familjen Grotesk','Segoe UI',system-ui,sans-serif;
-  --body:'Instrument Sans','Segoe UI',system-ui,sans-serif;
+  --display:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
+  --body:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#101916; --surface:#17221e; --surface-2:#203029; --ink:#e6efe9; --ink-2:#9db0a7; --line:#2c3d36;
+    --bg:#0f141c; --surface:#171e29; --surface-2:#212a38; --ink:#e8edf5; --ink-2:#9ba7b9; --line:#2a3445;
     --accent:#4fc2a8; --accent-ink:#08201a;
+    --hero-a:#0f5c50; --hero-b:#1d4f86;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
     --c-nec:#7aa4e6; --c-aho:#4fc9bf; --c-oci:#f09a52; --c-pro:#b997dc;
     --c-x1:#ee8fb0; --c-x2:#c0cc66; --c-x3:#d6a47f; --c-x4:#a9b8c7; --c-x5:#e8c24f; --c-x6:#66c4e3;
     --ok:#6fd49b; --ok-bg:#17331f; --warn:#f0b45a; --warn-bg:#3a2c12; --bad:#ff8c82; --bad-bg:#3d1b18;
@@ -35,8 +39,10 @@
   }
 }
 :root[data-theme="dark"]{
-  --bg:#101916; --surface:#17221e; --surface-2:#203029; --ink:#e6efe9; --ink-2:#9db0a7; --line:#2c3d36;
+  --bg:#0f141c; --surface:#171e29; --surface-2:#212a38; --ink:#e8edf5; --ink-2:#9ba7b9; --line:#2a3445;
   --accent:#4fc2a8; --accent-ink:#08201a;
+  --hero-a:#0f5c50; --hero-b:#1d4f86;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
   --c-nec:#7aa4e6; --c-aho:#4fc9bf; --c-oci:#f09a52; --c-pro:#b997dc;
     --c-x1:#ee8fb0; --c-x2:#c0cc66; --c-x3:#d6a47f; --c-x4:#a9b8c7; --c-x5:#e8c24f; --c-x6:#66c4e3;
   --ok:#6fd49b; --ok-bg:#17331f; --warn:#f0b45a; --warn-bg:#3a2c12; --bad:#ff8c82; --bad-bg:#3d1b18;
@@ -280,6 +286,59 @@ details.fold>.foldbody{padding:0 18px 16px}
 .obj .msg:empty{display:none}
 .newobj{display:grid;gap:12px;grid-template-columns:2fr 1fr auto;align-items:end}
 @media (max-width:560px){.newobj{grid-template-columns:1fr}}
+
+/* Diseño moderno y suave: tarjetas sin borde con sombra, esquinas redondas, resumen en degradado y pestañas abajo en el móvil. */
+.wrap{gap:18px}
+h1{font-weight:800;letter-spacing:-.02em}
+.card h2,.sectionhead{font-weight:700;letter-spacing:-.01em}
+.card,.cat,.tip,details.fold,.obj{border-color:transparent;border-radius:18px;box-shadow:var(--shadow)}
+.card{padding:20px}
+.obj{box-shadow:none;background:var(--surface-2)}
+.reco{border:2px solid var(--accent)}
+.btn{border-radius:999px;padding:8px 16px;border-color:var(--line)}
+.btn.icon{border-radius:50%;padding:0}
+input,select,textarea{background:var(--surface-2);border-color:transparent;border-radius:12px}
+input:focus,select:focus,textarea:focus{background:var(--surface);border-color:var(--accent)}
+.stat{border-radius:14px}
+.bar{height:10px;border-radius:5px}
+.bar span{border-radius:5px}
+.banner{border-radius:14px}
+
+.card.hero{background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:#fff;
+  --ink:#fff;--ink-2:rgba(255,255,255,.82);--surface-2:rgba(255,255,255,.18);--line:rgba(255,255,255,.22)}
+.hero .eyebrow{color:rgba(255,255,255,.85)}
+.hero .big.bad{color:#ffd9d4}
+.hero .stack{background:rgba(255,255,255,.9)}
+.hero .stack .tick{background:rgba(20,30,50,.25)}
+.hero .legend i{box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
+.hero .pill{background:rgba(255,255,255,.2);color:#fff}
+.hero .qbtn{background:rgba(255,255,255,.2);border-color:transparent;color:#fff}
+.hero .qbtn[aria-expanded="true"]{background:#fff;color:var(--hero-a)}
+.herotop{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.herotop>div{min-width:0}
+.ring{position:relative;flex:none;width:76px;height:76px;display:grid;place-items:center;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.ring::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(#fff calc(var(--p)*1%),rgba(255,255,255,.22) 0);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px))}
+
+.cat{border-top:0;padding:14px 16px}
+.cat .cico{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;line-height:1;background:color-mix(in srgb,var(--cc) 16%,transparent)}
+.cat.add{border:2px dashed var(--line);box-shadow:none;border-radius:18px}
+
+.tabs{justify-self:start;border:0;background:var(--surface-2);padding:4px;border-radius:999px;gap:2px}
+.tabs button{border:0;margin:0;border-radius:999px;padding:8px 18px}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(20,30,50,.12)}
+@media (max-width:699px){
+  .wrap{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+  .hero .big{font-size:2.1rem}
+  .ring{width:64px;height:64px;font-size:14px}
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:15;justify-self:stretch;justify-content:space-around;border-radius:20px 20px 0 0;background:var(--surface);
+    padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(20,30,50,.10)}
+  .tabs button,.tabs button[aria-selected="true"]{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;font-size:12px;border-radius:14px;box-shadow:none}
+  .tabs button .ti{margin:0;font-size:21px}
+  .tabs button[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+  .toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  .alertbar{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
+}
 </style>
 
 <div class="wrap">
@@ -714,14 +773,17 @@ function renderSummary(){
   var pct=gastable>0?gastado/gastable*100:(gastado>0?100:0);
   $('#sumEyebrow').textContent='Para gastar en '+monthName(state.ym);
   $('#summary').innerHTML=
+    '<div class="herotop"><div>'+
     '<p class="big'+(over?' bad':'')+'">'+(over?'Te has pasado '+fmt(-left):'Te quedan '+fmt(left))+'</p>'+
-    '<p class="sub">de '+fmt(gastable)+' para gastar · '+fmt(A.aho)+' al ahorro.'+perDay+'</p>'+
+    '<p class="sub">de '+fmt(gastable)+' para gastar · '+fmt(A.aho)+' al ahorro.'+perDay+'</p></div>'+
+    '<div class="ring" style="--p:'+Math.min(100,Math.round(pct))+'" aria-hidden="true">'+Math.round(pct)+' %</div></div>'+
     '<div class="stack" role="img" aria-label="Gastado '+fmt(gastado)+' de '+fmt(gastable)+'">'+segs+'<i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i></div>'+
     '<div class="scale" aria-hidden="true"><span style="left:50%">50 %</span><span style="left:75%">75 %</span></div>'+
     '<div class="legend">'+leg+'</div>'+
     '<p class="fine lvl">Gastado: '+Math.round(pct)+' %'+(pct>=100?' · límite '+(left<0?'superado':'alcanzado'):pct>=75?' · ojo, queda poco':pct>=50?' · vas por la mitad':'')+'</p>'+
     '<div class="pace">'+pace+'</div>';
 }
+var CICO={nec:'🧾',oci:'🎉',pro:'🚀',aho:'🐷'};
 function renderCats(){
   var s=sums(list()),A=state.alloc;
   var html=CATS.map(function(c){
@@ -744,7 +806,7 @@ function renderCats(){
         '<p class="rem '+cls+'">'+msg+'</p>'+
         (c.id==='aho'?'<button class="linkbtn" type="button" data-go="save">Ver cuánto crecerá →</button>':'');
     }
-    return '<article class="cat" style="--cc:'+cv(c.id)+'"><header><span class="dot"></span><h3>'+title+'</h3>'+rm+'</header>'+body+'</article>';
+    return '<article class="cat" style="--cc:'+cv(c.id)+'"><header><span class="cico" aria-hidden="true">'+(CICO[c.id]||'📌')+'</span><h3>'+title+'</h3>'+rm+'</header>'+body+'</article>';
   }).join('');
   if(state.extras.length<MAXX)html+='<button class="cat add" type="button" id="addCatBtn"><span aria-hidden="true">＋</span> Añadir partida</button>';
   $('#cats').innerHTML=html;
