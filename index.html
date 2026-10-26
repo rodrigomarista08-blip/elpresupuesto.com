@@ -371,7 +371,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 
   <section class="card">
     <div class="hrow"><h2>Ajustar el reparto</h2><button class="qbtn" type="button" data-help="h-split" aria-expanded="false" aria-controls="h-split" aria-label="Qué es Ajustar el reparto">?</button></div>
-    <p class="helptxt" id="h-split" hidden>Aquí pones cuánto dinero tienes este mes y cuánto va a cada partida. Lo ideal es repartirlo todo, hasta que ponga «Reparto exacto».</p>
+    <p class="helptxt" id="h-split" hidden>Aquí pones cuánto dinero tienes este mes y cuánto va a cada sección. Lo ideal es repartirlo todo, hasta que ponga «Reparto exacto».</p>
     <div class="settotal">
       <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
       <span class="pill neutral" id="sumCheck"></span>
@@ -383,13 +383,13 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   <div class="toprow">
     <section class="card hero">
       <div class="hrow" style="margin-bottom:0"><p class="eyebrow" id="sumEyebrow"></p><button class="qbtn" type="button" data-help="h-sum" aria-expanded="false" aria-controls="h-sum" aria-label="Qué es el resumen del mes">?</button></div>
-      <p class="helptxt" id="h-sum" hidden style="margin-top:8px">Te dice cuánto te queda para gastar este mes, contando todas las partidas menos el ahorro. La barra se llena a medida que gastas.</p>
+      <p class="helptxt" id="h-sum" hidden style="margin-top:8px">Te dice cuánto te queda para gastar este mes, contando todas las secciones menos el ahorro. La barra se llena a medida que gastas.</p>
       <div id="summary" aria-live="polite"></div>
     </section>
 
     <section class="card">
       <div class="hrow"><h2>Apuntar un gasto</h2><button class="qbtn" type="button" data-help="h-add" aria-expanded="false" aria-controls="h-add" aria-label="Qué es Apuntar un gasto">?</button></div>
-      <p class="helptxt" id="h-add" hidden>Escribe aquí cada cosa que pagues y elige su partida. Así la app lo descuenta y sabes cuánto te queda.</p>
+      <p class="helptxt" id="h-add" hidden>Escribe aquí cada cosa que pagues y elige su sección. Así la app lo descuenta y sabes cuánto te queda.</p>
       <form id="addForm" novalidate>
         <div class="row">
           <div>
@@ -397,7 +397,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
             <input id="amt" inputmode="decimal" autocomplete="off" placeholder="7,50">
           </div>
           <div>
-            <label for="cat">Partida</label>
+            <label for="cat">Sección</label>
             <select id="cat"></select>
           </div>
           <div class="full">
@@ -416,16 +416,16 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   </div>
 
   <div>
-    <div class="hrow hint"><p class="fine">Toca ✎ para cambiar un nombre · Ocio y Ahorro son fijas</p><button class="qbtn" type="button" data-help="h-cats" aria-expanded="false" aria-controls="h-cats" aria-label="Qué son las partidas">?</button></div>
-    <p class="helptxt" id="h-cats" hidden>Cada partida es un bolsillo con su propio dinero para el mes. Su barra muestra cuánto has gastado de ese bolsillo.</p>
-    <section class="cats" id="cats" aria-label="Partidas del mes"></section>
+    <div class="hrow hint"><p class="fine">Toca ✎ para cambiar un nombre · Ocio y Ahorro son fijas</p><button class="qbtn" type="button" data-help="h-cats" aria-expanded="false" aria-controls="h-cats" aria-label="Qué son las secciones">?</button></div>
+    <p class="helptxt" id="h-cats" hidden>Cada sección es un bolsillo con su propio dinero para el mes. Su barra muestra cuánto has gastado de ese bolsillo.</p>
+    <section class="cats" id="cats" aria-label="Secciones del mes"></section>
     <form class="card addcat" id="addCatForm" hidden novalidate style="margin-top:14px">
-      <h2>Nueva partida</h2>
+      <h2>Nueva sección</h2>
       <div class="row2">
         <div><label for="ac-name">Nombre</label><input id="ac-name" maxlength="24" autocomplete="off" placeholder="Gimnasio"></div>
         <div><label for="ac-amt">Cantidad al mes (€)</label><input id="ac-amt" inputmode="decimal" autocomplete="off" placeholder="15"></div>
       </div>
-      <div class="btnrow" style="margin-bottom:0"><button class="btn primary" type="submit">Añadir partida</button><button class="btn" id="ac-cancel" type="button">Cancelar</button></div>
+      <div class="btnrow" style="margin-bottom:0"><button class="btn primary" type="submit">Añadir sección</button><button class="btn" id="ac-cancel" type="button">Cancelar</button></div>
       <p class="msg" id="ac-msg" role="alert"></p>
     </form>
   </div>
@@ -581,11 +581,11 @@ var AHO={id:'aho',name:'Ahorro',verb:'apartado',spend:false,desc:'Colchón para 
 var CATS=[],CAT={};
 function rebuildCats(){
   CATS=BASE.concat(state.extras.map(function(x){
-    return {id:x.id,name:'Partida',edit:true,extra:true,ci:x.ci,verb:'gastado',spend:true,desc:'Partida personalizada.'};
+    return {id:x.id,name:'Sección',edit:true,extra:true,ci:x.ci,verb:'gastado',spend:true,desc:'Sección personalizada.'};
   }),[AHO]);
   CAT={};CATS.forEach(function(c){CAT[c.id]=c});
 }
-function cname(id){return (state.names&&state.names[id])||(CAT[id]?CAT[id].name:'Partida')}
+function cname(id){return (state.names&&state.names[id])||(CAT[id]?CAT[id].name:'Sección')}
 function cv(id){var c=CAT[id];return 'var(--c-'+(c&&c.extra?'x'+c.ci:id)+')'}
 function spendIds(){return CATS.filter(function(c){return c.spend}).map(function(c){return c.id})}
 function allocSum(){var t=0;CATS.forEach(function(c){t+=state.alloc[c.id]||0});return r2(t)}
@@ -661,7 +661,7 @@ function adoptCats(arr){
   var ch=false;
   (arr||[]).forEach(function(e){
     if(e&&typeof e.cat==='string'&&!CAT[e.cat]&&/^x[a-z0-9]{3,12}$/.test(e.cat)){
-      state.extras.push({id:e.cat,ci:nextCi()});state.names[e.cat]='Partida recuperada';state.alloc[e.cat]=0;rebuildCats();ch=true;
+      state.extras.push({id:e.cat,ci:nextCi()});state.names[e.cat]='Sección recuperada';state.alloc[e.cat]=0;rebuildCats();ch=true;
     }
   });
   if(ch)savePlan();
@@ -784,6 +784,28 @@ function renderSummary(){
     '<div class="pace">'+pace+'</div>';
 }
 var CICO={nec:'🧾',oci:'🎉',pro:'🚀',aho:'🐷'};
+/* Icono según el nombre de la sección: la primera palabra clave que encaje gana. */
+var NICO=[
+  ['🏋️',['gym','gimnasio','deporte','crossfit','fitness','pesas']],['⚽',['futbol','padel','tenis','baloncesto']],
+  ['❤️',['mujer','marido','novia','novio','pareja','amor','esposa','esposo','cita']],['🧸',['hijo','hija','bebe','nino','nina','peque']],
+  ['🐾',['mascota','perro','gato','veterinario']],['🛒',['super','mercadona','compra','comida','alimenta']],
+  ['🍽️',['restaurante','cena','comer fuera','delivery','glovo']],['☕',['cafe','desayuno']],['🍻',['fiesta','copas','bar','cerveza','salir']],
+  ['🏠',['casa','alquiler','hogar','piso','hipoteca','comunidad']],['💡',['luz','agua','butano','factura','suministro']],
+  ['📱',['movil','telefono','internet','fibra','tarifa']],['🚌',['transporte','bus','metro','tren','abono']],
+  ['🚗',['coche','gasolina','parking','taller','itv']],['🛵',['moto']],['🚲',['bici']],['✈️',['viaje','vacacion','vuelo','hotel','escapada']],
+  ['👕',['ropa','zapatilla','calzado','moda']],['💇',['peluqueria','belleza','estetica','maquillaje','cosmetic']],
+  ['💊',['salud','medico','farmacia','dentista','psicolog','seguro medico']],['📚',['estudio','clase','universidad','libro','curso','academia','colegio','master']],
+  ['🎮',['juego','videojuego','playstation','consola','steam']],['📺',['serie','netflix','streaming','hbo','disney']],['🎵',['musica','spotify','concierto']],
+  ['🎁',['regalo','cumple','navidad']],['💳',['deuda','prestamo','tarjeta','credito','plazo']],['📈',['inversion','invertir','bolsa','cripto']],
+  ['🛡️',['seguro']],['🤝',['donacion','ong','solidari']],['💼',['trabajo','negocio','empresa']],['💻',['ordenador','tecnologia','software','dominio','web']]
+].map(function(e){return {i:e[0],re:e[1].map(kwRegex)}});
+function catIcon(c){
+  if(c.edit){
+    var n=norm(cname(c.id));
+    for(var j=0;j<NICO.length;j++)if(NICO[j].re.some(function(r){return r.test(n)}))return NICO[j].i;
+  }
+  return CICO[c.id]||'📌';
+}
 function renderCats(){
   var s=sums(list()),A=state.alloc;
   var html=CATS.map(function(c){
@@ -792,10 +814,10 @@ function renderCats(){
     else{if(rem<=0){msg='Completo';cls='done'}else msg='Faltan '+fmt(rem)+' por apartar'}
     var nm=cname(c.id);
     var title=!c.edit?esc(nm):(state.editing===c.id
-      ?'<input class="nameinput" id="nameInput" data-cat="'+c.id+'" maxlength="24" value="'+esc(nm)+'" aria-label="Nombre de la partida">'
-      :'<button class="namebtn" type="button" data-edit="'+c.id+'" aria-label="Cambiar el nombre de la partida '+esc(nm)+'">'+esc(nm)+' <span aria-hidden="true">✎</span></button>');
+      ?'<input class="nameinput" id="nameInput" data-cat="'+c.id+'" maxlength="24" value="'+esc(nm)+'" aria-label="Nombre de la sección">'
+      :'<button class="namebtn" type="button" data-edit="'+c.id+'" aria-label="Cambiar el nombre de la sección '+esc(nm)+'">'+esc(nm)+' <span aria-hidden="true">✎</span></button>');
     var rm=(c.extra&&state.editing!==c.id&&state.confirmDel!==c.id)
-      ?'<button class="rm" type="button" data-rm="'+c.id+'" aria-label="Quitar la partida '+esc(nm)+'">Quitar</button>':'';
+      ?'<button class="rm" type="button" data-rm="'+c.id+'" aria-label="Quitar la sección '+esc(nm)+'">Quitar</button>':'';
     var body;
     if(state.confirmDel===c.id){
       body='<p class="desc">¿Quitar «'+esc(nm)+'»? Sus gastos y sus '+fmt(al)+' pasarán a «'+esc(cname('nec'))+'».</p>'+
@@ -806,9 +828,9 @@ function renderCats(){
         '<p class="rem '+cls+'">'+msg+'</p>'+
         (c.id==='aho'?'<button class="linkbtn" type="button" data-go="save">Ver cuánto crecerá →</button>':'');
     }
-    return '<article class="cat" style="--cc:'+cv(c.id)+'"><header><span class="cico" aria-hidden="true">'+(CICO[c.id]||'📌')+'</span><h3>'+title+'</h3>'+rm+'</header>'+body+'</article>';
+    return '<article class="cat" style="--cc:'+cv(c.id)+'"><header><span class="cico" aria-hidden="true">'+catIcon(c)+'</span><h3>'+title+'</h3>'+rm+'</header>'+body+'</article>';
   }).join('');
-  if(state.extras.length<MAXX)html+='<button class="cat add" type="button" id="addCatBtn"><span aria-hidden="true">＋</span> Añadir partida</button>';
+  if(state.extras.length<MAXX)html+='<button class="cat add" type="button" id="addCatBtn"><span aria-hidden="true">＋</span> Añadir sección</button>';
   $('#cats').innerHTML=html;
   if(state.editing){var inp=$('#nameInput');if(inp){inp.focus();inp.select()}}
 }
@@ -833,9 +855,9 @@ function renderMoves(){
 }
 function renderCheck(){
   var sum=allocSum(),diff=r2(state.total-sum),el=$('#sumCheck');
+  el.hidden=diff<0;
   if(diff===0){el.className='pill ok';el.textContent='Reparto exacto: '+fmt(sum)+' de '+fmt(state.total)}
   else if(diff>0){el.className='pill warn';el.textContent='Te faltan '+fmt(diff)+' por repartir'}
-  else{el.className='pill bad';el.textContent='Te pasas '+fmt(-diff)+' del total'}
 }
 
 /* ---------- ahorro ---------- */
@@ -1053,7 +1075,7 @@ function renderAlert(){
       title='Has llegado al límite';
       txt='Ya has gastado todo el dinero para gastar de este mes. Intenta no gastar más hasta fin de mes.';
     }
-    if(over.length)txt+=' Partidas pasadas: '+over.join(', ')+'.';
+    if(over.length)txt+=' Secciones pasadas: '+over.join(', ')+'.';
   }
   if(al.t<100&&mpct+10<pct)txt+=' Vas más rápido que el calendario: llevas el '+Math.round(mpct)+' % del mes.';
   el.className='alertbar '+lvl;el.hidden=false;
@@ -1108,7 +1130,7 @@ $('#addForm').addEventListener('submit',function(e){
   checkAlerts(ym);
 });
 
-/* reparto: las cantidades de las partidas (y el ahorro, que también se edita en la pestaña Ahorro) */
+/* reparto: las cantidades de las secciones (y el ahorro, que también se edita en la pestaña Ahorro) */
 function allocInput(e){
   var k=e.target.getAttribute&&e.target.getAttribute('data-alloc');if(!k||!CAT[k])return;
   var n=parseNum(e.target.value);
@@ -1260,7 +1282,7 @@ function removeExtra(id){
   state.alloc.nec=r2((state.alloc.nec||0)+al);
   state.extras.splice(x,1);delete state.names[id];delete state.alloc[id];rebuildCats();
   state.confirmDel=null;savePlan();renderSettings();renderAll();
-  toast('Partida quitada. '+(n?n+(n===1?' gasto pasó':' gastos pasaron')+' a «'+cname('nec')+'».':'Su dinero pasó a «'+cname('nec')+'».'),false);
+  toast('Sección quitada. '+(n?n+(n===1?' gasto pasó':' gastos pasaron')+' a «'+cname('nec')+'».':'Su dinero pasó a «'+cname('nec')+'».'),false);
   checkAlerts(nowYM,true);
 }
 function openAddCat(){
@@ -1293,13 +1315,13 @@ $('#cats').addEventListener('focusout',function(e){
 $('#addCatForm').addEventListener('submit',function(e){
   e.preventDefault();
   var name=$('#ac-name').value.trim().slice(0,24),v=$('#ac-amt').value.trim(),n=v===''?0:parseNum(v),m=$('#ac-msg');
-  if(!name){m.textContent='Ponle un nombre a la partida, por ejemplo «Gimnasio».';$('#ac-name').focus();return}
+  if(!name){m.textContent='Ponle un nombre a la sección, por ejemplo «Gimnasio».';$('#ac-name').focus();return}
   if(n==null||n>99999){m.textContent='Escribe una cantidad válida, por ejemplo 15.';$('#ac-amt').focus();return}
-  if(state.extras.length>=MAXX){m.textContent='Ya tienes el máximo de partidas propias ('+MAXX+').';return}
+  if(state.extras.length>=MAXX){m.textContent='Ya tienes el máximo de secciones propias ('+MAXX+').';return}
   addExtra(name,r2(n));
   $('#addCatForm').hidden=true;
   renderSettings();renderAll();
-  toast('Partida «'+name+'» añadida',false);
+  toast('Sección «'+name+'» añadida',false);
 });
 $('#ac-cancel').addEventListener('click',function(){$('#addCatForm').hidden=true});
 
@@ -1307,7 +1329,7 @@ $('#ac-cancel').addEventListener('click',function(){$('#addCatForm').hidden=true
 var TIPS=[
   {t:"Págate a ti primero",p:"Aparta el ahorro el mismo día que recibes el dinero, antes de gastar nada. Lo que queda es lo que puedes gastar, y así el ahorro deja de depender de la fuerza de voluntad a final de mes."},
   {t:"Empieza por un colchón pequeño",p:"El objetivo habitual es reunir entre tres y seis meses de gastos básicos, pero con un presupuesto ajustado conviene empezar por una meta pequeña, como un mes de gastos básicos. Ese colchón evita que un imprevisto acabe convirtiéndose en una deuda."},
-  {t:"Vigila los gastos hormiga",p:"Un café, un snack o una suscripción que ya no usas parecen poco, pero sumados pueden superar tu partida de ocio. Apunta todo durante un mes y repasa las suscripciones: verás enseguida cuáles no echarías de menos."},
+  {t:"Vigila los gastos hormiga",p:"Un café, un snack o una suscripción que ya no usas parecen poco, pero sumados pueden superar tu sección de ocio. Apunta todo durante un mes y repasa las suscripciones: verás enseguida cuáles no echarías de menos."},
   {t:"Pagar a plazos tiene un coste",p:"Antes de fraccionar una compra, mira el importe total que pagarás al final y la TAE, no solo la cuota. Algunas promociones son al 0 %, pero fuera de ellas los intereses de las tarjetas de crédito suelen ser altos, y una cuota fija durante años recorta tu margen cada mes."},
   {t:"El interés compuesto juega a tu favor",p:"Cuanto antes empiezas a ahorrar, más tiempo trabajan los intereses sobre los intereses. Con cantidades pequeñas el efecto es modesto, como verás en la pestaña Ahorro, pero el hábito que creas es lo que de verdad importa."},
   {t:"La inflación se come el dinero parado",p:"Si los precios suben más de lo que rinde tu dinero, cada euro compra menos con el tiempo. Por eso conviene saber qué interés da tu cuenta y comparar. Los depósitos en entidades españolas están garantizados hasta 100.000 euros por titular y entidad."},
@@ -1365,7 +1387,7 @@ var KB=[
   {k:['seguridad','clave','contrasena','phishing','sms','bizum','cvv','robo','hackeo','enlace'],a:"Desconfía de cualquier mensaje con prisa que te pida claves, códigos o que hagas una transferencia o un Bizum: tu banco no te pedirá contraseñas ni códigos por mensaje o por enlace. No compartas el CVV de la tarjeta ni los códigos que te llegan por SMS, entra en tu banca desde la app oficial o escribiendo tú la dirección, y activa los avisos de movimientos. Si dudas, llama al teléfono que figura en la web oficial o en el reverso de tu tarjeta."},
   {k:['impuesto','hacienda','irpf','declaracion de la renta','nomina','iva','sueldo','seguridad social','cotiz'],a:"En una nómina, lo que cobras (el neto) es menos que lo que figura como bruto, porque se retiene IRPF, que es un adelanto del impuesto sobre la renta, y se cotiza a la Seguridad Social. Si empiezas a ganar dinero por tu cuenta, con proyectos, clases o ventas, puede haber obligaciones fiscales según lo que ingreses y cómo. Lo más seguro es preguntar a la Agencia Tributaria o a una gestoría antes de que el dinero empiece a entrar."},
   {k:['ingres','ganar dinero','trabajo','proyecto','autonomo','freelance','vender','emprend'],a:function(){
-    return 'Una partida fija para tus proyectos te permite probar ideas sin tocar el ahorro. Empieza con gastos pequeños y comprueba si el proyecto devuelve lo que cuesta antes de invertir más. '+tipText(7);
+    return 'Una sección fija para tus proyectos te permite probar ideas sin tocar el ahorro. Empieza con gastos pequeños y comprueba si el proyecto devuelve lo que cuesta antes de invertir más. '+tipText(7);
   }},
   {k:['presupuesto','50/30','regla','organizar','reparto','repartir','mensual'],a:"La regla 50/30/20 es un buen punto de partida: 50 % para necesidades, 30 % para deseos y 20 % para ahorro. El método es repartir el dinero el día que lo recibes, apuntar los gastos y revisar cada semana. Con poco dinero las proporciones cambian y no pasa nada: lo importante es que cada euro tenga un destino."},
   {k:['objetivo','meta de ahorro','ahorrar para','quiero comprar','comprar un','comprarme'],a:"Para una compra concreta, divide el precio entre los meses que estés dispuesto a esperar: eso es lo que tienes que apartar cada mes. Por ejemplo, 360 euros en 12 meses son 30 al mes. Compara con lo que cuesta pagarlo a plazos, intereses incluidos, y mira si hay una versión más barata, reacondicionada o de segunda mano con garantía. Tenerlo apartado antes de comprar te evita deuda y te deja esperar a una buena oferta."},
@@ -1376,8 +1398,8 @@ var KB=[
   {k:['seguro','poliza','aseguradora','cobertura'],a:"Un seguro sirve para cubrir riesgos que no podrías pagar de golpe, como un accidente, una responsabilidad civil o un robo grande, y no para cada pequeño gasto. Compara coberturas y franquicias, no solo el precio, y lee qué excluye antes de contratar. Revisa cada año si sigues necesitando lo que pagas."},
   {k:['pension','jubilacion','retiro','largo plazo'],a:"A los 18 la jubilación queda lejos, pero cuanto antes se ahorra para el largo plazo, más tiempo trabaja el interés compuesto. Hay productos pensados para ello, como los planes de pensiones o los fondos, pero sus condiciones, comisiones y ventajas fiscales cambian con el tiempo, así que antes de contratar nada infórmate en fuentes oficiales o con un profesional independiente. De momento, tu mejor inversión es el hábito de ahorrar y un colchón."},
   {k:['beca','estudiante','universidad','matricula','descuento'],a:"Si estudias, mira las becas y ayudas que convoquen el Ministerio de Educación, tu comunidad autónoma y tu universidad: los plazos y requisitos cambian cada curso, así que consulta las convocatorias vigentes en la secretaría de tu facultad. Muchos servicios ofrecen descuentos con el carné de estudiante, desde transporte hasta software y suscripciones."},
-  {k:['sobres','efectivo','metalico','hucha'],a:"El método de los sobres consiste en separar el dinero por partidas, antes con billetes y hoy también con cuentas o huchas distintas, y gastar cada partida solo de su sobre. Cuando el sobre de ocio se vacía, no se gasta más. Es justo lo que hace esta app con tus partidas, y funciona mejor si el ahorro vive en un sitio aparte que no veas a diario."},
-  {k:['habito','constancia','disciplina','motivacion','no cumplo','fallo'],a:"Los hábitos de dinero se construyen con rutinas pequeñas y repetidas más que con grandes propósitos: reparte el día 1, apunta los gastos en el momento y revisa los domingos. Si un mes te pasas, no lo tires todo: mira qué partida falló, ajusta el mes siguiente y sigue. Un mes que sale mal enseña más que no haber llevado ninguna cuenta."},
+  {k:['sobres','efectivo','metalico','hucha'],a:"El método de los sobres consiste en separar el dinero por secciones, antes con billetes y hoy también con cuentas o huchas distintas, y gastar cada sección solo de su sobre. Cuando el sobre de ocio se vacía, no se gasta más. Es justo lo que hace esta app con tus secciones, y funciona mejor si el ahorro vive en un sitio aparte que no veas a diario."},
+  {k:['habito','constancia','disciplina','motivacion','no cumplo','fallo'],a:"Los hábitos de dinero se construyen con rutinas pequeñas y repetidas más que con grandes propósitos: reparte el día 1, apunta los gastos en el momento y revisa los domingos. Si un mes te pasas, no lo tires todo: mira qué sección falló, ajusta el mes siguiente y sigue. Un mes que sale mal enseña más que no haber llevado ninguna cuenta."},
   {k:['estres','emocional','aburrimiento','agobio','agobia'],a:"Gastar para animarse es muy común. Si notas que compras más cuando estás aburrido, estresado o triste, prueba a poner una pausa de 24 horas antes de comprar y a tener a mano alternativas gratis o baratas que te sienten igual de bien. Si el dinero te agobia de verdad, hablarlo con alguien de confianza también ayuda."},
   {k:['cuenta corriente','cuenta bancaria','cuenta remunerada','cuentas','banco','comision','deposito'],a:"Al elegir cuenta, compara las comisiones de mantenimiento, de tarjeta y de transferencias: hay cuentas sin comisiones y no hace falta pagar por tener tu dinero guardado. Las cuentas remuneradas y los depósitos dan un interés, que debes comparar por su TAE, y en entidades españolas están garantizados hasta 100.000 euros por titular y entidad. Fíjate también en las condiciones que te piden para no pagar comisiones."},
   {k:['inflacion','poder adquisitivo','precios'],a:function(){return tipText(5)}},
@@ -1414,7 +1436,7 @@ function buildMessages(q,share,raw){
 function renderAIMode(){
   var t;
   if(aiMode==='claude')t='Te responde Claude. Si lo dejas marcado, recibe tu reparto, nunca tus conceptos.';
-  else if(aiMode==='endpoint')t='Te responde un asistente de IA. Al preguntar, recibe tu pregunta y, si lo dejas marcado, tu reparto y lo gastado por partida.';
+  else if(aiMode==='endpoint')t='Te responde un asistente de IA. Al preguntar, recibe tu pregunta y, si lo dejas marcado, tu reparto y lo gastado por sección.';
   else t='Te responde la guía integrada. No es una IA.';
   $('#aiMode').textContent=t;
   $('#shareRow').hidden=(aiMode==='guide');
