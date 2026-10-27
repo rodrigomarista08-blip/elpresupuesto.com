@@ -1,4 +1,4 @@
-var CACHE = 'presupuesto-v13';
+var CACHE = 'presupuesto-v14';
 var FILES = ['./', './index.html', './calc.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {

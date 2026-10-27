@@ -374,6 +374,10 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .qform{display:flex;gap:8px;align-items:end;margin-top:14px}
 .qform>div{flex:1;min-width:0}
 .onb .sheet{gap:0}
+.move .ask{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;font-size:14px}
+.move .ask .btn{min-height:36px;padding:6px 14px}
+.checkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;align-self:center}
+.checkrow .btn{min-height:36px;padding:6px 14px;font-size:14px}
 .toast{width:max-content}
 .fab{box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 38%,transparent)}
 
@@ -540,7 +544,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <p class="helptxt" id="h-split" hidden>Aquí pones cuánto dinero tienes este mes y cuánto va a cada sección. Lo ideal es repartirlo todo, hasta que ponga «Reparto exacto».</p>
     <div class="settotal">
       <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
-      <span class="pill neutral" id="sumCheck"></span>
+      <div class="checkrow"><span class="pill neutral" id="sumCheck"></span><button class="btn" id="fixSplit" type="button" hidden></button></div>
     </div>
     <div id="splitbar"></div>
     <div class="setgrid" id="setgrid"></div>
@@ -861,7 +865,7 @@ var DEMO=[[2,'aho',2000,'Aportación al colchón'],[2,'nec',1500,'Recarga del bu
   return {id:'demo'+i,cat:r[1],amt:r[2],note:r[3],date:nowYM+'-'+pad(Math.min(r[0],now.getDate()))};
 });
 
-var state={names:{},extras:[],goals:[],fixed:[],fixedDone:{},fixEdit:null,lastCat:null,qcat:null,goalAdd:null,goalDel:null,editing:null,adding:false,confirmDel:null,alert:null,fired:{},showAll:false,tab:'money',chat:[],asking:false,total:10000,alloc:{nec:4500,oci:2500,pro:1000,aho:2000},rate:2,months:36,saved0:0,goal:0,tax:true,ym:nowYM,cache:{},demo:false,loaded:true,mode:'local',pending:0,error:false,undo:null};
+var state={names:{},extras:[],goals:[],fixed:[],fixedDone:{},fixEdit:null,lastCat:null,qcat:null,goalAdd:null,goalDel:null,delAsk:null,editing:null,adding:false,confirmDel:null,alert:null,fired:{},showAll:false,tab:'money',chat:[],asking:false,total:10000,alloc:{nec:4500,oci:2500,pro:1000,aho:2000},rate:2,months:36,saved0:0,goal:0,tax:true,ym:nowYM,cache:{},demo:false,loaded:true,mode:'local',pending:0,error:false,undo:null};
 rebuildCats();
 
 /* ---------- datos ---------- */
@@ -1324,15 +1328,31 @@ function renderMoves(){
     return '<li class="move"><span class="d">'+esc(dd)+'</span>'+
       '<span class="n">'+name+'<span class="chip"><i style="background:'+cv(e.cat)+'"></i>'+esc(cname(e.cat))+(e.fixed?' · 🔁 fijo':'')+'</span></span>'+
       '<span class="a">'+fmt(e.amt)+'</span>'+
-      '<button class="x" type="button" data-del="'+esc(e.id)+'" aria-label="Eliminar '+fmt(e.amt)+' de '+esc(e.note||cname(e.cat))+'"'+(isDemo?' hidden':'')+'>×</button></li>';
+      (state.delAsk===e.id
+        ?'<span></span><span class="ask" role="group" aria-label="Confirmar borrado"><span>¿Borrar este gasto?</span><button class="btn" type="button" data-delyes="'+esc(e.id)+'">Sí, borrar</button><button class="btn" type="button" data-delno="1">No</button></span>'
+        :'<button class="x" type="button" data-del="'+esc(e.id)+'" aria-label="Eliminar '+fmt(e.amt)+' de '+esc(e.note||cname(e.cat))+'"'+(isDemo?' hidden':'')+'>×</button>')+'</li>';
   }).join('')+'</ul>'+(total>5?'<button class="linkbtn" id="moreMoves" type="button" style="margin-top:8px">'+(state.showAll?'Ver menos':'Ver todos ('+total+')')+'</button>':'');
 }
 function renderCheck(){
-  var sum=allocSum(),diff=rc(state.total-sum),el=$('#sumCheck');
+  var chk=Calc.allocationDiff(state.total,allocMap()),sum=chk.sum,diff=chk.diff,el=$('#sumCheck');
   el.hidden=diff<0;
   if(diff===0){el.className='pill ok';el.textContent='Reparto exacto: '+fmt(sum)+' de '+fmt(state.total)}
   else if(diff>0){el.className='pill warn';el.textContent='Te faltan '+fmt(diff)+' por repartir'}
+  /* Si no cuadra, se ofrece ajustar la última sección (nunca el ahorro), diciendo de cuánto a cuánto. */
+  var b=$('#fixSplit'),k=fixTarget(),to=k?(state.alloc[k]||0)+diff:-1;
+  b.hidden=diff===0||!k||to<0;
+  if(!b.hidden)b.textContent='Cuadrar: «'+cname(k)+'» de '+fmt(state.alloc[k]||0)+' a '+fmt(to);
 }
+function allocMap(){var m={};CATS.forEach(function(c){m[c.id]=state.alloc[c.id]||0});return m}
+/* La última sección de gasto de la lista (no el ahorro). */
+function fixTarget(){var ids=spendIds();return ids[ids.length-1]||null}
+$('#fixSplit').addEventListener('click',function(){
+  var k=fixTarget(),diff=Calc.allocationDiff(state.total,allocMap()).diff,prev=state.alloc[k]||0;
+  if(!k||prev+diff<0)return;
+  state.alloc[k]=prev+diff;savePlan();syncInputs();renderAll();
+  state.undo={fn:function(){state.alloc[k]=prev;savePlan();syncInputs();renderAll()}};
+  toast('«'+cname(k)+'» ajustada a '+fmt(prev+diff)+' para que el reparto sume '+fmt(state.total)+'.',true);
+});
 
 /* ---------- ahorro ---------- */
 var PRESETS=[[6,'6 meses'],[12,'1 año'],[24,'2 años'],[36,'3 años'],[60,'5 años']];
@@ -1568,11 +1588,15 @@ $('#moves').addEventListener('click',function(e){
   if(e.target.closest('#showDemo')){state.demo=true;renderAll();return}
   if(e.target.closest('#emptyAdd')){openQuick();return}
   if(e.target.closest('#moreMoves')){state.showAll=!state.showAll;renderMoves();return}
-  var b=e.target.closest('[data-del]');if(!b)return;
-  var arr=state.cache[state.ym]||[],i=arr.findIndex(function(x){return x.id===b.getAttribute('data-del')});
-  if(i<0)return;
+  var b=e.target.closest('[data-del]');
+  if(b){state.delAsk=b.getAttribute('data-del');renderMoves();var y=$('[data-delyes]');if(y)y.focus();return}
+  if(e.target.closest('[data-delno]')){var id0=state.delAsk;state.delAsk=null;renderMoves();var x0=$('[data-del="'+id0+'"]');if(x0)x0.focus();return}
+  b=e.target.closest('[data-delyes]');if(!b)return;
+  state.delAsk=null;
+  var arr=state.cache[state.ym]||[],i=arr.findIndex(function(x){return x.id===b.getAttribute('data-delyes')});
+  if(i<0){renderMoves();return}
   var removed=arr.splice(i,1)[0];
-  state.undo={ym:state.ym,exp:removed};saveMonth(state.ym);renderAll();checkAlerts(state.ym,true);toast('Gasto eliminado',true);
+  state.undo={ym:state.ym,exp:removed};saveMonth(state.ym);renderAll();checkAlerts(state.ym,true);toast('Gasto borrado',true);
 });
 $('#toastBtn').addEventListener('click',function(){
   var u=state.undo;if(!u)return;
