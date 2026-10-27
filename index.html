@@ -406,6 +406,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .qform{display:flex;gap:8px;align-items:end;margin-top:14px}
 .qform>div{flex:1;min-width:0}
 .onb .sheet{gap:0}
+.onbform{display:grid}
 .move .ask{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;font-size:14px}
 .move .ask .btn{min-height:36px;padding:6px 14px}
 .checkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;align-self:center}
@@ -819,7 +820,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 </div>
 
 <div class="sheetwrap onb" id="onboard" hidden>
-  <form class="sheet" id="onbForm" role="dialog" aria-modal="true" aria-labelledby="onb-title" novalidate>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="onb-title"><form id="onbForm" class="onbform" novalidate>
     <p class="eyebrow">Primeros pasos</p>
     <h2 id="onb-title">¿Cuánto dinero tienes este mes?</h2>
     <p class="fine" style="margin:6px 0 14px">Con esto te propongo un reparto. Luego puedes cambiar lo que quieras.</p>
