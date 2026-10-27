@@ -327,8 +327,8 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   .wrap{padding-bottom:calc(160px + env(safe-area-inset-bottom,0px))}
   .hero .big{font-size:2.1rem}
   .tabs{position:fixed;left:0;right:0;bottom:0;z-index:15;justify-self:stretch;justify-content:space-around;border-radius:20px 20px 0 0;background:var(--surface);
-    padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(20,30,50,.10)}
-  .tabs button,.tabs button[aria-selected="true"]{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;font-size:12px;border-radius:14px;box-shadow:none}
+    padding:6px 10px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(20,30,50,.10)}
+  .tabs button,.tabs button[aria-selected="true"]{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;padding:6px 4px;font-size:12px;border-radius:14px;box-shadow:none}
   .tabs button .ti{margin:0;font-size:21px}
   .tabs button[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
   .toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
@@ -415,11 +415,16 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .bkbtns{display:grid;gap:8px}
 .bkbtns .btn{width:100%;min-height:46px}
 .sheet .fine{margin-top:6px}
+/* El botón flotante se aparta cuando estorba: fuera de Mi dinero, con el formulario de gasto a la vista o al escribir. */
+.fab.away{opacity:0;transform:translateY(12px);pointer-events:none}
+@media (prefers-reduced-motion:no-preference){.fab{transition:opacity .18s ease,transform .18s ease}}
 @media (min-width:700px){.wrap{padding-bottom:100px}}
 @media (max-width:699px){
-  .fab{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
-  .toast{bottom:calc(152px + env(safe-area-inset-bottom,0px))}
-  .alertbar{bottom:calc(152px + env(safe-area-inset-bottom,0px))}
+  /* Espacio final: barra (unos 80 px) + botón flotante (56 px) + margen, más la zona segura del móvil. */
+  .wrap{padding-bottom:calc(176px + env(safe-area-inset-bottom,0px))}
+  .fab{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(160px + env(safe-area-inset-bottom,0px))}
+  .alertbar{bottom:calc(160px + env(safe-area-inset-bottom,0px))}
   .sheetwrap{align-items:flex-end;padding:0}
   .sheet{border-radius:22px 22px 0 0;width:100%;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
 }
@@ -1755,15 +1760,29 @@ function showTab(t){
   if(t==='tips')renderRef();
   if(t==='save'){syncInputs();renderSavings()}
   window.scrollTo(0,0);
+  updateFab();
 }
+/* ---------- botón flotante: solo en Mi dinero y sin tapar el formulario ni los campos al escribir ---------- */
+var formInView=false;
+function typing(){var a=document.activeElement;return !!a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&!a.closest('.sheetwrap')}
+function updateFab(){$('#fab').classList.toggle('away',state.tab!=='money'||formInView||typing())}
+if('IntersectionObserver' in window){
+  new IntersectionObserver(function(en){formInView=en[0].isIntersecting;updateFab()},{threshold:0.15}).observe($('#addForm').closest('section'));
+}
+document.addEventListener('focusin',updateFab);
+document.addEventListener('focusout',function(){setTimeout(updateFab,0)});
 $('.tabs').addEventListener('click',function(e){
   var b=e.target.closest('[data-tab]');
   if(b)showTab(b.getAttribute('data-tab'));
 });
 $('.tabs').addEventListener('keydown',function(e){
-  if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
   var i=TABS.indexOf(state.tab);
-  i=(i+(e.key==='ArrowRight'?1:TABS.length-1))%TABS.length;
+  if(e.key==='ArrowRight')i=(i+1)%TABS.length;
+  else if(e.key==='ArrowLeft')i=(i+TABS.length-1)%TABS.length;
+  else if(e.key==='Home')i=0;
+  else if(e.key==='End')i=TABS.length-1;
+  else return;
+  e.preventDefault();
   showTab(TABS[i]);$('#tabbtn-'+TABS[i]).focus();
 });
 
