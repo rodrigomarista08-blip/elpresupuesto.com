@@ -415,6 +415,12 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .bkbtns{display:grid;gap:8px}
 .bkbtns .btn{width:100%;min-height:46px}
 .sheet .fine{margin-top:6px}
+/* Los ejemplos de los campos no deben parecer datos reales: más claros y en cursiva. */
+::placeholder{color:color-mix(in srgb,var(--ink-2) 62%,transparent);font-style:italic;opacity:1}
+/* Estados vacíos con un mensaje y una acción clara */
+.empty{justify-items:center;text-align:center;padding:22px 18px}
+.empty .eico{font-size:28px;line-height:1}
+.empty p{max-width:36ch}
 /* El botón flotante se aparta cuando estorba: fuera de Mi dinero, con el formulario de gasto a la vista o al escribir. */
 .fab.away{opacity:0;transform:translateY(12px);pointer-events:none}
 @media (prefers-reduced-motion:no-preference){.fab{transition:opacity .18s ease,transform .18s ease}}
@@ -549,7 +555,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
         <div class="row">
           <div>
             <label for="amt">Importe (€)</label>
-            <input id="amt" inputmode="decimal" autocomplete="off" placeholder="7,50">
+            <input id="amt" inputmode="decimal" autocomplete="off" placeholder="Ej.: 7,50">
           </div>
           <div>
             <label for="cat">Sección</label>
@@ -557,7 +563,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
           </div>
           <div class="full">
             <label for="note">Concepto (opcional)</label>
-            <input id="note" maxlength="60" autocomplete="off" placeholder="Café con Marta">
+            <input id="note" maxlength="60" autocomplete="off" placeholder="Ej.: café con Marta">
           </div>
           <div class="full">
             <label for="date">Fecha</label>
@@ -579,8 +585,8 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <form class="card addcat" id="addCatForm" hidden novalidate style="margin-top:14px">
       <div class="hrow"><span class="cico" id="ac-ico" aria-hidden="true">📌</span><h2>Nueva sección</h2></div>
       <div class="row2">
-        <div><label for="ac-name">Nombre</label><input id="ac-name" maxlength="24" autocomplete="off" placeholder="Gimnasio"></div>
-        <div><label for="ac-amt">Cantidad al mes (€)</label><input id="ac-amt" inputmode="decimal" autocomplete="off" placeholder="15"></div>
+        <div><label for="ac-name">Nombre</label><input id="ac-name" maxlength="24" autocomplete="off" placeholder="Ej.: Gimnasio"></div>
+        <div><label for="ac-amt">Cantidad al mes (€)</label><input id="ac-amt" inputmode="decimal" autocomplete="off" placeholder="Ej.: 15"></div>
       </div>
       <div class="btnrow" style="margin-bottom:0"><button class="btn primary" type="submit">Añadir sección</button><button class="btn" id="ac-cancel" type="button">Cancelar</button></div>
       <p class="msg" id="ac-msg" role="alert"></p>
@@ -630,8 +636,8 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
       <div class="fields">
         <div><label for="a-aho">Cada mes aparto (€)</label><input id="a-aho" data-alloc="aho" inputmode="decimal" autocomplete="off"></div>
         <div><label for="p-months">Durante (meses)</label><input id="p-months" type="number" min="1" max="120" step="1"></div>
-        <div><label for="p-saved">Ya tengo ahorrado (€)</label><input id="p-saved" inputmode="decimal" autocomplete="off" placeholder="0"></div>
-        <div><label for="p-goal">Mi meta (€, opcional)</label><input id="p-goal" inputmode="decimal" autocomplete="off" placeholder="Ej. 600"></div>
+        <div><label for="p-saved">Ya tengo ahorrado (€)</label><input id="p-saved" inputmode="decimal" autocomplete="off" placeholder="Ej.: 150"></div>
+        <div><label for="p-goal">Mi meta (€, opcional)</label><input id="p-goal" inputmode="decimal" autocomplete="off" placeholder="Ej.: 600"></div>
       </div>
       <div class="presets" id="presets" aria-label="Plazos habituales"></div>
       <p class="fine" style="margin-top:10px">«Cada mes aparto» es el mismo Ahorro de Mi dinero.</p>
@@ -643,8 +649,8 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
       <div id="goals"></div>
       <form id="goalForm" novalidate>
         <div class="newobj">
-          <div><label for="g-name">Nuevo objetivo</label><input id="g-name" maxlength="40" autocomplete="off" placeholder="Viaje a Roma"></div>
-          <div><label for="g-amt">Cuánto cuesta (€)</label><input id="g-amt" inputmode="decimal" autocomplete="off" placeholder="600"></div>
+          <div><label for="g-name">Nuevo objetivo</label><input id="g-name" maxlength="40" autocomplete="off" placeholder="Ej.: Viaje a Roma"></div>
+          <div><label for="g-amt">Cuánto cuesta (€)</label><input id="g-amt" inputmode="decimal" autocomplete="off" placeholder="Ej.: 600"></div>
           <button class="btn primary" type="submit">Crear objetivo</button>
         </div>
         <p class="msg" id="g-msg" role="alert"></p>
@@ -703,7 +709,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
       <div class="chat" id="chat" aria-live="polite"></div>
       <form id="askForm" novalidate>
         <label for="askInput">Tu pregunta</label>
-        <textarea id="askInput" maxlength="400" placeholder="Por ejemplo: ¿cuánto debería ahorrar si gano poco?"></textarea>
+        <textarea id="askInput" maxlength="400" placeholder="Ej.: ¿cuánto debería ahorrar si gano poco?"></textarea>
         <div class="askrow">
           <label class="chk" id="shareRow"><input type="checkbox" id="shareCtx" checked> Compartir mi reparto con la IA</label>
           <button class="btn primary" id="askBtn" type="submit">Preguntar</button>
@@ -728,7 +734,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
       <button class="qamt" type="button" data-qa="1">1 €</button><button class="qamt" type="button" data-qa="2">2 €</button><button class="qamt" type="button" data-qa="5">5 €</button><button class="qamt" type="button" data-qa="10">10 €</button>
     </div>
     <form id="q-form" class="qform" novalidate>
-      <div><label for="q-amt">Otra cantidad (€)</label><input id="q-amt" inputmode="decimal" autocomplete="off" placeholder="7,50"></div>
+      <div><label for="q-amt">Otra cantidad (€)</label><input id="q-amt" inputmode="decimal" autocomplete="off" placeholder="Ej.: 7,50"></div>
       <button class="btn primary" type="submit">Guardar</button>
     </form>
     <label class="chk" for="q-rep" style="margin-top:12px"><input type="checkbox" id="q-rep"> Se repite cada mes</label>
@@ -772,7 +778,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <h2 id="onb-title">¿Cuánto dinero tienes este mes?</h2>
     <p class="fine" style="margin:6px 0 14px">Con esto te propongo un reparto. Luego puedes cambiar lo que quieras.</p>
     <label for="onb-amt">Dinero del mes (€)</label>
-    <input id="onb-amt" inputmode="decimal" autocomplete="off" placeholder="300">
+    <input id="onb-amt" inputmode="decimal" autocomplete="off" placeholder="Ej.: 300">
     <p class="msg" id="onb-msg" role="alert"></p>
     <button class="btn primary" type="submit" style="width:100%">Ver mi reparto</button>
     <button class="linkbtn" id="onb-skip" type="button" style="justify-self:center;margin-top:8px">Ahora no</button>
@@ -1197,8 +1203,9 @@ function renderMoves(){
   var L=list().slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:0});
   var isDemo=state.demo&&state.ym===nowYM;
   if(!L.length){
-    $('#moves').innerHTML='<div class="empty"><p>'+(state.loaded||state.mode==='local'?'Todavía no hay movimientos en '+esc(monthName(state.ym))+'. Apunta el primero con el formulario.':'Cargando tus movimientos…')+'</p>'+
-      (state.ym===nowYM?'<button class="btn" id="showDemo" type="button">Ver cómo queda con un ejemplo</button>':'')+'</div>';
+    $('#moves').innerHTML='<div class="empty"><span class="eico" aria-hidden="true">🧾</span><p>Todavía no hay gastos en '+esc(monthName(state.ym))+'. Cuando pagues algo, apúntalo y verás cuánto te queda.</p>'+
+      '<div class="btnrow" style="justify-content:center;margin:0"><button class="btn primary" id="emptyAdd" type="button">＋ Apuntar mi primer gasto</button>'+
+      (state.ym===nowYM?'<button class="btn" id="showDemo" type="button">Ver un ejemplo</button>':'')+'</div></div>';
     return;
   }
   var total=L.length,vis=state.showAll?L:L.slice(0,5);
@@ -1303,7 +1310,7 @@ function goalById(id){return state.goals.find(function(g){return g.id===id})}
 function renderGoals(){
   var dep=state.alloc.aho||0,el=$('#goals'),full=state.goals.length>=MAXG;
   $('#goalForm').hidden=full;$('#goalMax').hidden=!full;
-  if(!state.goals.length){el.innerHTML='<p class="fine" style="margin-bottom:12px">Aún no tienes objetivos. Crea el primero aquí debajo.</p>';return}
+  if(!state.goals.length){el.innerHTML='<div class="empty" style="margin-bottom:14px"><span class="eico" aria-hidden="true">🎯</span><p>Aún no tienes objetivos. Ponle nombre y precio a algo para lo que ahorras, como un viaje o un móvil.</p><button class="btn primary" id="emptyGoal" type="button">＋ Crear mi primer objetivo</button></div>';return}
   var html=state.goals.map(function(g){
     var rem=r2(g.target-g.saved),pct=Math.min(1,g.saved/g.target),nm=esc(g.name),body;
     if(state.goalDel===g.id){
@@ -1318,7 +1325,7 @@ function renderGoals(){
         eta='<p class="eta">A tu ritmo de '+fmt(dep)+' al mes, lo tendrás hacia <strong>'+esc(d.toLocaleDateString('es-ES',{month:'long',year:'numeric'}))+'</strong> (en '+esc(span(m))+').</p>';
       }
       var add=state.goalAdd===g.id
-        ?'<form data-gform="'+g.id+'" novalidate><div><label for="ga-'+g.id+'">Cuánto has guardado (€)</label><input id="ga-'+g.id+'" inputmode="decimal" autocomplete="off" placeholder="20"></div>'+
+        ?'<form data-gform="'+g.id+'" novalidate><div><label for="ga-'+g.id+'">Cuánto has guardado (€)</label><input id="ga-'+g.id+'" inputmode="decimal" autocomplete="off" placeholder="Ej.: 20"></div>'+
           '<button class="btn primary" type="submit">Guardar</button><button class="btn" type="button" data-gaddno="1">Cancelar</button><p class="msg" role="alert"></p></form>'
         :'<div class="btnrow"><button class="btn primary" type="button" data-gadd="'+g.id+'">Añadir ahorro</button></div>';
       body='<div class="bar" role="img" aria-label="'+Math.round(pct*100)+' % conseguido"><span style="width:'+pct*100+'%"></span></div>'+
@@ -1456,6 +1463,7 @@ $('#today').addEventListener('click',function(){state.ym=nowYM;loadMonth(nowYM);
 $('#endDemo').addEventListener('click',function(){state.demo=false;renderAll()});
 $('#moves').addEventListener('click',function(e){
   if(e.target.closest('#showDemo')){state.demo=true;renderAll();return}
+  if(e.target.closest('#emptyAdd')){openQuick();return}
   if(e.target.closest('#moreMoves')){state.showAll=!state.showAll;renderMoves();return}
   var b=e.target.closest('[data-del]');if(!b)return;
   var arr=state.cache[state.ym]||[],i=arr.findIndex(function(x){return x.id===b.getAttribute('data-del')});
@@ -1578,7 +1586,7 @@ function renderFixed(){
     var c=CAT[f.cat]?f.cat:'nec',nm=f.note||cname(c);
     if(state.fixEdit===f.id){
       return '<li class="fixrow"><form class="fixedit" data-fform="'+f.id+'" novalidate>'+
-        '<div class="full"><label for="fe-note">Concepto</label><input id="fe-note" maxlength="60" autocomplete="off" value="'+esc(f.note)+'" placeholder="Abono transporte"></div>'+
+        '<div class="full"><label for="fe-note">Concepto</label><input id="fe-note" maxlength="60" autocomplete="off" value="'+esc(f.note)+'" placeholder="Ej.: abono transporte"></div>'+
         '<div><label for="fe-amt">Importe (€)</label><input id="fe-amt" inputmode="decimal" autocomplete="off" value="'+String(f.amt).replace('.',',')+'"></div>'+
         '<div><label for="fe-day">Día del mes</label><input id="fe-day" type="number" min="1" max="31" step="1" value="'+f.day+'"></div>'+
         '<div class="full"><label for="fe-cat">Sección</label><select id="fe-cat">'+CATS.map(function(x){
@@ -1702,6 +1710,7 @@ $('#goalForm').addEventListener('submit',function(e){
 });
 $('#goals').addEventListener('click',function(e){
   var t=e.target,b;
+  if(t.closest('#emptyGoal')){$('#g-name').scrollIntoView({block:'center'});$('#g-name').focus();return}
   if((b=t.closest('[data-gadd]'))){
     state.goalAdd=b.getAttribute('data-gadd');state.goalDel=null;renderGoals();
     var inp=$('#ga-'+state.goalAdd);if(inp)inp.focus();return;
