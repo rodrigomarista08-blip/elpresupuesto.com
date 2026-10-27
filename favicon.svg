@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Presupuesto mensual</title>
+  <rect width="64" height="64" rx="14" fill="#16231e"/>
+  <clipPath id="p"><rect x="9" y="24" width="46" height="16" rx="8"/></clipPath>
+  <g clip-path="url(#p)">
+    <rect x="9" y="24" width="21" height="16" fill="#2f5d9e"/>
+    <rect x="30" y="24" width="11.5" height="16" fill="#c8620f"/>
+    <rect x="41.5" y="24" width="6" height="16" fill="#7b4fa0"/>
+    <rect x="47.5" y="24" width="7.5" height="16" fill="#12807a"/>
+  </g>
+</svg>

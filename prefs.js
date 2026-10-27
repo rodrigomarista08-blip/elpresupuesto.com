@@ -41,7 +41,7 @@
     var st=document.getElementById('userTheme');
     if(!st){st=document.createElement('style');st.id='userTheme';document.head.appendChild(st)}
     st.textContent=css;
-    var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=a.l;
+    var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=p.accent==='teal'?'#0f6b5c':a.l;
   }
   apply();
   window.appPrefs={p:p,ACCENTS:ACCENTS,FONTS:FONTS,apply:apply,
