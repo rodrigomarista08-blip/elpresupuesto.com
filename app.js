@@ -1234,14 +1234,14 @@ var KB=[
     var dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),cap=state.alloc.oci/(dim/7);
     return 'Empieza por ver adónde va realmente el dinero: apunta todos los gastos de ocio durante un mes, sobre todo los pequeños, que son los que más se escapan. Revisa las suscripciones que no uses, fija un tope semanal (el tuyo es '+fmt(cap)+') y mira el domingo cuánto llevas. Si a final de mes te sobra algo de ocio, llévalo al ahorro en vez de gastarlo.';
   }},
-  {k:['tarjeta','debito','prepago','revolving'],a:"Con la tarjeta de débito el dinero sale al momento de tu cuenta, así que solo puedes gastar lo que tienes. La de crédito te adelanta dinero y te lo cobra después, y si aplazas el pago se generan intereses que suelen ser altos. La prepago se recarga con un importe y sirve para limitar el gasto, por ejemplo en compras por internet. Para empezar a controlar tu dinero, el débito es lo más sencillo, y si usas crédito, págalo entero cada mes."},
+  {k:['tarjeta','debito','prepago','revolving','debito o credito','credito o debito'],a:"Con la tarjeta de débito el dinero sale al momento de tu cuenta, así que solo puedes gastar lo que tienes. La de crédito te adelanta dinero y te lo cobra después, y si aplazas el pago se generan intereses que suelen ser altos. La prepago se recarga con un importe y sirve para limitar el gasto, por ejemplo en compras por internet. Para empezar a controlar tu dinero, el débito es lo más sencillo, y si usas crédito, págalo entero cada mes."},
   {k:['plazo','cuota','credito','prestamo','deuda','financiar','financiaci','fraccion'],a:function(){
     return tipText(3)+' Si no puedes pagarlo ahora con tu ahorro, plantéate esperar, buscar una opción más barata o ahorrar la cuota cada mes hasta reunir el importe: así no pagas intereses.';
   }},
   {k:['estaf','chiringuito','garantizad','fraude','piramid','cnmv','engano'],a:function(){return tipText(6)+' Si alguien te presiona para decidir rápido, es una señal de alarma.'}},
   {k:['invert','inversi','bolsa','accion'],a:"Los conceptos básicos son que a más rentabilidad esperada hay más riesgo, que conviene diversificar, vigilar las comisiones e invertir solo dinero que no vayas a necesitar pronto. Antes de eso suele ser sensato tener un colchón de emergencia. Desconfía de lo que prometa ganancias seguras, comprueba que la entidad esté autorizada por la CNMV y, para decisiones concretas, habla con un profesional independiente. No puedo recomendarte productos."},
   {k:['etf','indexad','fondo indexado','fondos','cartera'],a:"Un fondo indexado o un ETF reparte tu dinero entre muchos valores para copiar un índice, como un mercado entero. Así diversificas sin elegir empresas una a una, y suelen tener comisiones más bajas que los fondos de gestión activa. Aun así tienen riesgo: pueden bajar, a veces mucho, y se piensan a largo plazo. Mira siempre las comisiones y el nivel de riesgo. Esto es información general, no una recomendación de ningún producto."},
-  {k:['cripto','bitcoin','ethereum','nft'],a:"Las criptomonedas son muy volátiles: pueden multiplicar su valor o perder casi todo en poco tiempo, y alrededor de ellas hay muchas estafas y promesas de ganancias fáciles. Si algún día te interesan, usa solo dinero que podrías perder sin que te afecte, nunca el colchón ni lo que necesitas para vivir, y desconfía de quien te prometa rentabilidad segura. La CNMV publica avisos sobre este tema."},
+  {k:['cripto','bitcoin','ethereum','nft','bitcoin es','comprar bitcoin','invertir en cripto','invertir en bitcoin','criptomoneda'],a:"Las criptomonedas son muy volátiles: pueden multiplicar su valor o perder casi todo en poco tiempo, y alrededor de ellas hay muchas estafas y promesas de ganancias fáciles. Si algún día te interesan, usa solo dinero que podrías perder sin que te afecte, nunca el colchón ni lo que necesitas para vivir, y desconfía de quien te prometa rentabilidad segura. La CNMV publica avisos sobre este tema."},
   {k:['tae','tin','nominal'],a:"El TIN es el interés nominal que anuncia una entidad, sin tener en cuenta comisiones ni cada cuánto se pagan los intereses. La TAE sí lo incluye, y por eso sirve para comparar productos distintos, tanto lo que te dan por un depósito como lo que te cobran por un préstamo o una tarjeta. Si dos ofertas tienen distinto TIN, compáralas siempre por su TAE."},
   {k:['seguridad','clave','contrasena','phishing','sms','bizum','cvv','robo','hackeo','enlace'],a:"Desconfía de cualquier mensaje con prisa que te pida claves, códigos o que hagas una transferencia o un Bizum: tu banco no te pedirá contraseñas ni códigos por mensaje o por enlace. No compartas el CVV de la tarjeta ni los códigos que te llegan por SMS, entra en tu banca desde la app oficial o escribiendo tú la dirección, y activa los avisos de movimientos. Si dudas, llama al teléfono que figura en la web oficial o en el reverso de tu tarjeta."},
   {k:['impuesto','hacienda','irpf','declaracion de la renta','nomina','iva','sueldo','seguridad social','cotiz'],a:"En una nómina, lo que cobras (el neto) es menos que lo que figura como bruto, porque se retiene IRPF, que es un adelanto del impuesto sobre la renta, y se cotiza a la Seguridad Social. Si empiezas a ganar dinero por tu cuenta, con proyectos, clases o ventas, puede haber obligaciones fiscales según lo que ingreses y cómo. Lo más seguro es preguntar a la Agencia Tributaria o a una gestoría antes de que el dinero empiece a entrar."},
@@ -1264,18 +1264,36 @@ var KB=[
   {k:['inflacion','poder adquisitivo','precios'],a:function(){return tipText(5)}},
   {k:['interes compuesto','compuesto','intereses'],a:function(){return tipText(4)}},
   {k:['hola','buenas','buenos dias','buenas tardes','hey','que tal'],a:"¡Hola! Soy la guía de esta app. Puedo darte pautas sobre ahorro, gastos de ocio, tarjetas y pagar a plazos, inversión, impuestos, seguridad, becas, vivienda y más. Prueba con una pregunta concreta, como «¿cuánto debería ahorrar?»."},
-  {k:['gracias','te lo agradezco'],a:"¡De nada! Si te surge otra duda, pregúntame."},
-  {k:['que sabes','que puedes','temas','de que puedes','como funciona'],a:"Puedo orientarte sobre: ahorro y colchón, gastos de ocio y compras impulsivas, suscripciones, tarjetas y pagar a plazos, TAE y TIN, inversión, fondos y criptomonedas, estafas y seguridad, impuestos y nómina, ingresos extra, becas, vivienda, seguros, pensiones y cómo mantener el hábito. Pregúntame con tus palabras."}
+  {k:['gracias','te lo agradezco','adios','hasta luego','chao'],a:"¡De nada! Si te surge otra duda, pregúntame cuando quieras."},
+  {k:['que sabes','que puedes','temas','de que puedes','que te puedo preguntar','que preguntas'],a:function(){
+    var gs=[];KB.forEach(function(e){if(e.g&&gs.indexOf(e.g)<0)gs.push(e.g)});
+    return 'Puedo orientarte sobre '+KB.filter(function(e){return e.q}).length+' temas: '+gs.join(', ').toLowerCase()+'. Abre «Ver todos los temas», debajo de las sugerencias, para ver todas las preguntas y tocar la que quieras.';
+  }},
 ];
+/* Grupo y pregunta de ejemplo de los temas de siempre (para «Ver todos los temas»), por su primera palabra clave. */
+var KBQ={ahorr:['Ahorro','¿Cuánto debería ahorrar?'],'cuenta de ahorro':['Ahorro','¿Qué es una cuenta de ahorro?'],ocio:['Gastos del día a día','¿Cómo gasto menos en ocio?'],
+  tarjeta:['Bancos y pagos','¿Qué diferencia hay entre débito, crédito y prepago?'],plazo:['Deudas y crédito','¿Merece la pena pagar a plazos?'],
+  estaf:['Seguridad y riesgos','¿Cómo evito estafas al invertir?'],invert:['Inversión','¿Por dónde empiezo a invertir?'],etf:['Inversión','¿Qué es un fondo indexado o un ETF?'],
+  cripto:['Inversión','¿Debería comprar criptomonedas?'],tae:['Ahorro','¿Qué es la TAE y el TIN?'],seguridad:['Seguridad y riesgos','¿Cómo protejo mis claves y mi banca?'],
+  impuesto:['Trabajo e impuestos','¿Por qué cobro menos de lo que pone mi nómina?'],ingres:['Trabajo e impuestos','¿Cómo gano un dinero extra con proyectos?'],
+  presupuesto:['Gastos del día a día','¿Qué es la regla 50/30/20?'],objetivo:['Ahorro','¿Cómo ahorro para comprarme algo?'],impulsiv:['Consumo y compras','¿Cómo evito las compras impulsivas?'],
+  suscripci:['Gastos del día a día','¿Cómo controlo mis suscripciones?'],prestar:['Vida y relaciones','¿Debería prestar dinero a un amigo?'],alquiler:['Vivienda','¿Cuánto debería gastar en vivienda?'],
+  seguro:['Seguridad y riesgos','¿Para qué sirve un seguro?'],pension:['Inversión','¿Debería pensar ya en mi jubilación?'],beca:['Trabajo e impuestos','¿Qué becas y descuentos hay para estudiantes?'],
+  sobres:['Gastos del día a día','¿Qué es el método de los sobres?'],habito:['Vida y relaciones','¿Cómo mantengo el hábito de ahorrar?'],estres:['Vida y relaciones','¿Por qué gasto más cuando estoy mal?'],
+  'cuenta corriente':['Bancos y pagos','¿Qué miro al elegir una cuenta del banco?'],inflacion:['Ahorro','¿Qué es la inflación?'],'interes compuesto':['Ahorro','¿Qué es el interés compuesto?']};
+KB.forEach(function(e){var m=KBQ[e.k[0]];if(m){e.g=m[0];e.q=m[1]}});
+/* Los temas de guia.js van primero: son más concretos y ganan en caso de empate. */
+KB=(window.GUIA||[]).concat(KB);
 KB.forEach(function(e){e.re=e.k.map(kwRegex)});
 function guideAnswer(q){
   var n=norm(q),best=null,bs=0;
   KB.forEach(function(e){
     var sc=0;
-    e.re.forEach(function(r,i){if(r.test(n))sc+=(e.k[i].indexOf(' ')>=0?2:1)});
+    /* Pesan más las expresiones de varias palabras y las palabras largas, que son más específicas. */
+    e.re.forEach(function(r,i){if(r.test(n)){var w=e.k[i];sc+=w.indexOf(' ')>=0?2.5:(w.length>=7?1.5:1)}});
     if(sc>bs){bs=sc;best=e}
   });
-  if(!best)return 'Eso no lo tengo en la guía integrada. Prueba con preguntas sobre ahorro, gastos de ocio, tarjetas y pagar a plazos, inversión, impuestos, seguridad, becas o vivienda, o pregúntame «¿qué temas sabes?». También puedes repasar los consejos de arriba.';
+  if(!best)return 'Eso no lo tengo en la guía integrada. Prueba a decirlo con otras palabras o abre «Ver todos los temas», debajo de las sugerencias: ahí están todas las preguntas que sé responder. También puedes repasar los consejos de arriba.';
   return typeof best.a==='function'?best.a():best.a;
 }
 function ctxText(){
@@ -1389,13 +1407,30 @@ async function ask(q){
   }
   bot.pending=false;state.asking=false;$('#askBtn').disabled=false;renderChat();
 }
-var CHIPS=['¿Cuánto debería ahorrar?','¿Merece la pena pagar a plazos?','¿Cómo gasto menos en ocio?','¿Por dónde empiezo a invertir?','¿Qué es la TAE?','¿Cómo evito estafas?','¿Qué es una cuenta de ahorro?'];
+var CHIPS=['¿Cuánto debería ahorrar?','¿Qué hago con mi primer sueldo?','¿Cómo salgo de mis deudas?','¿Cómo ahorro en la compra del supermercado?','¿Por dónde empiezo a invertir?','¿Qué es la TAE?','¿Cómo evito estafas?','¿Tengo que hacer la declaración de la renta?'];
 function renderChips(){
   $('#chips').innerHTML=CHIPS.map(function(q,i){return '<button class="chip-btn" type="button" data-q="'+i+'">'+esc(q)+'</button>'}).join('');
 }
 $('#chips').addEventListener('click',function(e){
   var b=e.target.closest('[data-q]');
   if(b)ask(CHIPS[+b.getAttribute('data-q')]);
+});
+/* «Ver todos los temas»: las preguntas de ejemplo de la guía, por grupos. Al tocar una, se pregunta. */
+var TOPICS=KB.filter(function(e){return e.q});
+function renderTopics(){
+  var groups=[];
+  TOPICS.forEach(function(e){if(groups.indexOf(e.g)<0)groups.push(e.g)});
+  $('#topicsSum').textContent='Ver todos los temas ('+TOPICS.length+')';
+  $('#topicList').innerHTML=groups.map(function(g){
+    return '<h3>'+esc(g)+'</h3><div class="chips">'+TOPICS.map(function(e,i){
+      return e.g===g?'<button class="chip-btn" type="button" data-tq="'+i+'">'+esc(e.q)+'</button>':'';
+    }).join('')+'</div>';
+  }).join('');
+}
+$('#topicList').addEventListener('click',function(e){
+  var b=e.target.closest('[data-tq]');if(!b)return;
+  ask(TOPICS[+b.getAttribute('data-tq')].q);
+  $('#chat').scrollIntoView({block:'nearest'});
 });
 $('#askForm').addEventListener('submit',function(e){
   e.preventDefault();
@@ -1602,7 +1637,7 @@ $('#migBanner').hidden=migration.status!=='error';
 if(!fresh)askPersist();
 if(migration.status==='migrated')toast('Hemos actualizado cómo se guardan tus datos. Todo sigue igual y la copia anterior se conserva.',false);
 if(fresh){$('#fab').hidden=true;$('#onboard').hidden=false;$('#onb-amt').focus()}
-else if(autoFixed)toast(autoFixed===1?'Se ha apuntado 1 gasto fijo de este mes.':'Se han apuntado '+autoFixed+' gastos fijos de este mes.',false);renderTipGrid();renderChips();renderChat();renderAIMode();initAI();
+else if(autoFixed)toast(autoFixed===1?'Se ha apuntado 1 gasto fijo de este mes.':'Se han apuntado '+autoFixed+' gastos fijos de este mes.',false);renderTipGrid();renderChips();renderTopics();renderChat();renderAIMode();initAI();
 })();
 
 /* Para que funcione sin conexión. */

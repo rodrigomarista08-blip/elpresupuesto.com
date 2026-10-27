@@ -407,6 +407,12 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .qform>div{flex:1;min-width:0}
 .onb .sheet{gap:0}
 .onbform{display:grid}
+/* Lista de todos los temas de la guía */
+.topics{margin:0 0 14px;background:var(--surface-2);box-shadow:none}
+.topics h3{font-family:var(--display);font-weight:700;font-size:.95rem;margin:14px 0 8px}
+.topics h3:first-child{margin-top:0}
+.topics .chips{margin-bottom:0}
+.chip-btn{text-align:left}
 .move .ask{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;font-size:14px}
 .move .ask .btn{min-height:36px;padding:6px 14px}
 .checkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;align-self:center}
@@ -721,6 +727,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
       <p class="helptxt" id="h-ask" hidden>Escribe cualquier pregunta sobre dinero y te responderá la guía o la IA. Es información general, no un consejo profesional.</p>
       <p class="lead">Pregunta lo que quieras sobre tu dinero. <span id="aiMode"></span></p>
       <div class="chips" id="chips"></div>
+      <details class="fold topics" id="topics"><summary id="topicsSum">Ver todos los temas</summary><div class="foldbody" id="topicList"></div></details>
       <div class="chat" id="chat" aria-live="polite"></div>
       <form id="askForm" novalidate>
         <label for="askInput">Tu pregunta</label>
@@ -835,5 +842,6 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 <div class="toast" id="toast" role="status" hidden><span id="toastText"></span><button id="toastBtn" type="button">Deshacer</button></div>
 
 <script src="calc.js"></script>
+<script src="guia.js"></script>
 <script src="app.js"></script>
 </body></html>
