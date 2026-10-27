@@ -269,7 +269,9 @@ input[type=checkbox]{width:auto;min-height:0;accent-color:var(--accent)}
 .wrap{gap:16px}
 .card{padding:16px}
 .stack.split{height:24px;margin:4px 0 14px}
-.stack.split .seg{display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--surface);font-size:11px;white-space:nowrap}
+.stack.split .seg{display:flex;align-items:center;justify-content:center;overflow:hidden;color:#fff;font-size:11px;white-space:nowrap}
+/* El porcentaje lleva una etiqueta oscura para que se lea sobre cualquier color de sección, en claro y en oscuro (AA). */
+.stack.split .seg b{background:rgba(0,0,0,.5);border-radius:4px;padding:0 4px;line-height:16px}
 .stack.split b{font-weight:700}
 .tabs button .ti{margin-right:6px}
 @media (max-width:420px){.tabs button{padding:10px 10px;font-size:14px}.tabs button .ti{margin-right:3px}}
@@ -335,14 +337,14 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .banner{border-radius:14px}
 
 .card.hero{background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:#fff;
-  --ink:#fff;--ink-2:rgba(255,255,255,.82);--surface-2:rgba(255,255,255,.18);--line:rgba(255,255,255,.22)}
-.hero .eyebrow{color:rgba(255,255,255,.85)}
+  --ink:#fff;--ink-2:rgba(255,255,255,.96);--surface-2:rgba(255,255,255,.18);--line:rgba(255,255,255,.22)}
+.hero .eyebrow{color:#fff}
 .hero .big.bad{color:#fff}
 .hero .stack{background:rgba(255,255,255,.9)}
 .hero .stack .tick{background:rgba(20,30,50,.25)}
 .hero .legend i{box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
-.hero .pill{background:rgba(255,255,255,.2);color:#fff}
-.hero .qbtn{background:rgba(255,255,255,.2);border-color:transparent;color:#fff}
+.hero .pill{background:rgba(0,20,30,.28);color:#fff}
+.hero .qbtn{background:rgba(0,20,30,.28);border-color:rgba(255,255,255,.5);color:#fff}
 .hero .qbtn[aria-expanded="true"]{background:#fff;color:var(--hero-a)}
 
 .cat{border-top:0;padding:14px 16px}
@@ -360,7 +362,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     padding:6px 10px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(20,30,50,.10)}
   .tabs button,.tabs button[aria-selected="true"]{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;padding:6px 4px;font-size:12px;border-radius:14px;box-shadow:none}
   .tabs button .ti{margin:0;font-size:21px}
-  .tabs button[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+  .tabs button[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 14%,transparent);color:color-mix(in srgb,var(--accent) 72%,var(--ink))}
   .toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
   .alertbar{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
 }

@@ -674,9 +674,10 @@ function renderNames(){
 function renderSplit(){
   var sum=allocSum(),el=$('#splitbar');
   if(!(sum>0)){el.innerHTML='';return}
-  el.innerHTML='<div class="stack split" role="img" aria-label="Cómo se reparte tu dinero">'+CATS.map(function(c){
+  var desc=CATS.filter(function(c){return (state.alloc[c.id]||0)>0}).map(function(c){return cname(c.id)+' '+Math.round((state.alloc[c.id]||0)/sum*100)+' %'}).join(', ');
+  el.innerHTML='<div class="stack split" role="img" aria-label="Cómo se reparte tu dinero: '+esc(desc)+'">'+CATS.map(function(c){
     var v=state.alloc[c.id]||0,w=v/sum*100;
-    return v>0?'<span class="seg" style="width:'+w+'%;background:'+cv(c.id)+'" title="'+esc(cname(c.id))+' '+Math.round(w)+' %">'+(w>=9?'<b>'+Math.round(w)+' %</b>':'')+'</span>':'';
+    return v>0?'<span class="seg" style="width:'+w+'%;background:'+cv(c.id)+'" title="'+esc(cname(c.id))+' '+Math.round(w)+' %">'+(w>=11?'<b>'+Math.round(w)+' %</b>':'')+'</span>':'';
   }).join('')+'</div>';
 }
 function renderAll(){renderHeader();renderSummary();renderSplit();renderCats();renderMoves();renderFixed();renderCheck();renderSavings();renderNames();renderAlert();renderStatus();if(state.tab==='tips')renderRef()}
