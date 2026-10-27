@@ -11,8 +11,14 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Presupuesto mensual</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="preload" href="fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* Fuentes alojadas en el propio sitio (fonts/, licencia SIL OFL 1.1). Solo se descarga la que se usa. */
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:400 800;font-display:swap;src:url(fonts/plus-jakarta-sans-latin.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-style:normal;font-weight:400 800;font-display:swap;src:url(fonts/nunito-latin.woff2) format('woff2')}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/atkinson-hyperlegible-400-latin.woff2) format('woff2')}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/atkinson-hyperlegible-700-latin.woff2) format('woff2')}
+@font-face{font-family:'Lora';font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/lora-latin.woff2) format('woff2')}
 /* Layout: resumen del mes arriba junto al formulario de gastos, cuatro partidas en fila, luego movimientos, ajuste del reparto, proyección del ahorro y reglas. Una sola columna en móvil. */
 :root{
   --bg:#f3f5f9; --surface:#ffffff; --surface-2:#eef1f6; --ink:#1b2333; --ink-2:#5d6779; --line:#e2e6ee;
@@ -454,10 +460,10 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     green:{n:'Verde',l:'#2b7a30',d:'#86d18a'}
   };
   var FONTS={
-    jakarta:{n:'Moderna',f:"'Plus Jakarta Sans'",q:null},
-    nunito:{n:'Redondeada',f:"'Nunito'",q:'Nunito:wght@400;500;600;700;800'},
-    atkinson:{n:'Muy legible',f:"'Atkinson Hyperlegible'",q:'Atkinson+Hyperlegible:wght@400;700'},
-    lora:{n:'Clásica',f:"'Lora'",q:'Lora:wght@400;500;600;700'}
+    jakarta:{n:'Moderna',f:"'Plus Jakarta Sans'"},
+    nunito:{n:'Redondeada',f:"'Nunito'"},
+    atkinson:{n:'Muy legible',f:"'Atkinson Hyperlegible'"},
+    lora:{n:'Clásica',f:"'Lora'"}
   };
   var p={accent:'teal',font:'jakarta',theme:'auto',protectSavings:true};
   try{
@@ -469,11 +475,6 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
       if(typeof s.protectSavings==='boolean')p.protectSavings=s.protectSavings;
     }
   }catch(e){}
-  function loadFont(k){
-    var f=FONTS[k];if(!f||!f.q||document.getElementById('font-'+k))return;
-    var l=document.createElement('link');l.id='font-'+k;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+f.q+'&display=swap';
-    document.head.appendChild(l);
-  }
   function apply(){
     var r=document.documentElement,a=ACCENTS[p.accent],f=FONTS[p.font],css='';
     if(p.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',p.theme);
@@ -482,8 +483,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
       var dk='--accent:'+a.d+';--accent-ink:#0b1220;--hero-a:color-mix(in srgb,'+a.l+' 72%,#000);--hero-b:color-mix(in srgb,'+a.l+' 45%,#0d1b3a);';
       css+=':root{'+lt+'}@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){'+dk+'}}:root[data-theme="dark"]{'+dk+'}';
     }
-    if(f.q){
-      loadFont(p.font);
+    if(p.font!=='jakarta'){
       css+=':root{--display:'+f.f+",'Segoe UI',system-ui,sans-serif;--body:"+f.f+",'Segoe UI',system-ui,sans-serif}";
     }
     var st=document.getElementById('userTheme');
@@ -492,7 +492,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=a.l;
   }
   apply();
-  window.appPrefs={p:p,ACCENTS:ACCENTS,FONTS:FONTS,apply:apply,loadFont:loadFont,
+  window.appPrefs={p:p,ACCENTS:ACCENTS,FONTS:FONTS,apply:apply,
     save:function(){try{localStorage.setItem(KEY,JSON.stringify(p));return true}catch(e){return false}}};
 })();
 </script>
@@ -2299,7 +2299,7 @@ function renderSettingsSheet(){
 }
 function savePrefs(){AP.apply();AP.save();renderSettingsSheet()}
 $('#openSettings').addEventListener('click',function(){
-  Object.keys(AP.FONTS).forEach(AP.loadFont);
+
   renderSettingsSheet();openSheet('settings');
 });
 $('#settings').addEventListener('click',function(e){
