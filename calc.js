@@ -178,7 +178,30 @@ function verifyMigration(before,after){
 }
 /* Valida una copia de seguridad (archivo JSON) y la devuelve como almacén actual, o explica por qué no vale.
    Acepta las copias antiguas ({v:1}, en euros) y las nuevas ({schemaVersion:2}, en céntimos). */
+/* Copia «en bruto» (aviso de error o copia del formato anterior): {raw:{'presupuesto:v2:plan':'…', …}} o las claves sueltas.
+   Se reconstruye como copia normal, con el formato nuevo si está y si no con el antiguo. */
+function fromRaw(raw){
+  function pick(prefix){
+    var plan=null,months={},found=false;
+    Object.keys(raw).forEach(function(k){
+      if(k.indexOf(prefix)!==0)return;
+      var rest=k.slice(prefix.length),v;
+      try{v=JSON.parse(raw[k])}catch(e){return}
+      if(rest==='plan'){plan=v;found=true}
+      else if(/^m-\d{4}-\d{2}$/.test(rest)&&v&&typeof v==='object'){months[rest.slice(2)]=v;found=true}
+    });
+    return found?{plan:plan,months:months}:null;
+  }
+  var v2=pick('presupuesto:v2:'),v1=pick('presupuesto:v1:');
+  if(v2)return {schemaVersion:2,plan:v2.plan,months:v2.months};
+  if(v1)return {v:1,plan:v1.plan,months:v1.months};
+  return null;
+}
 function readBackup(obj){
+  if(obj&&typeof obj==='object'&&!Array.isArray(obj)){
+    var raw=obj.raw&&typeof obj.raw==='object'?obj.raw:(Object.keys(obj).some(function(k){return k.indexOf('presupuesto:')===0})?obj:null);
+    if(raw){var conv=fromRaw(raw);if(!conv)return {ok:false,error:'La copia no contiene datos de esta app.'};obj=conv}
+  }
   if(!obj||typeof obj!=='object'||Array.isArray(obj))return {ok:false,error:'El archivo no es una copia de esta app.'};
   var v=obj.schemaVersion||(obj.v===1?1:null);
   if(!v)return {ok:false,error:'El archivo no es una copia de esta app.'};

@@ -156,6 +156,13 @@ code{font-size:12px}
     eq(C.readBackup({foo:1}).ok,false,'rechaza un objeto que no es una copia');
     eq(C.readBackup({schemaVersion:9,months:{}}).ok,false,'rechaza una copia de una versión más nueva');
     eq(C.readBackup({v:1,plan:[],months:{}}).ok,false,'rechaza un reparto dañado');
+    var raw={'presupuesto:v2:plan':JSON.stringify({schemaVersion:2,total:40000}),'presupuesto:v2:m-2026-10':JSON.stringify({schemaVersion:2,expenses:[{id:'a',cat:'oci',amt:350,note:'',date:'2026-10-02'}]}),
+      'presupuesto:v1:prefs':'{"theme":"dark"}','presupuesto:v1:plan':JSON.stringify({total:999})};
+    r=C.readBackup({app:'presupuesto-mensual',kind:'raw',raw:raw});
+    eq([r.ok,r.store.plan.total,r.store.months['2026-10'].expenses[0].amt],[true,40000,350],'acepta la descarga de emergencia y usa el formato nuevo');
+    r=C.readBackup({'presupuesto:v1:plan':JSON.stringify({total:12.5}),'presupuesto:v1:m-2026-09':JSON.stringify({expenses:[{id:'b',cat:'nec',amt:1.1,note:'',date:'2026-09-01'}]})});
+    eq([r.ok,r.store.plan.total,r.store.months['2026-09'].expenses[0].amt],[true,1250,110],'acepta la copia del formato anterior (euros) y la convierte');
+    eq(C.readBackup({raw:{'presupuesto:v1:prefs':'{}'}}).ok,false,'rechaza una descarga sin datos de dinero');
   });
 
   group('Exportar a CSV (Excel)',function(){

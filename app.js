@@ -289,7 +289,7 @@ function runMigration(){
 /* Copia literal de los datos antiguos, por si el usuario quiere guardarla antes de borrarla. */
 function originalRaw(){
   var out={};(migration.meta&&migration.meta.originalKeys||migration.keys||v1Keys()).forEach(function(k){var v=rawGet(k);if(v!=null)out[k]=v});
-  return out;
+  return {app:'presupuesto-mensual',kind:'raw',exportedAt:new Date().toISOString(),raw:out};
 }
 
 /* ---------- vistas ---------- */
@@ -367,7 +367,7 @@ function renderSummary(){
     sub=fmt(A.aho)+' irán al ahorro.';
   }
   var pct=gastable>0?gastado/gastable*100:(gastado>0?100:0);
-  $('#sumEyebrow').textContent=eyebrow;
+  $('#sumEyebrow').textContent=eyebrow;$('#summary').removeAttribute('aria-busy');
   $('#summary').innerHTML=
     '<p class="big'+(over?' bad':'')+'">'+head+'</p>'+
     '<p class="sub">'+sub+'</p>'+

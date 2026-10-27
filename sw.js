@@ -1,5 +1,5 @@
-var CACHE = 'presupuesto-v16';
-var FILES = ['./', './index.html', './prefs.js', './calc.js', './app.js', './fonts/plus-jakarta-sans-latin.woff2', './manifest.webmanifest',
+var CACHE = 'presupuesto-v17';
+var FILES = ['./', './index.html', './errores.js', './prefs.js', './calc.js', './app.js', './fonts/plus-jakarta-sans-latin.woff2', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon.svg'];
 var NET_TIMEOUT = 4000; // con una red muy lenta, a los 4 s se usa lo guardado
 
