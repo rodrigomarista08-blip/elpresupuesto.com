@@ -115,6 +115,59 @@ code{font-size:12px}
     eq(C.monthsToGoal(500,100,600,0),0,'ya conseguido');
   });
 
+  group('Migración v1 → v2 (euros a céntimos)',function(){
+    var v1={schemaVersion:1,
+      plan:{total:500,alloc:{nec:200,oci:150,pro:50,aho:100,xabc123:12.5},saved0:300.1,goal:0,rate:2.5,months:24,tax:true,names:{nec:'Básicos'},
+        extras:[{id:'xabc123',ci:1}],goals:[{id:'gabc123',name:'Roma',target:650,saved:220.35}],fixed:[{id:'fabc1234',cat:'oci',amt:12.99,note:'Netflix',day:5}],lastCat:'oci'},
+      months:{'2026-10':{expenses:[{id:'e1',cat:'oci',amt:8.9,note:'',date:'2026-10-02'},{id:'e2',cat:'nec',amt:0.1,note:'',date:'2026-10-03'},{id:'e3',cat:'nec',amt:0.2,note:'',date:'2026-10-03',fixed:'fabc1234'}],fixedDone:['fabc1234']},
+              '2026-09':{expenses:[]}}};
+    var v2=C.migrateStore(v1);
+    eq(v2.schemaVersion,2,'queda en la versión 2');
+    eq(v2.plan.total,50000,'500 € → 50000 céntimos');
+    eq(v2.plan.alloc,{nec:20000,oci:15000,pro:5000,aho:10000,xabc123:1250},'reparto en céntimos (12,5 € → 1250)');
+    eq(v2.plan.saved0,30010,'300,10 € sin error de coma flotante');
+    eq(v2.plan.goals[0],{id:'gabc123',name:'Roma',target:65000,saved:22035},'objetivo en céntimos');
+    eq(v2.plan.fixed[0].amt,1299,'gasto fijo 12,99 € → 1299');
+    eq(v2.plan.names,{nec:'Básicos'},'los nombres se conservan');
+    eq(v2.plan.rate,2.5,'la TAE (porcentaje) no se toca');
+    eq(v2.months['2026-10'].expenses.map(function(e){return e.amt}),[890,10,20],'8,9 + 0,1 + 0,2 € → 890 + 10 + 20');
+    eq(v2.months['2026-10'].expenses[2].fixed,'fabc1234','se conserva la marca de gasto fijo');
+    eq(v2.months['2026-10'].fixedDone,['fabc1234'],'se conservan los fijos ya apuntados');
+    eq(C.verifyMigration(v1,v2),[],'la verificación no encuentra pérdidas');
+    eq(v1.plan.total,500,'el original no se modifica');
+    var bad=JSON.parse(JSON.stringify(v2));bad.months['2026-10'].expenses.pop();
+    eq(C.verifyMigration(v1,bad).length>0,true,'la verificación detecta un gasto perdido');
+    eq(C.migrateStore(v2),v2,'migrar datos ya actuales no cambia nada');
+    var threw=false;try{C.migrateStore({schemaVersion:99})}catch(e){threw=true}
+    eq(threw,true,'rechaza datos de una versión más nueva');
+  });
+
+  group('Copias de seguridad',function(){
+    var r=C.readBackup({v:1,plan:{total:300,alloc:{nec:100,oci:100,pro:50,aho:50}},months:{'2026-10':[{id:'a',cat:'oci',amt:7.5,note:'',date:'2026-10-01'}]}});
+    eq(r.ok,true,'acepta una copia antigua (v:1)');
+    eq(r.store.plan.total,30000,'y la pasa a céntimos');
+    eq(r.store.months['2026-10'].expenses[0].amt,750,'7,50 € → 750');
+    r=C.readBackup({schemaVersion:2,plan:{total:30000},months:{'2026-10':{expenses:[{id:'a',cat:'oci',amt:750,note:'',date:'2026-10-01'}]}}});
+    eq(r.ok&&r.store.months['2026-10'].expenses[0].amt,750,'acepta una copia nueva sin volver a convertir');
+    r=C.readBackup({schemaVersion:2,months:{'2026-10':[{id:'a',cat:'oci',amt:-5,date:'2026-10-01'},{id:'b',cat:'oci',amt:5,date:'2026-11-01'},{id:'c',cat:'oci',amt:5,date:'2026-10-02'}]}});
+    eq([r.ok,r.expenses,r.skipped],[true,1,2],'descarta gastos negativos o con fecha de otro mes');
+    eq(C.readBackup('hola').ok,false,'rechaza un texto');
+    eq(C.readBackup([]).ok,false,'rechaza una lista');
+    eq(C.readBackup({foo:1}).ok,false,'rechaza un objeto que no es una copia');
+    eq(C.readBackup({schemaVersion:9,months:{}}).ok,false,'rechaza una copia de una versión más nueva');
+    eq(C.readBackup({v:1,plan:[],months:{}}).ok,false,'rechaza un reparto dañado');
+  });
+
+  group('Exportar a CSV (Excel)',function(){
+    var csv=C.expensesCSV([{date:'2026-10-05',section:'Ocio',note:'Cine; palomitas',amt:1250,fixed:false},{date:'2026-10-01',section:'Básicos',note:'Dijo "hola"',amt:5,fixed:true}]);
+    eq(csv.charCodeAt(0),0xFEFF,'empieza con BOM (UTF-8 para Excel)');
+    var lines=csv.slice(1).split('\r\n');
+    eq(lines[0],'Fecha;Sección;Concepto;Importe (€);Gasto fijo','cabecera con «;»');
+    eq(lines[1],'05/10/2026;Ocio;"Cine; palomitas";12,50;No','fecha española, coma decimal y «;» entrecomillado');
+    eq(lines[2],'01/10/2026;Básicos;"Dijo ""hola""";0,05;Sí','comillas dobladas y céntimos');
+    eq(C.expensesCSV([]).slice(1),'Fecha;Sección;Concepto;Importe (€);Gasto fijo\r\n','sin gastos: solo la cabecera');
+  });
+
   var bad=res.filter(function(r){return !r.ok}).length,el=document.getElementById('sum');
   el.textContent=(bad?bad+' fallos de ':'Todo correcto: ')+res.length+' pruebas';
   el.className='sum '+(bad?'ko':'ok');

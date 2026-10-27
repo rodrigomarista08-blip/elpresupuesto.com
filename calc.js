@@ -124,9 +124,105 @@ function monthsToGoal(goalC,depC,s0C,i){
   return null;
 }
 
-var Calc={formatEUR:formatEUR,toInputString:toInputString,parseAmount:parseAmount,daysInMonth:daysInMonth,sum:sum,
+/* ---------- Formato de los datos guardados y migraciones ----------
+   v1: importes en euros con decimales (claves «presupuesto:v1:…»).
+   v2: importes en céntimos enteros y campo schemaVersion (claves «presupuesto:v2:…»).
+   Un «almacén» es {schemaVersion, plan, months:{'AAAA-MM': {expenses:[…], fixedDone:[…]}}}. */
+var SCHEMA=2;
+function toCents(v){return (typeof v==='number'&&isFinite(v))?Math.round(v*100):v}
+function clone(o){return o==null?o:JSON.parse(JSON.stringify(o))}
+var MIGRATIONS={
+  /* v1 → v2: euros a céntimos en todos los importes. El resto de campos se copia tal cual. */
+  1:function(st){
+    var p=clone(st.plan);
+    if(p&&typeof p==='object'){
+      p.total=toCents(p.total);p.saved0=toCents(p.saved0);p.goal=toCents(p.goal);
+      if(p.alloc&&typeof p.alloc==='object')Object.keys(p.alloc).forEach(function(k){p.alloc[k]=toCents(p.alloc[k])});
+      if(Array.isArray(p.goals))p.goals.forEach(function(g){if(g&&typeof g==='object'){g.target=toCents(g.target);g.saved=toCents(g.saved)}});
+      if(Array.isArray(p.fixed))p.fixed.forEach(function(f){if(f&&typeof f==='object')f.amt=toCents(f.amt)});
+      p.schemaVersion=2;
+    }
+    var ms={};
+    Object.keys(st.months||{}).forEach(function(ym){
+      var m=clone(st.months[ym])||{};
+      if(Array.isArray(m.expenses))m.expenses.forEach(function(e){if(e&&typeof e==='object')e.amt=toCents(e.amt)});
+      m.schemaVersion=2;ms[ym]=m;
+    });
+    return {schemaVersion:2,plan:p,months:ms};
+  }
+};
+/* Lleva un almacén de su versión a la actual, paso a paso. */
+function migrateStore(st){
+  var cur=clone(st),v=cur&&cur.schemaVersion;
+  if(!(v>=1))throw new Error('Versión de datos desconocida');
+  if(v>SCHEMA)throw new Error('Datos de una versión más nueva de la app');
+  while(v<SCHEMA){
+    if(!MIGRATIONS[v])throw new Error('Falta la migración desde la versión '+v);
+    cur=MIGRATIONS[v](cur);v=cur.schemaVersion;
+  }
+  return cur;
+}
+/* Comprueba que una migración no pierde nada: mismos gastos por mes y mismos totales (en céntimos). */
+function verifyMigration(before,after){
+  var errs=[];
+  Object.keys(before.months||{}).forEach(function(ym){
+    var a=((before.months[ym]||{}).expenses)||[],b=((after.months[ym]||{}).expenses)||[];
+    if(a.length!==b.length)errs.push(ym+': '+a.length+' gastos antes y '+b.length+' después');
+    var sa=0,sb=0;
+    a.forEach(function(e){sa+=Math.round((before.schemaVersion===1?e.amt*100:e.amt)||0)});
+    b.forEach(function(e){sb+=e.amt||0;if(e.amt!==Math.round(e.amt))errs.push(ym+': importe con decimales en céntimos')});
+    if(sa!==sb)errs.push(ym+': la suma cambió ('+sa+' → '+sb+')');
+  });
+  if(before.plan&&after.plan&&before.schemaVersion===1&&toCents(before.plan.total)!==after.plan.total)errs.push('el dinero del mes cambió');
+  return errs;
+}
+/* Valida una copia de seguridad (archivo JSON) y la devuelve como almacén actual, o explica por qué no vale.
+   Acepta las copias antiguas ({v:1}, en euros) y las nuevas ({schemaVersion:2}, en céntimos). */
+function readBackup(obj){
+  if(!obj||typeof obj!=='object'||Array.isArray(obj))return {ok:false,error:'El archivo no es una copia de esta app.'};
+  var v=obj.schemaVersion||(obj.v===1?1:null);
+  if(!v)return {ok:false,error:'El archivo no es una copia de esta app.'};
+  if(v>SCHEMA)return {ok:false,error:'La copia es de una versión más nueva de la app. Actualiza la página e inténtalo de nuevo.'};
+  if(!obj.months||typeof obj.months!=='object'||Array.isArray(obj.months))return {ok:false,error:'A la copia le faltan los meses.'};
+  if(obj.plan!=null&&(typeof obj.plan!=='object'||Array.isArray(obj.plan)))return {ok:false,error:'El reparto de la copia está dañado.'};
+  var months={},skipped=0,count=0;
+  Object.keys(obj.months).forEach(function(ym){
+    var src=obj.months[ym],list=Array.isArray(src)?src:(src&&Array.isArray(src.expenses)?src.expenses:null);
+    if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(ym)||!list){skipped++;return}
+    var ok=list.filter(function(e){
+      var good=e&&typeof e==='object'&&typeof e.id==='string'&&typeof e.cat==='string'&&typeof e.amt==='number'&&isFinite(e.amt)&&e.amt>0&&
+        typeof e.date==='string'&&e.date.slice(0,7)===ym&&/^\d{4}-\d{2}-\d{2}$/.test(e.date);
+      if(!good)skipped++;
+      return good;
+    });
+    count+=ok.length;
+    months[ym]={schemaVersion:v,expenses:ok};
+  });
+  var st;
+  try{st=migrateStore({schemaVersion:v,plan:obj.plan||null,months:months})}catch(e){return {ok:false,error:e.message}}
+  return {ok:true,store:st,months:Object.keys(months).length,expenses:count,skipped:skipped};
+}
+
+/* ---------- CSV para Excel en español: separador «;», coma decimal y UTF-8 con BOM (para que Excel lea bien las tildes) ---------- */
+function csvCell(v){
+  var s=String(v==null?'':v);
+  return /[;"\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+}
+function csvAmount(c){return (Math.round(c)/100).toFixed(2).replace('.',',')}
+/* rows: [{date:'AAAA-MM-DD', section, note, amt (céntimos), fixed (bool)}] */
+function expensesCSV(rows){
+  var out=['Fecha;Sección;Concepto;Importe (€);Gasto fijo'];
+  rows.forEach(function(r){
+    var d=String(r.date||'').split('-');
+    out.push([d[2]+'/'+d[1]+'/'+d[0],r.section,r.note,csvAmount(r.amt),r.fixed?'Sí':'No'].map(csvCell).join(';'));
+  });
+  return '﻿'+out.join('\r\n')+'\r\n';
+}
+
+var Calc={formatEUR:formatEUR,expensesCSV:expensesCSV,toInputString:toInputString,parseAmount:parseAmount,daysInMonth:daysInMonth,sum:sum,
   allocationDiff:allocationDiff,splitByPercent:splitByPercent,proportionalCuts:proportionalCuts,weekWindow:weekWindow,
-  weekBudget:weekBudget,ocioWeeklyCap:ocioWeeklyCap,monthlyRate:monthlyRate,projectSavings:projectSavings,monthsToGoal:monthsToGoal};
+  weekBudget:weekBudget,ocioWeeklyCap:ocioWeeklyCap,monthlyRate:monthlyRate,projectSavings:projectSavings,monthsToGoal:monthsToGoal,
+  SCHEMA:SCHEMA,migrateStore:migrateStore,verifyMigration:verifyMigration,readBackup:readBackup};
 root.Calc=Calc;
 if(typeof module!=='undefined'&&module.exports)module.exports=Calc;
 })(typeof window!=='undefined'?window:this);
