@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pruebas de cálculos</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:16px;line-height:1.45;background:#fff;color:#16231e}
+h1{font-size:1.3rem}
+.sum{font-weight:700;padding:8px 12px;border-radius:8px;display:inline-block}
+.ok{background:#dff1e6;color:#1d6a40}.ko{background:#fbe3e0;color:#a3221b}
+li{margin:2px 0}li.ko{padding:2px 6px}
+code{font-size:12px}
+</style>
+</head><body>
+<h1>Pruebas de los cálculos (calc.js)</h1>
+<p id="sum" class="sum">Ejecutando…</p>
+<ol id="out"></ol>
+<script src="calc.js"></script>
+<script>
+(function(){
+  var C=window.Calc,res=[],cur='';
+  function sp(s){return String(s).replace(/[  ]/g,' ')}
+  function eq(a,b,msg){var ok=JSON.stringify(a)===JSON.stringify(b);res.push({g:cur,ok:ok,m:msg+(ok?'':' — esperado '+JSON.stringify(b)+', obtenido '+JSON.stringify(a))})}
+  function near(a,b,tol,msg){var ok=Math.abs(a-b)<=tol;res.push({g:cur,ok:ok,m:msg+(ok?'':' — esperado '+b+'±'+tol+', obtenido '+a)})}
+  function group(n,f){cur=n;try{f()}catch(e){res.push({g:n,ok:false,m:'Error: '+e.message})}}
+
+  group('Días del mes',function(){
+    eq(C.daysInMonth(2026,2),28,'febrero 2026 tiene 28 días');
+    eq(C.daysInMonth(2028,2),29,'febrero 2028 (bisiesto) tiene 29');
+    eq(C.daysInMonth(2026,4),30,'abril tiene 30');
+    eq(C.daysInMonth(2026,10),31,'octubre tiene 31');
+  });
+
+  group('Leer importes',function(){
+    eq(C.parseAmount('7,50'),750,'«7,50»');
+    eq(C.parseAmount('7.50'),750,'«7.50» con punto');
+    eq(C.parseAmount('7,5'),750,'«7,5»');
+    eq(C.parseAmount(' 12 € '),1200,'con espacios y símbolo €');
+    eq(C.parseAmount('1.234,56'),123456,'miles con punto y decimales con coma');
+    eq(C.parseAmount('1,234.56'),123456,'miles con coma y decimales con punto');
+    eq(C.parseAmount('1.000'),100000,'«1.000» son mil euros');
+    eq(C.parseAmount('0'),0,'importe 0');
+    eq(C.parseAmount('0,01'),1,'un céntimo');
+    eq(C.parseAmount(''),null,'vacío no vale');
+    eq(C.parseAmount('-5'),null,'negativo no vale');
+    eq(C.parseAmount('abc'),null,'letras no valen');
+    eq(C.parseAmount('7,5000'),null,'cuatro decimales no vale');
+    eq(C.parseAmount('.'),null,'solo un separador no vale');
+  });
+
+  group('Mostrar importes',function(){
+    eq(sp(C.formatEUR(750)),'7,50 €','750 céntimos');
+    eq(sp(C.formatEUR(0)),'0,00 €','cero');
+    eq(sp(C.formatEUR(1234567)),'12.345,67 €','miles con punto');
+    eq(sp(C.formatEUR(-1050)),'-10,50 €','negativo');
+    eq(C.toInputString(750),'7,50','para un campo: 7,50');
+    eq(C.toInputString(1200),'12','para un campo: sin ,00');
+  });
+
+  group('Reparto',function(){
+    eq(C.allocationDiff(50000,{nec:20000,oci:15000,pro:5000,aho:10000}),{sum:50000,diff:0},'reparto exacto');
+    eq(C.allocationDiff(50000,{nec:20000,oci:15000,pro:5000,aho:5000}).diff,5000,'faltan 50 € por repartir');
+    eq(C.allocationDiff(50000,{nec:30000,oci:15000,pro:5000,aho:10000}).diff,-10000,'el reparto se pasa en 100 €');
+    var P={nec:45,oci:25,pro:10,aho:20};
+    var s=C.splitByPercent(40000,P);eq(s,{nec:18000,oci:10000,pro:4000,aho:8000},'400 € con 45/25/10/20');
+    s=C.splitByPercent(100001,P);eq(C.sum([s.nec,s.oci,s.pro,s.aho]),100001,'1000,01 €: no se pierde ningún céntimo');
+    s=C.splitByPercent(1,P);eq(C.sum([s.nec,s.oci,s.pro,s.aho]),1,'un solo céntimo va entero a una sección');
+    s=C.splitByPercent(0,P);eq(s,{nec:0,oci:0,pro:0,aho:0},'importe 0');
+    s=C.splitByPercent(1000,{a:1,b:1,c:1});eq(C.sum([s.a,s.b,s.c]),1000,'10 € entre 3 (no divide exacto) suma 10 €');
+    eq([s.a,s.b,s.c].sort(),[333,333,334],'10 € entre 3: 3,33 + 3,33 + 3,34');
+    s=C.splitByPercent(50000,{a:30,b:30,c:30});eq(C.sum([s.a,s.b,s.c]),50000,'porcentajes que no suman 100 se normalizan');
+  });
+
+  group('Compensar al pasarse',function(){
+    var r=C.proportionalCuts(3000,[{id:'nec',rem:13200},{id:'pro',rem:5000}]);
+    eq(r.cuts,{nec:2176,pro:824},'30 € repartidos según lo que queda (21,76 + 8,24)');
+    eq(r.covered+r.short,3000,'cubre todo');
+    r=C.proportionalCuts(100,[{id:'a',rem:300},{id:'b',rem:300},{id:'c',rem:300}]);
+    eq(C.sum([r.cuts.a,r.cuts.b,r.cuts.c]),100,'1 € entre 3 secciones iguales suma 1 €');
+    r=C.proportionalCuts(1000,[{id:'a',rem:300},{id:'b',rem:200}]);
+    eq(r,{cuts:{a:300,b:200},covered:500,short:500},'si no llega, recorta todo y dice lo que falta');
+    r=C.proportionalCuts(0,[{id:'a',rem:300}]);eq(r.cuts.a,0,'nada que compensar');
+    r=C.proportionalCuts(500,[]);eq(r.short,500,'sin secciones con margen');
+  });
+
+  group('Semana y margen',function(){
+    eq(C.weekWindow(27,2,31),{d0:26,d1:31},'martes 27 de octubre: semana 26–31 (fin de mes)');
+    eq(C.weekWindow(1,4,31),{d0:1,d1:4},'jueves 1 de octubre: semana 1–4');
+    eq(C.weekWindow(14,3,31),{d0:12,d1:18},'miércoles 14: semana 12–18');
+    eq(C.weekWindow(28,6,28),{d0:23,d1:28},'sábado 28 de febrero (28 días)');
+    eq(C.weekWindow(30,1,30),{d0:30,d1:30},'lunes 30 de noviembre (30 días): semana de un día');
+    eq(C.weekBudget(26350,2000,12,18,31),{budget:9922,can:7922},'283,50 € al empezar la semana, 7 de 20 días, 20 € gastados');
+    eq(C.weekBudget(10000,0,1,7,28),{budget:2500,can:2500},'mes de 28 días: 100 € → 25 € la primera semana');
+    eq(C.weekBudget(9000,0,1,7,30),{budget:2100,can:2100},'mes de 30 días: 90 € → 21 €');
+    eq(C.weekBudget(0,0,1,7,31),{budget:0,can:0},'importe 0');
+    eq(C.weekBudget(-500,0,12,18,31).budget,0,'si ya se pasó del mes, no hay margen');
+    eq(C.weekBudget(1000,0,1,7,31).budget,225,'10 € en 7 de 31 días: 2,258… → 2,25 (hacia abajo)');
+  });
+
+  group('Tope semanal de ocio',function(){
+    eq(C.ocioWeeklyCap(15000,31),3387,'150 € en 31 días → 33,87 €');
+    eq(C.ocioWeeklyCap(15000,30),3500,'150 € en 30 días → 35 €');
+    eq(C.ocioWeeklyCap(15000,28),3750,'150 € en 28 días → 37,50 €');
+    eq(C.ocioWeeklyCap(0,31),0,'ocio 0');
+  });
+
+  group('Proyección del ahorro',function(){
+    var p=C.projectSavings(10000,12,0,0);eq(p[11],120000,'100 €/mes un año sin interés');
+    var i=C.monthlyRate(2,false,0.19);p=C.projectSavings(0,12,100000,i);near(p[11],102000,2,'1.000 € al 2 % TAE durante un año ≈ 1.020 €');
+    i=C.monthlyRate(2,true,0.19);p=C.projectSavings(0,12,100000,i);near(p[11],101618,2,'con un 19 % de impuestos, descontado cada mes ≈ 1.016,18 €');
+    eq(C.projectSavings(0,3,0,0.01),[0,0,0],'sin dinero no hay intereses');
+    eq(C.monthsToGoal(65000,10000,22000,0),5,'faltan 430 € a 100 €/mes: 5 meses');
+    eq(C.monthsToGoal(65000,0,0,0),null,'sin aportar nunca se llega');
+    eq(C.monthsToGoal(500,100,600,0),0,'ya conseguido');
+  });
+
+  var bad=res.filter(function(r){return !r.ok}).length,el=document.getElementById('sum');
+  el.textContent=(bad?bad+' fallos de ':'Todo correcto: ')+res.length+' pruebas';
+  el.className='sum '+(bad?'ko':'ok');
+  document.title=(bad?'FALLAN '+bad:'OK')+' · '+res.length+' pruebas';
+  var last='';
+  document.getElementById('out').innerHTML=res.map(function(r){
+    var h=(r.g!==last?'</ol><h2 style="font-size:1rem;margin:14px 0 4px">'+r.g+'</h2><ol>':'');last=r.g;
+    return h+'<li class="'+(r.ok?'':'ko')+'">'+(r.ok?'✔ ':'✘ ')+r.m.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</li>';
+  }).join('');
+  window.__results={total:res.length,failed:bad,fails:res.filter(function(r){return !r.ok})};
+})();
+</script>
+</body></html>
