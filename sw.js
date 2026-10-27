@@ -1,5 +1,5 @@
-var CACHE = 'presupuesto-v14';
-var FILES = ['./', './index.html', './calc.js', './fonts/plus-jakarta-sans-latin.woff2', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+var CACHE = 'presupuesto-v15';
+var FILES = ['./', './index.html', './prefs.js', './calc.js', './app.js', './fonts/plus-jakarta-sans-latin.woff2', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));
