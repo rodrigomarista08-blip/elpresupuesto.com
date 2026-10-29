@@ -519,6 +519,8 @@ input[aria-invalid="true"]:focus{border-color:var(--bad)}
 @media (prefers-reduced-motion:no-preference){.toast:not([hidden]){animation:toastin .18s ease-out}@keyframes toastin{from{opacity:0;margin-bottom:-8px}}}
 /* Pasos para instalar en iPhone y iPad */
 .steps{margin:6px 0 10px;padding-left:1.4em;display:grid;gap:8px}
+/* Con el botón de instalar, el «Guardado en este dispositivo» sigue en una línea (pasa por debajo de los botones, no los toca). */
+@media (max-width:480px){.top .status.ok{white-space:nowrap}}
 </style>
 <script src="errores.js"></script>
 <script src="prefs.js"></script>
@@ -871,7 +873,7 @@ input[aria-invalid="true"]:focus{border-color:var(--bad)}
     <p class="msg" id="onb-msg" role="alert"></p>
     <button class="btn primary" type="submit" style="width:100%">Ver mi reparto</button>
     <button class="linkbtn" id="onb-skip" type="button" style="justify-self:center;margin-top:8px">Ahora no</button>
-  </form>
+  </form></div>
 </div>
 
 <div class="toast" id="toast" role="status" hidden><span class="tico" id="toastIco" aria-hidden="true" hidden></span><span id="toastText"></span><button id="toastBtn" type="button">Deshacer</button></div>
