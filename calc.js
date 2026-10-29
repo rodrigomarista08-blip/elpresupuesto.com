@@ -51,6 +51,26 @@ function allocationDiff(totalC,alloc){
   return {sum:s,diff:Math.round(totalC)-s};
 }
 
+/* Estado del reparto y el mensaje que lo explica. kind: 'empty' (no hay dinero del mes), 'exact', 'short' (falta) u 'over' (sobra).
+   opts.totalChanged: el aviso sale porque se acaba de cambiar el dinero del mes, y se dice. */
+function splitStatus(totalC,alloc,opts){
+  var c=allocationDiff(totalC,alloc),t=Math.round(totalC)||0,f=formatEUR,out={sum:c.sum,diff:c.diff};
+  var why=opts&&opts.totalChanged?'El dinero del mes ahora es '+f(t)+'. ':'';
+  if(!(t>0)){out.kind='empty';out.text='Escribe cuánto dinero tienes este mes para comprobar el reparto.'}
+  else if(c.diff===0){out.kind='exact';out.text='Reparto exacto: '+f(c.sum)+' de '+f(t)+'.'}
+  else if(c.diff>0){out.kind='short';out.text=why+'Has repartido '+f(c.sum)+' de '+f(t)+'. Te faltan '+f(c.diff)+'.'}
+  else{out.kind='over';out.text=why+'Te pasas '+f(-c.diff)+' del dinero del mes: has repartido '+f(c.sum)+' de '+f(t)+'.'}
+  return out;
+}
+
+/* Propuesta para cuadrar el reparto cambiando solo la sección «key»: de cuánto a cuánto. null si no hace falta o no se puede. */
+function fixProposal(totalC,alloc,key){
+  if(!key||!(Math.round(totalC)>0))return null;
+  var d=allocationDiff(totalC,alloc).diff,from=Math.round(alloc[key]||0),to=from+d;
+  if(d===0||to<0)return null;
+  return {key:key,from:from,to:to,up:d>0};
+}
+
 /* Reparte un total en céntimos según porcentajes, sin perder ni inventar céntimos (resto mayor). */
 function splitByPercent(totalC,pcts){
   var keys=Object.keys(pcts),totalP=0,out={},given=0;
@@ -243,7 +263,7 @@ function expensesCSV(rows){
 }
 
 var Calc={formatEUR:formatEUR,expensesCSV:expensesCSV,toInputString:toInputString,parseAmount:parseAmount,daysInMonth:daysInMonth,sum:sum,
-  allocationDiff:allocationDiff,splitByPercent:splitByPercent,proportionalCuts:proportionalCuts,weekWindow:weekWindow,
+  allocationDiff:allocationDiff,splitStatus:splitStatus,fixProposal:fixProposal,splitByPercent:splitByPercent,proportionalCuts:proportionalCuts,weekWindow:weekWindow,
   weekBudget:weekBudget,ocioWeeklyCap:ocioWeeklyCap,monthlyRate:monthlyRate,projectSavings:projectSavings,monthsToGoal:monthsToGoal,
   SCHEMA:SCHEMA,migrateStore:migrateStore,verifyMigration:verifyMigration,readBackup:readBackup};
 root.Calc=Calc;
