@@ -498,6 +498,25 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   .sheetwrap{align-items:flex-end;padding:0}
   .sheet{border-radius:22px 22px 0 0;width:100%;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
 }
+/* Aviso del reparto: falta (aviso), exacto (bien) o sobra (alerta) */
+.splitmsg{margin:0;flex:1 1 220px;min-width:0;border-radius:12px;padding:7px 12px;font-size:14px;font-weight:600;line-height:1.4;background:var(--surface-2);color:var(--ink-2)}
+.splitmsg:empty{display:none}
+.splitmsg.exact{background:var(--ok-bg);color:var(--ok)}
+.splitmsg.short{background:var(--warn-bg);color:var(--warn)}
+.splitmsg.over{background:var(--bad-bg);color:var(--bad);box-shadow:inset 4px 0 0 var(--bad)}
+.splitmsg.over::before{content:'⚠️ '}
+.checkrow .btn{white-space:normal;text-align:left}
+/* Error junto a un campo */
+.ferr{margin:6px 0 0;font-size:13px;font-weight:600;color:var(--bad);line-height:1.35}
+input[aria-invalid="true"]{border-color:var(--bad);background:var(--bad-bg)}
+input[aria-invalid="true"]:focus{border-color:var(--bad)}
+/* Variantes del aviso flotante */
+.toast .tico{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px}
+.toast.ok .tico{background:var(--ok-bg);color:var(--ok)}
+.toast.warn .tico{background:var(--warn-bg);color:var(--warn)}
+.toast.error .tico{background:var(--bad-bg);color:var(--bad)}
+.toast.error{box-shadow:inset 4px 0 0 var(--bad)}
+@media (prefers-reduced-motion:no-preference){.toast:not([hidden]){animation:toastin .18s ease-out}@keyframes toastin{from{opacity:0;margin-bottom:-8px}}}
 </style>
 <script src="errores.js"></script>
 <script src="prefs.js"></script>
@@ -556,7 +575,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <p class="helptxt" id="h-split" hidden>Aquí pones cuánto dinero tienes este mes y cuánto va a cada sección. Lo ideal es repartirlo todo, hasta que ponga «Reparto exacto».</p>
     <div class="settotal">
       <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
-      <div class="checkrow"><span class="pill neutral" id="sumCheck"></span><button class="btn" id="fixSplit" type="button" hidden></button></div>
+      <div class="checkrow"><p class="splitmsg" id="sumCheck" aria-live="polite"></p><button class="btn" id="fixSplit" type="button" hidden></button></div>
     </div>
     <div id="splitbar"></div>
     <div class="setgrid" id="setgrid"></div>
@@ -839,7 +858,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   </form>
 </div>
 
-<div class="toast" id="toast" role="status" hidden><span id="toastText"></span><button id="toastBtn" type="button">Deshacer</button></div>
+<div class="toast" id="toast" role="status" hidden><span class="tico" id="toastIco" aria-hidden="true" hidden></span><span id="toastText"></span><button id="toastBtn" type="button">Deshacer</button></div>
 
 <script src="calc.js"></script>
 <script src="guia.js"></script>
