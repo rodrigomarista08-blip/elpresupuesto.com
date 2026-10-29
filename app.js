@@ -520,24 +520,26 @@ function renderMoves(){
   }).join('')+'</ul>'+(total>5?'<button class="linkbtn" id="moreMoves" type="button" style="margin-top:8px">'+(state.showAll?'Ver menos':'Ver todos ('+total+')')+'</button>':'');
 }
 function renderCheck(){
-  var chk=Calc.allocationDiff(state.total,allocMap()),sum=chk.sum,diff=chk.diff,el=$('#sumCheck');
-  el.hidden=diff<0;
-  if(diff===0){el.className='pill ok';el.textContent='Reparto exacto: '+fmt(sum)+' de '+fmt(state.total)}
-  else if(diff>0){el.className='pill warn';el.textContent='Te faltan '+fmt(diff)+' por repartir'}
-  /* Si no cuadra, se ofrece ajustar la última sección (nunca el ahorro), diciendo de cuánto a cuánto. */
-  var b=$('#fixSplit'),k=fixTarget(),to=k?(state.alloc[k]||0)+diff:-1;
-  b.hidden=diff===0||!k||to<0;
-  if(!b.hidden)b.textContent='Cuadrar: «'+cname(k)+'» de '+fmt(state.alloc[k]||0)+' a '+fmt(to);
+  var st=Calc.splitStatus(state.total,allocMap(),{totalChanged:state.checkWhy==='total'}),el=$('#sumCheck');
+  if(st.kind==='exact')state.checkWhy=null;
+  /* Si no cuadra, se ofrece ajustar la última sección (nunca el ahorro), diciendo cuál y de cuánto a cuánto. */
+  var b=$('#fixSplit'),fx=Calc.fixProposal(state.total,allocMap(),fixTarget()),text=st.text;
+  if(st.kind==='over'&&!fx)text+=' Baja alguna sección para que cuadre.';
+  el.className='splitmsg '+st.kind;el.textContent=text;
+  b.hidden=!fx;
+  if(fx)b.textContent='Cuadrar: '+(fx.up?'subir':'bajar')+' «'+cname(fx.key)+'» de '+fmt(fx.from)+' a '+fmt(fx.to);
 }
 function allocMap(){var m={};CATS.forEach(function(c){m[c.id]=state.alloc[c.id]||0});return m}
 /* La última sección de gasto de la lista (no el ahorro). */
 function fixTarget(){var ids=spendIds();return ids[ids.length-1]||null}
 $('#fixSplit').addEventListener('click',function(){
-  var k=fixTarget(),diff=Calc.allocationDiff(state.total,allocMap()).diff,prev=state.alloc[k]||0;
-  if(!k||prev+diff<0)return;
-  state.alloc[k]=prev+diff;savePlan();syncInputs();renderAll();
+  var fx=Calc.fixProposal(state.total,allocMap(),fixTarget());
+  if(!fx)return;
+  var k=fx.key,prev=fx.from,inp=document.getElementById('s-'+k);
+  if(inp)clearFieldError(inp);
+  state.alloc[k]=fx.to;state.checkWhy=null;savePlan();syncInputs();renderAll();
   state.undo={fn:function(){state.alloc[k]=prev;savePlan();syncInputs();renderAll()}};
-  toast('«'+cname(k)+'» ajustada a '+fmt(prev+diff)+' para que el reparto sume '+fmt(state.total)+'.',true);
+  toast('«'+cname(k)+'» ajustada a '+fmt(fx.to)+' para que el reparto sume '+fmt(state.total)+'.',true,'ok');
 });
 
 /* ---------- ahorro ---------- */
@@ -654,7 +656,8 @@ function syncInputs(){
   CATS.forEach(function(c){map['s-'+c.id]=inStr(state.alloc[c.id]||0)});
   Object.keys(map).forEach(function(id){
     var el=document.getElementById(id);
-    if(el&&document.activeElement!==el)el.value=map[id];
+    /* Un campo con error conserva lo que escribió la persona hasta que lo corrija. */
+    if(el&&document.activeElement!==el&&el.getAttribute('aria-invalid')!=='true')el.value=map[id];
   });
   var tx=document.getElementById('p-tax');if(tx)tx.checked=!!state.tax;
 }
@@ -689,10 +692,18 @@ function setDateBounds(){
 }
 
 /* ---------- avisos ---------- */
-var toastTimer=null;
-function toast(text,withUndo){
-  $('#toastText').textContent=text;$('#toastBtn').hidden=!withUndo;$('#toast').hidden=false;
-  clearTimeout(toastTimer);toastTimer=setTimeout(function(){$('#toast').hidden=true;state.undo=null},6000);
+/* kind: 'ok' (éxito), 'warn' (aviso), 'error' o nada (información). Los errores se anuncian como alerta y duran más. */
+var toastTimer=null,toastText=null,TOAST_MS={info:6000,ok:4000,warn:8000,error:10000},TOAST_ICO={info:'',ok:'✓',warn:'!',error:'✕'};
+function toast(text,withUndo,kind){
+  kind=TOAST_MS[kind]?kind:'info';
+  var t=$('#toast');
+  t.className='toast '+kind;t.setAttribute('role',kind==='error'?'alert':'status');
+  $('#toastIco').textContent=TOAST_ICO[kind];$('#toastIco').hidden=!TOAST_ICO[kind];
+  $('#toastBtn').hidden=!withUndo;t.hidden=false;
+  /* El texto entra un instante después de mostrarse, para que los lectores de pantalla lo anuncien. */
+  $('#toastText').textContent='';clearTimeout(toastText);
+  toastText=setTimeout(function(){$('#toastText').textContent=text},30);
+  clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.hidden=true;state.undo=null},withUndo?Math.max(6000,TOAST_MS[kind]):TOAST_MS[kind]);
 }
 
 /* ---------- avisos de gasto: 50 %, 75 % y límite ---------- */
@@ -864,7 +875,7 @@ function quickSave(amt){
   var rep=$('#q-rep').checked,fid=addExpense(exp,rep);
   closeQuick();
   state.undo={fn:function(){undoAdd(exp,fid)}};
-  toast('Apuntado '+fmt(exp.amt)+' en '+cname(exp.cat)+(fid?' · se repetirá cada mes':''),true);
+  toast('Apuntado '+fmt(exp.amt)+' en '+cname(exp.cat)+(fid?' · se repetirá cada mes':''),true,'ok');
 }
 $('#fab').addEventListener('click',openQuick);
 $('#q-close').addEventListener('click',closeQuick);
@@ -969,25 +980,68 @@ $('#onbForm').addEventListener('submit',function(e){
 $('#onb-skip').addEventListener('click',function(){savePlan();renderAll();closeOnboard()});
 
 /* reparto: las cantidades de las secciones (y el ahorro, que también se edita en la pestaña Ahorro) */
+/* Error junto al campo: lo escrito se queda a la vista para corregirlo y el aviso se quita al corregirlo. */
+function fieldError(el,msg){
+  var id=el.id+'-err',p=document.getElementById(id);
+  if(!p){p=document.createElement('p');p.className='ferr';p.id=id;p.setAttribute('role','alert');el.insertAdjacentElement('afterend',p)}
+  p.textContent=msg;el.setAttribute('aria-invalid','true');
+  var d=(el.getAttribute('aria-describedby')||'').split(' ').filter(Boolean);
+  if(d.indexOf(id)<0){d.push(id);el.setAttribute('aria-describedby',d.join(' '))}
+}
+function clearFieldError(el){
+  if(el.getAttribute('aria-invalid')!=='true')return;
+  var id=el.id+'-err',p=document.getElementById(id);if(p)p.remove();
+  el.removeAttribute('aria-invalid');
+  var d=(el.getAttribute('aria-describedby')||'').split(' ').filter(function(x){return x&&x!==id});
+  if(d.length)el.setAttribute('aria-describedby',d.join(' '));else el.removeAttribute('aria-describedby');
+}
+/* Por qué no vale un importe del reparto y qué valor se sigue usando mientras tanto. */
+function splitFieldMsg(raw,n,isTotal,keep){
+  var s=String(raw||'').trim(),m;
+  if(!s)m='Escribe cuánto dinero tienes este mes.';
+  else if(s.charAt(0)==='-')m='No puede ser negativo.';
+  else if(n===0)m='Tiene que ser mayor que 0.';
+  else if(n!=null&&n>MAXALLOC)m='Como mucho '+fmt(MAXALLOC)+'.';
+  else m='No entiendo «'+(s.length>14?s.slice(0,14)+'…':s)+'».';
+  return m+' Escríbelo así: '+(isTotal?'300 o 300,50':'12,50')+'. Mientras, se mantiene '+fmt(keep)+'.';
+}
+/* Valor guardado al entrar en el campo: si lo escrito no vale, se vuelve a él (sin tocar lo que se ve en el campo). */
+function isSplitField(t){return t&&(t.id==='s-total'||(t.getAttribute&&CAT[t.getAttribute('data-alloc')]))}
+document.addEventListener('focusin',function(e){
+  var t=e.target;if(!isSplitField(t)||t.getAttribute('aria-invalid')==='true')return;
+  t._held=t.id==='s-total'?state.total:(state.alloc[t.getAttribute('data-alloc')]||0);
+});
+/* reparto: las cantidades de las secciones (y el ahorro, que también se edita en la pestaña Ahorro) */
 function allocInput(e){
   var k=e.target.getAttribute&&e.target.getAttribute('data-alloc');if(!k||!CAT[k])return;
   var v=e.target.value.trim(),n=v===''?0:amountOf(v);
-  if(n!=null&&n<=MAXALLOC){state.alloc[k]=n;syncInputs();renderAll()}
+  if(n!=null&&n<=MAXALLOC){clearFieldError(e.target);state.alloc[k]=n;state.checkWhy=null;syncInputs();renderAll()}
 }
 function allocChange(e){
-  var k=e.target.getAttribute&&e.target.getAttribute('data-alloc');if(!k||!CAT[k])return;
-  var v=e.target.value.trim(),n=v===''?0:amountOf(v);
-  if(n==null||n>MAXALLOC){syncInputs();toast('Ese importe no es válido. Escríbelo así: 12,50.',false);return}
+  var el=e.target,k=el.getAttribute&&el.getAttribute('data-alloc');if(!k||!CAT[k])return;
+  var v=el.value.trim(),n=v===''?0:amountOf(v);
+  if(n==null||n>MAXALLOC){
+    var keep=el._held!=null?el._held:(state.alloc[k]||0);
+    state.alloc[k]=keep;fieldError(el,splitFieldMsg(v,n,false,keep));renderAll();return;
+  }
+  clearFieldError(el);el._held=n;
   savePlan();syncInputs();checkAlerts(nowYM);
 }
 $('#setgrid').addEventListener('input',allocInput);
 $('#setgrid').addEventListener('change',allocChange);
 $('#a-aho').addEventListener('input',allocInput);
 $('#a-aho').addEventListener('change',allocChange);
-$('#s-total').addEventListener('input',function(){var n=amountOf($('#s-total').value);if(n!=null&&n>0&&n<=MAXALLOC){state.total=n;renderCheck()}});
+$('#s-total').addEventListener('input',function(){
+  var el=$('#s-total'),n=amountOf(el.value);
+  if(n!=null&&n>0&&n<=MAXALLOC){clearFieldError(el);state.total=n;state.checkWhy='total';renderCheck()}
+});
 $('#s-total').addEventListener('change',function(){
-  var n=amountOf($('#s-total').value);
-  if(n==null||!(n>0)||n>MAXALLOC)toast('El dinero del mes tiene que ser mayor que 0. Escríbelo así: 300 o 300,50.',false);
+  var el=$('#s-total'),n=amountOf(el.value);
+  if(n==null||!(n>0)||n>MAXALLOC){
+    var keep=el._held!=null?el._held:state.total;
+    state.total=keep;state.checkWhy=null;fieldError(el,splitFieldMsg(el.value,n,true,keep));renderCheck();return;
+  }
+  clearFieldError(el);el._held=n;
   savePlan();syncInputs();renderCheck();
 });
 
@@ -1478,14 +1532,43 @@ $('#aiConsent').addEventListener('click',function(e){
   finishConsent({send:true,share:b.getAttribute('data-cs')==='send'&&!$('#cs-ctx').hidden});
 });
 $('#aiForget').addEventListener('click',function(){lsSet('aiConsent','null');renderAIMode();toast('Te volveremos a preguntar antes de enviar nada.',false)});
-['settings','backup'].forEach(function(id){
+['settings','backup','installHelp'].forEach(function(id){
   $('#'+id).addEventListener('click',function(e){if(e.target===this||e.target.closest('[data-close]'))closeSheet(id)});
 });
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
   if(!$('#aiConsent').hidden){e.preventDefault();finishConsent(null);return}
-  ['backup','settings'].some(function(id){if(!$('#'+id).hidden){e.preventDefault();closeSheet(id);return true}});
+  ['installHelp','backup','settings'].some(function(id){if(!$('#'+id).hidden){e.preventDefault();closeSheet(id);return true}});
 });
+
+/* ---------- instalar la app ----------
+   Chrome y Edge avisan con beforeinstallprompt; iPhone y iPad no, así que allí se explican los pasos.
+   Si ya está instalada, o el navegador no deja instalarla, el botón no sale. */
+var installEvt=null;
+var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+var standaloneMQ=window.matchMedia?window.matchMedia('(display-mode: standalone)'):null;
+function isInstalled(){return !!(standaloneMQ&&standaloneMQ.matches)||navigator.standalone===true}
+function renderInstall(){$('#installBtn').hidden=isInstalled()||!(installEvt||isIOS)}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();installEvt=e;renderInstall()});
+window.addEventListener('appinstalled',function(){
+  installEvt=null;$('#installBtn').hidden=true;
+  toast('Listo: ya tienes Mi dinero en tu pantalla de inicio.',false,'ok');
+});
+if(standaloneMQ){if(standaloneMQ.addEventListener)standaloneMQ.addEventListener('change',renderInstall);else if(standaloneMQ.addListener)standaloneMQ.addListener(renderInstall)}
+$('#installBtn').addEventListener('click',function(){
+  if(installEvt){
+    /* El aviso del navegador solo se puede abrir una vez por evento. */
+    var ev=installEvt;installEvt=null;
+    ev.prompt();
+    Promise.resolve(ev.userChoice).then(function(r){
+      if(r&&r.outcome==='accepted')$('#installBtn').hidden=true;
+      else{renderInstall();toast('Sin problema. Puedes instalarla cuando quieras desde el menú del navegador.',false)}
+    },renderInstall);
+    return;
+  }
+  if(isIOS&&!isInstalled())openSheet('installHelp');
+});
+renderInstall();
 
 /* ajustes de aspecto */
 var AP=window.appPrefs;
@@ -1621,7 +1704,7 @@ $('#bkFile').addEventListener('change',function(){
   rd.onerror=function(){m.className='msg';m.textContent='No se pudo leer el archivo.'};
   rd.readAsText(f);
 });
-$('#bkNow').addEventListener('click',function(){if(downloadBackup())toast('Copia descargada. Guárdala en un sitio seguro.',false)});
+$('#bkNow').addEventListener('click',function(){if(downloadBackup())toast('Copia descargada. Guárdala en un sitio seguro.',false,'ok');else toast('No se pudo descargar la copia. Ábrela desde 💾 Copia y prueba otra vez.',false,'error')});
 $('#bkLater').addEventListener('click',function(){var m=bkMeta();m.snooze=Date.now();setBkMeta(m);renderBkBanner()});
 
 runMigration();

@@ -10,30 +10,30 @@
 <meta name="theme-color" content="#0f6b5c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Presupuesto">
+<meta name="apple-mobile-web-app-title" content="Mi dinero">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Presupuesto mensual</title>
+<title>Mi dinero</title>
 <meta name="description" content="Reparte tu dinero del mes, apunta tus gastos en dos toques y ahorra con objetivos. Gratis, sin registro y con tus datos solo en tu dispositivo.">
 <link rel="canonical" href="https://rodrigomarista08-blip.github.io/elpresupuesto.com/">
 <!-- Vista previa al compartir el enlace (Open Graph y Twitter/X). Las URL de imagen tienen que ser absolutas. -->
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
-<meta property="og:site_name" content="Presupuesto mensual">
-<meta property="og:title" content="Mi presupuesto: reparte tu dinero del mes">
+<meta property="og:site_name" content="Mi dinero">
+<meta property="og:title" content="Mi dinero: reparte lo que tienes cada mes">
 <meta property="og:description" content="Apunta gastos en dos toques, mira cuánto puedes gastar esta semana y ahorra con objetivos. Gratis y sin registro.">
 <meta property="og:url" content="https://rodrigomarista08-blip.github.io/elpresupuesto.com/">
 <meta property="og:image" content="https://rodrigomarista08-blip.github.io/elpresupuesto.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Mi presupuesto: tarjeta que dice «Puedes gastar 79,22 € esta semana».">
+<meta property="og:image:alt" content="Mi dinero: tarjeta que dice «Puedes gastar 79,22 € esta semana».">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mi presupuesto: reparte tu dinero del mes">
+<meta name="twitter:title" content="Mi dinero: reparte lo que tienes cada mes">
 <meta name="twitter:description" content="Apunta gastos en dos toques, mira cuánto puedes gastar esta semana y ahorra con objetivos. Gratis y sin registro.">
 <meta name="twitter:image" content="https://rodrigomarista08-blip.github.io/elpresupuesto.com/og-image.png">
-<meta name="twitter:image:alt" content="Mi presupuesto: tarjeta que dice «Puedes gastar 79,22 € esta semana».">
+<meta name="twitter:image:alt" content="Mi dinero: tarjeta que dice «Puedes gastar 79,22 € esta semana».">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preload" href="fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -498,6 +498,29 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   .sheetwrap{align-items:flex-end;padding:0}
   .sheet{border-radius:22px 22px 0 0;width:100%;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
 }
+/* Aviso del reparto: falta (aviso), exacto (bien) o sobra (alerta) */
+.splitmsg{margin:0;flex:1 1 220px;min-width:0;border-radius:12px;padding:7px 12px;font-size:14px;font-weight:600;line-height:1.4;background:var(--surface-2);color:var(--ink-2)}
+.splitmsg:empty{display:none}
+.splitmsg.exact{background:var(--ok-bg);color:var(--ok)}
+.splitmsg.short{background:var(--warn-bg);color:var(--warn)}
+.splitmsg.over{background:var(--bad-bg);color:var(--bad);box-shadow:inset 4px 0 0 var(--bad)}
+.splitmsg.over::before{content:'⚠️ '}
+.checkrow .btn{white-space:normal;text-align:left}
+/* Error junto a un campo */
+.ferr{margin:6px 0 0;font-size:13px;font-weight:600;color:var(--bad);line-height:1.35}
+input[aria-invalid="true"]{border-color:var(--bad);background:var(--bad-bg)}
+input[aria-invalid="true"]:focus{border-color:var(--bad)}
+/* Variantes del aviso flotante */
+.toast .tico{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px}
+.toast.ok .tico{background:var(--ok-bg);color:var(--ok)}
+.toast.warn .tico{background:var(--warn-bg);color:var(--warn)}
+.toast.error .tico{background:var(--bad-bg);color:var(--bad)}
+.toast.error{box-shadow:inset 4px 0 0 var(--bad)}
+@media (prefers-reduced-motion:no-preference){.toast:not([hidden]){animation:toastin .18s ease-out}@keyframes toastin{from{opacity:0;margin-bottom:-8px}}}
+/* Pasos para instalar en iPhone y iPad */
+.steps{margin:6px 0 10px;padding-left:1.4em;display:grid;gap:8px}
+/* Con el botón de instalar, el «Guardado en este dispositivo» sigue en una línea (pasa por debajo de los botones, no los toca). */
+@media (max-width:480px){.top .status.ok{white-space:nowrap}}
 </style>
 <script src="errores.js"></script>
 <script src="prefs.js"></script>
@@ -506,17 +529,18 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   <style>.wrap,.fab{display:none!important}</style>
   <div class="noscript">
     <h1>Esta app necesita JavaScript</h1>
-    <p>Presupuesto mensual funciona entero en tu navegador y guarda tus datos solo en este dispositivo. Para usarla, activa JavaScript en los ajustes del navegador y vuelve a abrir la página.</p>
+    <p>Mi dinero funciona entero en tu navegador y guarda tus datos solo en este dispositivo. Para usarla, activa JavaScript en los ajustes del navegador y vuelve a abrir la página.</p>
   </div>
 </noscript>
 <div class="wrap">
   <header class="top">
     <div>
       <p class="eyebrow">Presupuesto mensual</p>
-      <h1>Mi presupuesto</h1>
+      <h1>Mi dinero</h1>
       <p class="status" id="status"><i></i><span><span class="sk sk-line" style="width:9em" aria-hidden="true"></span><span class="sr-only">Cargando tus datos</span></span></p>
     </div>
     <div class="tools">
+      <button class="btn" id="installBtn" type="button" aria-label="Instalar la app" hidden><span aria-hidden="true">📲</span><span class="tlabel"> Instalar</span></button>
       <button class="btn" id="openBackup" type="button" aria-haspopup="dialog" aria-label="Copia de seguridad"><span aria-hidden="true">💾</span><span class="tlabel"> Copia</span></button>
       <button class="btn icon" id="openSettings" type="button" aria-haspopup="dialog" aria-label="Ajustes"><span aria-hidden="true">⚙️</span></button>
     </div>
@@ -556,7 +580,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
     <p class="helptxt" id="h-split" hidden>Aquí pones cuánto dinero tienes este mes y cuánto va a cada sección. Lo ideal es repartirlo todo, hasta que ponga «Reparto exacto».</p>
     <div class="settotal">
       <div><label for="s-total">Dinero del mes (€)</label><input id="s-total" inputmode="decimal" autocomplete="off"></div>
-      <div class="checkrow"><span class="pill neutral" id="sumCheck"></span><button class="btn" id="fixSplit" type="button" hidden></button></div>
+      <div class="checkrow"><p class="splitmsg" id="sumCheck" aria-live="polite"></p><button class="btn" id="fixSplit" type="button" hidden></button></div>
     </div>
     <div id="splitbar"></div>
     <div class="setgrid" id="setgrid"></div>
@@ -826,6 +850,19 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   </div>
 </div>
 
+<div class="sheetwrap" id="installHelp" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ih-title">
+    <div class="sheethead"><h2 id="ih-title">Instalar Mi dinero</h2><button class="btn icon" type="button" data-close="installHelp" aria-label="Cerrar">×</button></div>
+    <ol class="steps">
+      <li>Toca el botón Compartir: el cuadrado con una flecha hacia arriba. En el iPhone está abajo y en el iPad, arriba.</li>
+      <li>Baja y elige «Añadir a pantalla de inicio».</li>
+      <li>Toca «Añadir». Mi dinero aparecerá en tu pantalla de inicio y se abrirá como una app.</li>
+    </ol>
+    <p class="fine">Si no ves la opción, abre esta página en Safari y prueba otra vez.</p>
+    <button class="btn primary" type="button" data-close="installHelp" style="margin-top:14px">Entendido</button>
+  </div>
+</div>
+
 <div class="sheetwrap onb" id="onboard" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="onb-title"><form id="onbForm" class="onbform" novalidate>
     <p class="eyebrow">Primeros pasos</p>
@@ -839,7 +876,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
   </form></div>
 </div>
 
-<div class="toast" id="toast" role="status" hidden><span id="toastText"></span><button id="toastBtn" type="button">Deshacer</button></div>
+<div class="toast" id="toast" role="status" hidden><span class="tico" id="toastIco" aria-hidden="true" hidden></span><span id="toastText"></span><button id="toastBtn" type="button">Deshacer</button></div>
 
 <script src="calc.js"></script>
 <script src="guia.js"></script>

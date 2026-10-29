@@ -1,5 +1,6 @@
-var CACHE = 'presupuesto-v20';
-var FILES = ['./', './index.html', './errores.js', './prefs.js', './calc.js', './guia.js', './app.js', './fonts/plus-jakarta-sans-latin.woff2', './manifest.webmanifest',
+var CACHE = 'presupuesto-v21';
+var FILES = ['./', './index.html', './errores.js', './prefs.js', './calc.js', './guia.js', './app.js', './fonts/plus-jakarta-sans-latin.woff2', './fonts/nunito-latin.woff2',
+  './fonts/atkinson-hyperlegible-400-latin.woff2', './fonts/atkinson-hyperlegible-700-latin.woff2', './fonts/lora-latin.woff2', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon.svg'];
 var NET_TIMEOUT = 4000; // con una red muy lenta, a los 4 s se usa lo guardado
 

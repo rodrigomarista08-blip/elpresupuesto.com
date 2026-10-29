@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Presupuesto mensual",
-  "short_name": "Presupuesto",
+  "name": "Mi dinero",
+  "short_name": "Mi dinero",
   "description": "Reparte tu dinero del mes, apunta tus gastos y ahorra con objetivos. Tus datos se quedan en tu dispositivo.",
   "lang": "es",
   "dir": "ltr",
