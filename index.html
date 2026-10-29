@@ -853,12 +853,12 @@ input[aria-invalid="true"]:focus{border-color:var(--bad)}
 <div class="sheetwrap" id="installHelp" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ih-title">
     <div class="sheethead"><h2 id="ih-title">Instalar Mi dinero</h2><button class="btn icon" type="button" data-close="installHelp" aria-label="Cerrar">×</button></div>
-    <ol class="steps">
+    <ol class="steps" id="ih-steps">
       <li>Toca el botón Compartir: el cuadrado con una flecha hacia arriba. En el iPhone está abajo y en el iPad, arriba.</li>
       <li>Baja y elige «Añadir a pantalla de inicio».</li>
       <li>Toca «Añadir». Mi dinero aparecerá en tu pantalla de inicio y se abrirá como una app.</li>
     </ol>
-    <p class="fine">Si no ves la opción, abre esta página en Safari y prueba otra vez.</p>
+    <p class="fine" id="ih-note">Si no ves la opción, abre esta página en Safari y prueba otra vez.</p>
     <button class="btn primary" type="button" data-close="installHelp" style="margin-top:14px">Entendido</button>
   </div>
 </div>

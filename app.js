@@ -1542,16 +1542,40 @@ document.addEventListener('keydown',function(e){
 });
 
 /* ---------- instalar la app ----------
-   Chrome y Edge avisan con beforeinstallprompt; iPhone y iPad no, así que allí se explican los pasos.
-   Si ya está instalada, o el navegador no deja instalarla, el botón no sale. */
-var installEvt=null;
-var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+   El botón sale siempre que la app no esté abierta como app instalada. Si el navegador ofrece su aviso
+   (beforeinstallprompt, en Chrome y Edge) se usa; si no, se explican los pasos para ese navegador. */
+var installEvt=null,installedNow=false;
+var UA=navigator.userAgent;
+var isIOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 var standaloneMQ=window.matchMedia?window.matchMedia('(display-mode: standalone)'):null;
 function isInstalled(){return !!(standaloneMQ&&standaloneMQ.matches)||navigator.standalone===true}
-function renderInstall(){$('#installBtn').hidden=isInstalled()||!(installEvt||isIOS)}
+function renderInstall(){$('#installBtn').hidden=installedNow||isInstalled()}
+/* Pasos según el navegador: [pasos, nota final]. */
+function installSteps(){
+  var android=/Android/.test(UA),inApp=/FBAN|FBAV|FB_IAB|Instagram|Line\/|TikTok|Twitter|LinkedInApp|GSA\//.test(UA);
+  var already='Si ya la tienes instalada, búscala en tu pantalla de inicio o en tus aplicaciones.';
+  if(inApp)return [['Estás dentro de otra app, y desde aquí no se puede instalar.','Toca el menú (⋯ o ⋮) y elige «Abrir en el navegador», o copia el enlace y pégalo en '+(isIOS?'Safari':'Chrome')+'.','Allí pulsa otra vez el botón 📲 Instalar.'],already];
+  if(isIOS){
+    if(/CriOS|FxiOS|EdgiOS/.test(UA))return [['Toca el botón Compartir (el cuadrado con una flecha hacia arriba), junto a la barra de direcciones o en el menú.','Elige «Añadir a pantalla de inicio».','Toca «Añadir». Mi dinero aparecerá en tu pantalla de inicio.'],'Si no ves la opción, abre esta página en Safari y prueba otra vez.'];
+    return [['Toca el botón Compartir: el cuadrado con una flecha hacia arriba. En el iPhone está abajo y en el iPad, arriba.','Baja y elige «Añadir a pantalla de inicio».','Toca «Añadir». Mi dinero aparecerá en tu pantalla de inicio y se abrirá como una app.'],'Si no ves la opción, abre esta página en Safari y prueba otra vez.'];
+  }
+  if(/SamsungBrowser/.test(UA))return [['Toca el menú (☰) abajo a la derecha.','Elige «Añadir página a» y después «Pantalla de inicio».','Confirma con «Añadir».'],already];
+  if(/Firefox/.test(UA)&&android)return [['Abre el menú (⋮) del navegador.','Elige «Instalar» o «Añadir a pantalla de inicio».','Confirma con «Añadir».'],already];
+  if(/Firefox/.test(UA))return [['Firefox en el ordenador no permite instalar páginas como apps.','Abre esta página en Chrome o Edge y pulsa ahí el botón 📲 Instalar.'],'También puedes guardarla en marcadores: funciona igual, con tus datos en este navegador.'];
+  if(/Edg\//.test(UA))return [['Abre el menú (⋯) arriba a la derecha.','Ve a «Aplicaciones» y elige «Instalar este sitio como aplicación».','Confirma con «Instalar».'],already];
+  if(android)return [['Abre el menú (⋮) arriba a la derecha.','Elige «Instalar aplicación» o «Añadir a pantalla de inicio».','Confirma con «Instalar».'],already];
+  if(/Safari\//.test(UA)&&!/Chrome|Chromium/.test(UA))return [['En la barra de menús, abre «Archivo».','Elige «Añadir al Dock».','Confirma con «Añadir». Mi dinero se abrirá como una app.'],'Necesitas macOS Sonoma o posterior. Si no aparece la opción, abre la página en Chrome.'];
+  return [['Busca el icono de instalar (una pantalla con una flecha) a la derecha de la barra de direcciones y púlsalo.','Si no está, abre el menú (⋮) y elige «Enviar, guardar y compartir» → «Instalar página como app», o «Instalar Mi dinero».','Confirma con «Instalar».'],already];
+}
+function openInstallHelp(){
+  var s=installSteps();
+  $('#ih-steps').innerHTML=s[0].map(function(t){return '<li>'+esc(t)+'</li>'}).join('');
+  $('#ih-note').textContent=s[1];
+  openSheet('installHelp');
+}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();installEvt=e;renderInstall()});
 window.addEventListener('appinstalled',function(){
-  installEvt=null;$('#installBtn').hidden=true;
+  installEvt=null;installedNow=true;$('#installBtn').hidden=true;
   toast('Listo: ya tienes Mi dinero en tu pantalla de inicio.',false,'ok');
 });
 if(standaloneMQ){if(standaloneMQ.addEventListener)standaloneMQ.addEventListener('change',renderInstall);else if(standaloneMQ.addListener)standaloneMQ.addListener(renderInstall)}
@@ -1561,12 +1585,12 @@ $('#installBtn').addEventListener('click',function(){
     var ev=installEvt;installEvt=null;
     ev.prompt();
     Promise.resolve(ev.userChoice).then(function(r){
-      if(r&&r.outcome==='accepted')$('#installBtn').hidden=true;
-      else{renderInstall();toast('Sin problema. Puedes instalarla cuando quieras desde el menú del navegador.',false)}
+      if(r&&r.outcome==='accepted'){installedNow=true;$('#installBtn').hidden=true}
+      else{renderInstall();toast('Sin problema. Puedes instalarla cuando quieras con este mismo botón.',false)}
     },renderInstall);
     return;
   }
-  if(isIOS&&!isInstalled())openSheet('installHelp');
+  openInstallHelp();
 });
 renderInstall();
 

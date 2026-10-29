@@ -1,4 +1,4 @@
-var CACHE = 'presupuesto-v22';
+var CACHE = 'presupuesto-v23';
 var FILES = ['./', './index.html', './errores.js', './prefs.js', './calc.js', './guia.js', './app.js', './fonts/plus-jakarta-sans-latin.woff2', './fonts/nunito-latin.woff2',
   './fonts/atkinson-hyperlegible-400-latin.woff2', './fonts/atkinson-hyperlegible-700-latin.woff2', './fonts/lora-latin.woff2', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon.svg'];
