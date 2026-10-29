@@ -517,6 +517,8 @@ input[aria-invalid="true"]:focus{border-color:var(--bad)}
 .toast.error .tico{background:var(--bad-bg);color:var(--bad)}
 .toast.error{box-shadow:inset 4px 0 0 var(--bad)}
 @media (prefers-reduced-motion:no-preference){.toast:not([hidden]){animation:toastin .18s ease-out}@keyframes toastin{from{opacity:0;margin-bottom:-8px}}}
+/* Pasos para instalar en iPhone y iPad */
+.steps{margin:6px 0 10px;padding-left:1.4em;display:grid;gap:8px}
 </style>
 <script src="errores.js"></script>
 <script src="prefs.js"></script>
@@ -536,6 +538,7 @@ input[aria-invalid="true"]:focus{border-color:var(--bad)}
       <p class="status" id="status"><i></i><span><span class="sk sk-line" style="width:9em" aria-hidden="true"></span><span class="sr-only">Cargando tus datos</span></span></p>
     </div>
     <div class="tools">
+      <button class="btn" id="installBtn" type="button" aria-label="Instalar la app" hidden><span aria-hidden="true">📲</span><span class="tlabel"> Instalar</span></button>
       <button class="btn" id="openBackup" type="button" aria-haspopup="dialog" aria-label="Copia de seguridad"><span aria-hidden="true">💾</span><span class="tlabel"> Copia</span></button>
       <button class="btn icon" id="openSettings" type="button" aria-haspopup="dialog" aria-label="Ajustes"><span aria-hidden="true">⚙️</span></button>
     </div>
@@ -842,6 +845,19 @@ input[aria-invalid="true"]:focus{border-color:var(--bad)}
         <button class="btn" type="button" id="bkOldNo">Cancelar</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="sheetwrap" id="installHelp" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ih-title">
+    <div class="sheethead"><h2 id="ih-title">Instalar Mi dinero</h2><button class="btn icon" type="button" data-close="installHelp" aria-label="Cerrar">×</button></div>
+    <ol class="steps">
+      <li>Toca el botón Compartir: el cuadrado con una flecha hacia arriba. En el iPhone está abajo y en el iPad, arriba.</li>
+      <li>Baja y elige «Añadir a pantalla de inicio».</li>
+      <li>Toca «Añadir». Mi dinero aparecerá en tu pantalla de inicio y se abrirá como una app.</li>
+    </ol>
+    <p class="fine">Si no ves la opción, abre esta página en Safari y prueba otra vez.</p>
+    <button class="btn primary" type="button" data-close="installHelp" style="margin-top:14px">Entendido</button>
   </div>
 </div>
 

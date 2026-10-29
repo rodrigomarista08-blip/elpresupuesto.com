@@ -1532,14 +1532,43 @@ $('#aiConsent').addEventListener('click',function(e){
   finishConsent({send:true,share:b.getAttribute('data-cs')==='send'&&!$('#cs-ctx').hidden});
 });
 $('#aiForget').addEventListener('click',function(){lsSet('aiConsent','null');renderAIMode();toast('Te volveremos a preguntar antes de enviar nada.',false)});
-['settings','backup'].forEach(function(id){
+['settings','backup','installHelp'].forEach(function(id){
   $('#'+id).addEventListener('click',function(e){if(e.target===this||e.target.closest('[data-close]'))closeSheet(id)});
 });
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
   if(!$('#aiConsent').hidden){e.preventDefault();finishConsent(null);return}
-  ['backup','settings'].some(function(id){if(!$('#'+id).hidden){e.preventDefault();closeSheet(id);return true}});
+  ['installHelp','backup','settings'].some(function(id){if(!$('#'+id).hidden){e.preventDefault();closeSheet(id);return true}});
 });
+
+/* ---------- instalar la app ----------
+   Chrome y Edge avisan con beforeinstallprompt; iPhone y iPad no, así que allí se explican los pasos.
+   Si ya está instalada, o el navegador no deja instalarla, el botón no sale. */
+var installEvt=null;
+var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+var standaloneMQ=window.matchMedia?window.matchMedia('(display-mode: standalone)'):null;
+function isInstalled(){return !!(standaloneMQ&&standaloneMQ.matches)||navigator.standalone===true}
+function renderInstall(){$('#installBtn').hidden=isInstalled()||!(installEvt||isIOS)}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();installEvt=e;renderInstall()});
+window.addEventListener('appinstalled',function(){
+  installEvt=null;$('#installBtn').hidden=true;
+  toast('Listo: ya tienes Mi dinero en tu pantalla de inicio.',false,'ok');
+});
+if(standaloneMQ){if(standaloneMQ.addEventListener)standaloneMQ.addEventListener('change',renderInstall);else if(standaloneMQ.addListener)standaloneMQ.addListener(renderInstall)}
+$('#installBtn').addEventListener('click',function(){
+  if(installEvt){
+    /* El aviso del navegador solo se puede abrir una vez por evento. */
+    var ev=installEvt;installEvt=null;
+    ev.prompt();
+    Promise.resolve(ev.userChoice).then(function(r){
+      if(r&&r.outcome==='accepted')$('#installBtn').hidden=true;
+      else{renderInstall();toast('Sin problema. Puedes instalarla cuando quieras desde el menú del navegador.',false)}
+    },renderInstall);
+    return;
+  }
+  if(isIOS&&!isInstalled())openSheet('installHelp');
+});
+renderInstall();
 
 /* ajustes de aspecto */
 var AP=window.appPrefs;
