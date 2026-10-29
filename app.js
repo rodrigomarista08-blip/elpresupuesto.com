@@ -29,11 +29,16 @@ var todayStr=dstr(now);
 var MAXX=6,MAXG=5,MAXF=30,TAXR=0.19;
 /* Topes en céntimos: un gasto hasta 9.999 €, el reparto hasta 99.999 € y el ahorro hasta 9.999.999 €. */
 var MAXEXP=999900,MAXALLOC=9999900,MAXSAVE=999999900;
+/* Secciones de serie pensadas para estudiantes y gente joven. Los id «nec» y «pro» se mantienen porque ahí están los datos
+   de quien ya usaba la app (antes se llamaban «Necesarios» y «Proyectos»; ver SECV y LEGACY). */
 var BASE=[
-  {id:'nec',name:'Necesarios',edit:true,verb:'gastado',spend:true,desc:'Transporte, móvil, material de clase.'},
+  {id:'nec',name:'Comida',edit:true,verb:'gastado',spend:true,desc:'Súper, menú del día, cafetería.'},
+  {id:'tra',name:'Transporte',edit:true,verb:'gastado',spend:true,desc:'Abono, bus, metro, tren o gasolina.'},
   {id:'oci',name:'Ocio',verb:'gastado',spend:true,desc:'Salidas, cafés, caprichos.'},
-  {id:'pro',name:'Proyectos',edit:true,verb:'gastado',spend:true,desc:'Dominio, herramientas y material para ganar dinero.'}
+  {id:'pro',name:'Suscripciones',edit:true,verb:'gastado',spend:true,desc:'Móvil, Spotify, Netflix, gimnasio.'}
 ];
+/* Versión de las secciones de serie guardada en el plan. Un plan sin ella es de antes del cambio. */
+var SECV=2,LEGACY={nec:'Necesarios',pro:'Proyectos'};
 var AHO={id:'aho',name:'Ahorro',verb:'apartado',spend:false,desc:'Colchón para imprevistos. Se aparta el día 1.'};
 var CATS=[],CAT={};
 function rebuildCats(){
@@ -47,11 +52,11 @@ function cv(id){var c=CAT[id];return 'var(--c-'+(c&&c.extra?'x'+c.ci:id)+')'}
 function spendIds(){return CATS.filter(function(c){return c.spend}).map(function(c){return c.id})}
 function allocSum(){var t=0;CATS.forEach(function(c){t+=state.alloc[c.id]||0});return rc(t)}
 
-var DEMO=[[2,'aho',2000,'Aportación al colchón'],[2,'nec',1500,'Recarga del bus'],[3,'nec',650,'Fotocopias de clase'],[5,'oci',900,'Cine'],[9,'oci',750,'Cafés'],[12,'nec',1000,'Recarga del móvil'],[14,'oci',800,'Cena con amigos'],[16,'pro',890,'Dominio web']].map(function(r,i){
+var DEMO=[[2,'aho',2000,'Aportación al colchón'],[2,'tra',1500,'Recarga del abono'],[3,'nec',650,'Menú en la cafetería'],[5,'oci',900,'Cine'],[8,'nec',2350,'Compra en el súper'],[9,'oci',750,'Cafés'],[12,'pro',1000,'Tarifa del móvil'],[14,'oci',800,'Cena con amigos'],[16,'pro',599,'Spotify']].map(function(r,i){
   return {id:'demo'+i,cat:r[1],amt:r[2],note:r[3],date:nowYM+'-'+pad(Math.min(r[0],now.getDate()))};
 });
 
-var state={names:{},extras:[],goals:[],fixed:[],fixedDone:{},fixEdit:null,lastCat:null,qcat:null,goalAdd:null,goalDel:null,delAsk:null,editing:null,adding:false,confirmDel:null,alert:null,fired:{},showAll:false,tab:'money',chat:[],asking:false,total:10000,alloc:{nec:4500,oci:2500,pro:1000,aho:2000},rate:2,months:36,saved0:0,goal:0,tax:true,ym:nowYM,cache:{},demo:false,loaded:true,mode:'local',pending:0,error:false,undo:null};
+var state={names:{},extras:[],goals:[],fixed:[],fixedDone:{},fixEdit:null,lastCat:null,qcat:null,goalAdd:null,goalDel:null,delAsk:null,editing:null,adding:false,confirmDel:null,alert:null,fired:{},showAll:false,tab:'money',chat:[],asking:false,total:10000,alloc:{nec:3000,tra:1500,oci:2500,pro:1000,aho:2000},rate:2,months:36,saved0:0,goal:0,tax:true,ym:nowYM,cache:{},demo:false,loaded:true,mode:'local',pending:0,error:false,undo:null};
 rebuildCats();
 
 /* ---------- datos ---------- */
@@ -88,7 +93,7 @@ function nextCi(){
 }
 function planObj(){
   var al={};CATS.forEach(function(c){al[c.id]=state.alloc[c.id]||0});
-  return {schemaVersion:Calc.SCHEMA,total:state.total,alloc:al,rate:state.rate,months:state.months,saved0:state.saved0,goal:state.goal,tax:state.tax,names:state.names,
+  return {schemaVersion:Calc.SCHEMA,sec:SECV,total:state.total,alloc:al,rate:state.rate,months:state.months,saved0:state.saved0,goal:state.goal,tax:state.tax,names:state.names,
     extras:state.extras.map(function(x){return {id:x.id,ci:x.ci}}),
     goals:state.goals.map(function(g){return {id:g.id,name:g.name,target:g.target,saved:g.saved}}),
     fixed:state.fixed.map(function(f){return {id:f.id,cat:f.cat,amt:f.amt,note:f.note,day:f.day}}),
@@ -113,6 +118,13 @@ function applyPlan(d){
     });
   }
   CATS.forEach(function(c){if(cents(a[c.id])&&a[c.id]>=0&&a[c.id]<=MAXALLOC)state.alloc[c.id]=a[c.id]});
+  /* Plan de antes de las secciones nuevas: «Necesarios» y «Proyectos» conservan su nombre (sus gastos se apuntaron con ese
+     sentido) y Transporte empieza en 0 para que el reparto siga cuadrando. Nada se borra ni cambia de sección. */
+  state.secLegacy=d.sec!==SECV;
+  if(state.secLegacy){
+    Object.keys(LEGACY).forEach(function(id){if(!state.names[id])state.names[id]=LEGACY[id]});
+    if(!cents(a.tra))state.alloc.tra=0;
+  }
   if(cents(d.total)&&d.total>0&&d.total<=MAXALLOC)state.total=d.total;
   if(num(d.rate)&&d.rate>=0&&d.rate<=30)state.rate=d.rate;
   if(num(d.months)&&d.months>=1&&d.months<=120)state.months=Math.round(d.months);
@@ -155,7 +167,12 @@ function adoptCats(arr){
 }
 function loadPlan(){
   var raw=lsGet('plan');if(!raw)return;
-  try{applyPlan(JSON.parse(raw))}catch(e){}
+  try{applyPlan(JSON.parse(raw))}catch(e){return}
+  /* Paso a las secciones nuevas: antes se guarda una copia del plan tal cual estaba y se avisa una vez. */
+  if(state.secLegacy&&!saveLocked){
+    if(lsGet('plan-antes-secciones')===null)lsSet('plan-antes-secciones',raw);
+    lsSet('secNotice','1');savePlan();
+  }
 }
 function loadMonth(ym){
   if(ym in state.cache)return;
@@ -222,7 +239,7 @@ function importAll(text){
   var r=Calc.readBackup(d);
   if(!r.ok)return r;
   var st=r.store;
-  if(st.plan)applyPlan(st.plan);
+  if(st.plan){applyPlan(st.plan);if(state.secLegacy)lsSet('secNotice','1')}
   savePlan();
   Object.keys(st.months).forEach(function(ym){
     var m=st.months[ym];
@@ -377,7 +394,7 @@ function renderSummary(){
     '<p class="fine lvl">Gastado: '+Math.round(pct)+' %'+(pct>=100?' · límite '+(left<0?'superado':'alcanzado'):pct>=75?' · ojo, queda poco':pct>=50?' · vas por la mitad':'')+'</p>'+
     '<div class="pace">'+pace+'</div>';
 }
-var CICO={nec:'🧾',oci:'🎉',pro:'🚀',aho:'🐷'};
+var CICO={nec:'🛒',tra:'🚌',oci:'🎉',pro:'📱',aho:'🐷'};
 /* Icono según el nombre de la sección: la primera palabra clave que encaje gana, así que lo más concreto va antes
    (por ejemplo «amazon music» antes que «prime video» y este antes que «amazon» a secas). */
 var NICO=[
@@ -537,7 +554,7 @@ function allocMap(){var m={};CATS.forEach(function(c){m[c.id]=state.alloc[c.id]|
 function fixTarget(){var ids=spendIds();return ids[ids.length-1]||null}
 /* Grupo de la regla 50/30/20 según el nombre de la sección (el mismo que elige su icono).
    Las palabras de ahorro se miran antes, porque en el icono pueden ganar otras («Hucha viaje» lleva ✈️).
-   Si el nombre no dice nada, «Necesarios» cuenta como necesidad y las demás como deseo. */
+   Si el nombre no dice nada, Comida y Transporte cuentan como necesidad y las demás como deseo. */
 var NEED_ICO=['🏠','💡','📱','🛒','🚌','🚆','⛽','🚗','🏍️','🚲','💊','👓','🧸','🐾','🧾','🏦','💳','🛡️','📚','🔧','🧹','💼'],SAVE_ICO=['🐷','📈'];
 var SAVE_RE=['ahorro','ahorrar','hucha','colchon','emergencia','imprevisto','inversion','invertir','fondo indexado','indexado','etf','plan de pensiones','pension'].map(kwRegex);
 function ruleGroup(c){
@@ -545,12 +562,12 @@ function ruleGroup(c){
   if(c.edit&&SAVE_RE.some(function(r){return r.test(norm(cname(c.id)))}))return 'save';
   var ico=c.edit?nameIcon(cname(c.id),null):null;
   if(ico)return SAVE_ICO.indexOf(ico)>=0?'save':NEED_ICO.indexOf(ico)>=0?'need':'want';
-  return c.id==='nec'?'need':'want';
+  return c.id==='nec'||c.id==='tra'?'need':'want';
 }
 function ruleProposal(){
   return Calc.rule503020(state.total,CATS.map(function(c){return {id:c.id,group:ruleGroup(c),cur:state.alloc[c.id]||0}}));
 }
-/* «Necesidades 50 %: Necesarios 300,00 € · Deseos 30 %: Ocio 128,57 €, Proyectos 51,43 € · Ahorro 20 %: Ahorro 120,00 €» */
+/* «Necesidades 50 %: Comida 300,00 €, Transporte 150,00 € · Deseos 30 %: Ocio 128,57 €, Suscripciones 51,43 € · Ahorro 20 %: Ahorro 120,00 €» */
 function ruleText(r){
   var L={need:'Necesidades',want:'Deseos',save:'Ahorro'};
   return 'Quedaría así. '+['need','want','save'].filter(function(g){return r.groups[g].length}).map(function(g){
@@ -1006,11 +1023,11 @@ $('#onbForm').addEventListener('submit',function(e){
   e.preventDefault();
   var n=amountOf($('#onb-amt').value),m=$('#onb-msg');
   if(n==null||!(n>0)||n>MAXALLOC){m.textContent='Escribe cuánto tienes este mes, por ejemplo 300.';$('#onb-amt').focus();return}
-  /* El mismo reparto de partida que trae la app: 45 % necesarios, 25 % ocio, 10 % proyectos y 20 % ahorro, sin perder céntimos. */
-  var sp=Calc.splitByPercent(n,{nec:45,oci:25,pro:10,aho:20});
-  state.total=n;state.alloc.nec=sp.nec;state.alloc.oci=sp.oci;state.alloc.pro=sp.pro;state.alloc.aho=sp.aho;
+  /* Reparto de partida: 30 % comida, 15 % transporte, 25 % ocio, 10 % suscripciones y 20 % ahorro (50/30/20), sin perder céntimos. */
+  var sp=Calc.splitByPercent(n,{nec:30,tra:15,oci:25,pro:10,aho:20});
+  state.total=n;Object.keys(sp).forEach(function(k){state.alloc[k]=sp[k]});
   savePlan();askPersist();renderSettings();renderAll();closeOnboard();window.scrollTo(0,0);
-  toast('Listo: '+['nec','oci','pro','aho'].map(function(k){return cname(k)+' '+fmt(state.alloc[k])}).join(' · ')+'. Puedes cambiarlo en «Ajustar el reparto».',false);
+  toast('Listo: '+['nec','tra','oci','pro','aho'].map(function(k){return cname(k)+' '+fmt(state.alloc[k])}).join(' · ')+'. Puedes cambiarlo en «Ajustar el reparto».',false);
 });
 $('#onb-skip').addEventListener('click',function(){savePlan();renderAll();closeOnboard()});
 
@@ -1201,7 +1218,7 @@ $('.tabs').addEventListener('keydown',function(e){
   showTab(TABS[i]);$('#tabbtn-'+TABS[i]).focus();
 });
 
-/* ---------- partidas: nombres (Necesarios, Proyectos y las tuyas), añadir y quitar ---------- */
+/* ---------- partidas: nombres (las de serie que se pueden renombrar y las tuyas), añadir y quitar ---------- */
 function commitName(id,val){
   if(state.editing!==id)return;
   state.editing=null;
@@ -1668,6 +1685,32 @@ function bkMeta(){
 }
 function setBkMeta(m){lsSet('backup',JSON.stringify(m))}
 function markBackup(){var m=bkMeta();m.last=Date.now();setBkMeta(m);renderBkBanner()}
+/* Aviso único de las secciones nuevas para quien ya usaba la app. Ofrece pasar «Necesarios» y «Proyectos» a los nombres
+   nuevos (solo cambia el nombre: sus gastos y cantidades se quedan igual). */
+var SEC_NEW={nec:'Comida',pro:'Suscripciones'};
+function legacyIds(){return Object.keys(LEGACY).filter(function(id){return state.names[id]===LEGACY[id]})}
+function renderSecBanner(){
+  var on=lsGet('secNotice')==='1'&&!state.demo,ids=legacyIds();
+  $('#secBanner').hidden=!on;if(!on)return;
+  var q=function(id){return '«'+LEGACY[id]+'»'};
+  $('#secText').textContent='Hemos renovado las secciones de serie: ahora son Comida, Transporte, Ocio, Suscripciones y Ahorro. Ya tienes Transporte, de momento con 0 €.'+
+    (ids.length?' '+ids.map(q).join(' y ')+(ids.length>1?' siguen como estaban':' sigue como estaba')+', con sus gastos.':'');
+  $('#secNew').hidden=!ids.length;
+  $('#secNew').textContent='Cambiar a '+ids.map(function(id){return '«'+SEC_NEW[id]+'»'}).join(' y ');
+  $('#secKeep').textContent=ids.length?'Dejar mis nombres':'Entendido';
+}
+$('#secNew').addEventListener('click',function(){
+  var ids=legacyIds(),prev={};
+  ids.forEach(function(id){prev[id]=state.names[id];delete state.names[id]});
+  lsSet('secNotice','0');savePlan();renderSettings();renderAll();renderSecBanner();
+  state.undo={fn:function(){Object.keys(prev).forEach(function(id){state.names[id]=prev[id]});lsSet('secNotice','1');savePlan();renderSettings();renderAll();renderSecBanner()}};
+  toast(ids.map(function(id){return '«'+LEGACY[id]+'» ahora es «'+SEC_NEW[id]+'»'}).join(' y ')+'. Tus gastos y cantidades no cambian.',true,'ok');
+});
+$('#secKeep').addEventListener('click',function(){
+  var had=legacyIds().length;
+  lsSet('secNotice','0');renderSecBanner();
+  if(had)toast('Hecho. Puedes cambiar los nombres cuando quieras con el lápiz ✎ de cada sección.',false);
+});
 function renderBkBanner(){
   var m=bkMeta(),ref=Math.max(m.last||m.first||Date.now(),m.snooze||0);
   $('#bkBanner').hidden=!(lsGet('plan')!==null&&Date.now()-ref>=BK_EVERY);
@@ -1776,7 +1819,7 @@ var autoFixed=applyFixed(nowYM);
 setDateBounds();renderSettings();getFired(nowYM);
 if(autoFixed)checkAlerts(nowYM,true);
 renderAll();
-renderBkBanner();
+renderBkBanner();renderSecBanner();
 $('#migBanner').hidden=migration.status!=='error';
 if(!fresh)askPersist();
 if(migration.status==='migrated')toast('Hemos actualizado cómo se guardan tus datos. Todo sigue igual y la copia anterior se conserva.',false);
