@@ -84,6 +84,22 @@ code{font-size:12px}
     eq(C.fixProposal(9500,A,'pro'),null,'reparto exacto: nada que cuadrar');
     eq(C.fixProposal(0,A,'pro'),null,'dinero del mes en 0: no se propone cuadrar');
     eq(C.fixProposal(9499,A,'pro'),{key:'pro',from:1000,to:999,up:false},'cuadrar con céntimos');
+    function sumOf(o){return Object.keys(o).reduce(function(t,k){return t+o[k]},0)}
+    var S4=[{id:'nec',group:'need',cur:40000},{id:'oci',group:'want',cur:25000},{id:'pro',group:'want',cur:10000},{id:'aho',group:'save',cur:20000}],r;
+    r=C.rule503020(100000,S4);
+    eq(r.alloc,{nec:50000,oci:21429,pro:8571,aho:20000},'50/30/20 con las 4 secciones de serie: los deseos mantienen su proporción (250:100)');
+    eq(r.groups,{need:['nec'],want:['oci','pro'],save:['aho']},'50/30/20: dice qué secciones van en cada grupo');
+    r=C.rule503020(100000,[{id:'nec',group:'need',cur:30000},{id:'x1',group:'need',cur:60000},{id:'oci',group:'want',cur:0},{id:'x2',group:'want',cur:0},{id:'aho',group:'save',cur:0}]);
+    eq(r.alloc,{nec:16667,x1:33333,oci:15000,x2:15000,aho:20000},'50/30/20 con secciones propias: necesidades 1:2 y deseos a 0 a partes iguales');
+    r=C.rule503020(50000,[{id:'nec',group:'need',cur:100},{id:'aho',group:'save',cur:100}]);
+    eq([r.alloc,r.pct],[{nec:40000,aho:10000},{need:80,want:0,save:20}],'50/30/20 sin deseos: su 30 % pasa a necesidades');
+    r=C.rule503020(50000,[{id:'oci',group:'want',cur:100},{id:'aho',group:'save',cur:100}]);
+    eq(r.alloc,{oci:40000,aho:10000},'50/30/20 sin necesidades: su 50 % pasa a deseos');
+    r=C.rule503020(1001,S4);
+    eq([sumOf(r.alloc),r.alloc.aho],[1001,200],'50/30/20 con céntimos que no cuadran: suma exactamente el total');
+    r=C.rule503020(9999999,S4);
+    eq(sumOf(r.alloc),9999999,'50/30/20 con el máximo: no se pierde ni un céntimo');
+    eq(sumOf(C.rule503020(0,S4).alloc),0,'50/30/20 con dinero del mes en 0: todo a 0');
     var P={nec:45,oci:25,pro:10,aho:20};
     var s=C.splitByPercent(40000,P);eq(s,{nec:18000,oci:10000,pro:4000,aho:8000},'400 € con 45/25/10/20');
     s=C.splitByPercent(100001,P);eq(C.sum([s.nec,s.oci,s.pro,s.aho]),100001,'1000,01 €: no se pierde ningún céntimo');

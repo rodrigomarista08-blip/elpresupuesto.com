@@ -86,6 +86,29 @@ function splitByPercent(totalC,pcts){
   return out;
 }
 
+/* Regla 50/30/20 adaptada a las secciones de cada persona: 50 % necesidades, 30 % deseos y 20 % ahorro.
+   sections: [{id, group:'need'|'want'|'save', cur}]. Dentro de cada grupo se respeta el peso que ya tenía cada
+   sección (si todas estaban a 0, a partes iguales). Si falta un grupo, su parte pasa al grupo de gasto que haya.
+   Devuelve {alloc:{id:céntimos}, pct:{need,want,save}, groups:{need:[ids],…}}; alloc suma exactamente totalC. */
+function rule503020(totalC,sections){
+  var t=Math.max(0,Math.round(totalC)||0),G={need:[],want:[],save:[]},alloc={},pct={need:50,want:30,save:20};
+  sections.forEach(function(s){(G[s.group]||G.want).push(s);alloc[s.id]=0});
+  if(!G.need.length){pct.want+=pct.need;pct.need=0}
+  if(!G.want.length){pct.need+=pct.want;pct.want=0}
+  if(!G.save.length){if(G.need.length)pct.need+=pct.save;else pct.want+=pct.save;pct.save=0}
+  var gp={};Object.keys(pct).forEach(function(g){if(G[g].length&&pct[g]>0)gp[g]=pct[g]});
+  var gt=Object.keys(gp).length?splitByPercent(t,gp):{};
+  Object.keys(gp).forEach(function(g){
+    var w={},tw=0;
+    G[g].forEach(function(s){var v=Math.max(0,Math.round(s.cur||0));w[s.id]=v;tw+=v});
+    if(!(tw>0))G[g].forEach(function(s){w[s.id]=1});
+    var part=splitByPercent(gt[g],w);
+    Object.keys(part).forEach(function(k){alloc[k]=part[k]});
+  });
+  var ids={};Object.keys(G).forEach(function(g){ids[g]=G[g].map(function(s){return s.id})});
+  return {alloc:alloc,pct:pct,groups:ids};
+}
+
 /* Reparte un recorte entre varias secciones en proporción a lo que le queda a cada una.
    Nunca recorta más de lo que le queda a una sección; lo que no se pueda cubrir sale en «short». */
 function proportionalCuts(amountC,pool){
@@ -263,7 +286,7 @@ function expensesCSV(rows){
 }
 
 var Calc={formatEUR:formatEUR,expensesCSV:expensesCSV,toInputString:toInputString,parseAmount:parseAmount,daysInMonth:daysInMonth,sum:sum,
-  allocationDiff:allocationDiff,splitStatus:splitStatus,fixProposal:fixProposal,splitByPercent:splitByPercent,proportionalCuts:proportionalCuts,weekWindow:weekWindow,
+  allocationDiff:allocationDiff,splitStatus:splitStatus,fixProposal:fixProposal,rule503020:rule503020,splitByPercent:splitByPercent,proportionalCuts:proportionalCuts,weekWindow:weekWindow,
   weekBudget:weekBudget,ocioWeeklyCap:ocioWeeklyCap,monthlyRate:monthlyRate,projectSavings:projectSavings,monthsToGoal:monthsToGoal,
   SCHEMA:SCHEMA,migrateStore:migrateStore,verifyMigration:verifyMigration,readBackup:readBackup};
 root.Calc=Calc;

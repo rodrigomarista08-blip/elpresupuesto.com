@@ -522,24 +522,59 @@ function renderMoves(){
 function renderCheck(){
   var st=Calc.splitStatus(state.total,allocMap(),{totalChanged:state.checkWhy==='total'}),el=$('#sumCheck');
   if(st.kind==='exact')state.checkWhy=null;
-  /* Si no cuadra, se ofrece ajustar la última sección (nunca el ahorro), diciendo cuál y de cuánto a cuánto. */
-  var b=$('#fixSplit'),fx=Calc.fixProposal(state.total,allocMap(),fixTarget()),text=st.text;
-  if(st.kind==='over'&&!fx)text+=' Baja alguna sección para que cuadre.';
+  /* Si no cuadra porque ha cambiado el dinero del mes, se propone repartirlo con la regla 50/30/20 según las secciones;
+     si no cuadra por tocar una sección, se ofrece ajustar la última sección (nunca el ahorro), diciendo de cuánto a cuánto. */
+  var b=$('#fixSplit'),pv=$('#fixPreview'),text=st.text,rule=state.checkWhy==='total'&&st.kind!=='exact'&&st.kind!=='empty';
+  var fx=rule?null:Calc.fixProposal(state.total,allocMap(),fixTarget());
+  if(st.kind==='over'&&!fx&&!rule)text+=' Baja alguna sección para que cuadre.';
   el.className='splitmsg '+st.kind;el.textContent=text;
-  b.hidden=!fx;
-  if(fx)b.textContent='Cuadrar: '+(fx.up?'subir':'bajar')+' «'+cname(fx.key)+'» de '+fmt(fx.from)+' a '+fmt(fx.to);
+  b.hidden=!fx&&!rule;pv.hidden=!rule;
+  if(rule){b.textContent='Cuadrar con la regla 50/30/20';pv.textContent=ruleText(ruleProposal())}
+  else if(fx)b.textContent='Cuadrar: '+(fx.up?'subir':'bajar')+' «'+cname(fx.key)+'» de '+fmt(fx.from)+' a '+fmt(fx.to);
 }
 function allocMap(){var m={};CATS.forEach(function(c){m[c.id]=state.alloc[c.id]||0});return m}
 /* La última sección de gasto de la lista (no el ahorro). */
 function fixTarget(){var ids=spendIds();return ids[ids.length-1]||null}
+/* Grupo de la regla 50/30/20 según el nombre de la sección (el mismo que elige su icono).
+   Las palabras de ahorro se miran antes, porque en el icono pueden ganar otras («Hucha viaje» lleva ✈️).
+   Si el nombre no dice nada, «Necesarios» cuenta como necesidad y las demás como deseo. */
+var NEED_ICO=['🏠','💡','📱','🛒','🚌','🚆','⛽','🚗','🏍️','🚲','💊','👓','🧸','🐾','🧾','🏦','💳','🛡️','📚','🔧','🧹','💼'],SAVE_ICO=['🐷','📈'];
+var SAVE_RE=['ahorro','ahorrar','hucha','colchon','emergencia','imprevisto','inversion','invertir','fondo indexado','indexado','etf','plan de pensiones','pension'].map(kwRegex);
+function ruleGroup(c){
+  if(c.id==='aho')return 'save';
+  if(c.edit&&SAVE_RE.some(function(r){return r.test(norm(cname(c.id)))}))return 'save';
+  var ico=c.edit?nameIcon(cname(c.id),null):null;
+  if(ico)return SAVE_ICO.indexOf(ico)>=0?'save':NEED_ICO.indexOf(ico)>=0?'need':'want';
+  return c.id==='nec'?'need':'want';
+}
+function ruleProposal(){
+  return Calc.rule503020(state.total,CATS.map(function(c){return {id:c.id,group:ruleGroup(c),cur:state.alloc[c.id]||0}}));
+}
+/* «Necesidades 50 %: Necesarios 300,00 € · Deseos 30 %: Ocio 128,57 €, Proyectos 51,43 € · Ahorro 20 %: Ahorro 120,00 €» */
+function ruleText(r){
+  var L={need:'Necesidades',want:'Deseos',save:'Ahorro'};
+  return 'Quedaría así. '+['need','want','save'].filter(function(g){return r.groups[g].length}).map(function(g){
+    return L[g]+' '+r.pct[g]+' %: '+r.groups[g].map(function(id){return cname(id)+' '+fmt(r.alloc[id])}).join(', ');
+  }).join(' · ')+'.';
+}
 $('#fixSplit').addEventListener('click',function(){
+  var prevAll=allocMap(),prevWhy=state.checkWhy;
+  function done(msg){
+    CATS.forEach(function(c){var inp=document.getElementById('s-'+c.id);if(inp)clearFieldError(inp)});
+    state.checkWhy=null;savePlan();syncInputs();renderAll();
+    state.undo={fn:function(){Object.keys(prevAll).forEach(function(k){state.alloc[k]=prevAll[k]});state.checkWhy=prevWhy;savePlan();syncInputs();renderAll()}};
+    toast(msg,true,'ok');
+  }
+  if(state.checkWhy==='total'){
+    var r=ruleProposal();
+    Object.keys(r.alloc).forEach(function(k){state.alloc[k]=r.alloc[k]});
+    done('Repartido con la regla 50/30/20: tus '+fmt(state.total)+' quedan '+r.pct.need+' % necesidades, '+r.pct.want+' % deseos y '+r.pct.save+' % ahorro.');
+    return;
+  }
   var fx=Calc.fixProposal(state.total,allocMap(),fixTarget());
   if(!fx)return;
-  var k=fx.key,prev=fx.from,inp=document.getElementById('s-'+k);
-  if(inp)clearFieldError(inp);
-  state.alloc[k]=fx.to;state.checkWhy=null;savePlan();syncInputs();renderAll();
-  state.undo={fn:function(){state.alloc[k]=prev;savePlan();syncInputs();renderAll()}};
-  toast('«'+cname(k)+'» ajustada a '+fmt(fx.to)+' para que el reparto sume '+fmt(state.total)+'.',true,'ok');
+  state.alloc[fx.key]=fx.to;
+  done('«'+cname(fx.key)+'» ajustada a '+fmt(fx.to)+' para que el reparto sume '+fmt(state.total)+'.');
 });
 
 /* ---------- ahorro ---------- */
