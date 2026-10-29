@@ -485,7 +485,7 @@ input:focus,select:focus,textarea:focus{background:var(--surface);border-color:v
 .empty{justify-items:center;text-align:center;padding:22px 18px}
 .empty .eico{font-size:28px;line-height:1}
 .empty p{max-width:36ch}
-/* El botón flotante se aparta cuando estorba: fuera de Mi dinero, con el formulario de gasto a la vista o al escribir. */
+/* El botón flotante se aparta cuando estorba: fuera de Resumen, con el formulario de gasto a la vista o al escribir. */
 .fab.away{opacity:0;transform:translateY(12px);pointer-events:none}
 @media (prefers-reduced-motion:no-preference){.fab{transition:opacity .18s ease,transform .18s ease}}
 @media (min-width:700px){.wrap{padding-bottom:100px}}
@@ -553,7 +553,7 @@ input[aria-invalid="true"]:focus{border-color:var(--bad)}
   </header>
 
   <div class="tabs" role="tablist" aria-label="Secciones">
-    <button type="button" role="tab" id="tabbtn-money" data-tab="money" aria-selected="true" aria-controls="pane-money"><span class="ti" aria-hidden="true">💶</span>Mi dinero</button>
+    <button type="button" role="tab" id="tabbtn-money" data-tab="money" aria-selected="true" aria-controls="pane-money"><span class="ti" aria-hidden="true">💶</span>Resumen</button>
     <button type="button" role="tab" id="tabbtn-save" data-tab="save" aria-selected="false" tabindex="-1" aria-controls="pane-save"><span class="ti" aria-hidden="true">🐷</span>Ahorro</button>
     <button type="button" role="tab" id="tabbtn-tips" data-tab="tips" aria-selected="false" tabindex="-1" aria-controls="pane-tips"><span class="ti" aria-hidden="true">💡</span>Consejos</button>
   </div>
@@ -685,7 +685,7 @@ input[aria-invalid="true"]:focus{border-color:var(--bad)}
         <div><label for="p-goal">Mi meta (€, opcional)</label><input id="p-goal" inputmode="decimal" autocomplete="off" placeholder="Ej.: 600"></div>
       </div>
       <div class="presets" id="presets" aria-label="Plazos habituales"></div>
-      <p class="fine" style="margin-top:10px">«Cada mes aparto» es el mismo Ahorro de Mi dinero.</p>
+      <p class="fine" style="margin-top:10px">«Cada mes aparto» es el mismo Ahorro de la pestaña Resumen.</p>
     </section>
 
     <section class="card">

@@ -1142,7 +1142,7 @@ function showTab(t){
   window.scrollTo(0,0);
   updateFab();
 }
-/* ---------- botón flotante: solo en Mi dinero y sin tapar el formulario ni los campos al escribir ---------- */
+/* ---------- botón flotante: solo en Resumen y sin tapar el formulario ni los campos al escribir ---------- */
 var formInView=false;
 function typing(){var a=document.activeElement;return !!a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&!a.closest('.sheetwrap')}
 function updateFab(){$('#fab').classList.toggle('away',state.tab!=='money'||formInView||typing())}
@@ -1256,7 +1256,7 @@ function renderTipGrid(){
 }
 function renderRef(){
   var A=state.alloc,sum=allocSum(),el=$('#refcmp');
-  if(!(sum>0)){el.innerHTML='<p class="fine">Reparte tu dinero en Mi dinero para ver esta comparación.</p>';return}
+  if(!(sum>0)){el.innerHTML='<p class="fine">Reparte tu dinero en la pestaña Resumen para ver esta comparación.</p>';return}
   function pc(v){return (v/sum*100).toLocaleString('es-ES',{maximumFractionDigits:1})+' %'}
   var stats=CATS.map(function(c){
     return '<div class="stat" style="border-top:3px solid '+cv(c.id)+'"><p class="l">'+esc(cname(c.id))+'</p><p class="v">'+pc(A[c.id]||0)+'</p></div>';
@@ -1280,7 +1280,7 @@ function kwRegex(w){return new RegExp('(^|[^a-z0-9])'+w.replace(/[.*+?^${}()|[\]
 var KB=[
   {k:['ahorr','colchon','emergencia','guardar dinero'],a:function(){
     var A=state.alloc,sum=allocSum();
-    if(!(sum>0))return 'Una referencia habitual es ahorrar alrededor del 20 % de lo que entra. Reparte tu dinero en Mi dinero y te digo cuánto sería en tu caso. '+tipText(0);
+    if(!(sum>0))return 'Una referencia habitual es ahorrar alrededor del 20 % de lo que entra. Reparte tu dinero en la pestaña Resumen y te digo cuánto sería en tu caso. '+tipText(0);
     return 'Una referencia habitual es ahorrar alrededor del 20 % de lo que entra, la regla 50/30/20. Si tu dinero es poco, empieza por lo que puedas, aunque sea un 5 o un 10 %, y sube el porcentaje cuando puedas. Con tus '+fmt(sum)+' al mes, el 20 % serían '+fmt(sum*0.2)+' y ahora apartas '+fmt(A.aho)+'. Lo que más cuenta es apartarlo el día que recibes el dinero y no tocarlo salvo imprevistos reales.';
   }},
   {k:['cuenta de ahorro','cuentas de ahorro','cuenta remunerada','cuentas remuneradas','remunerad'],a:"Una cuenta de ahorro (o remunerada) es una cuenta de tu banco que te paga intereses por el dinero que dejas en ella. Tu dinero sigue siendo tuyo y, en entidades españolas, está garantizado hasta 100.000 euros por titular y entidad. Compara la TAE y lee las condiciones: algunas piden nómina, solo pagan hasta cierto saldo o tienen un tipo alto solo unos meses. Los intereses tributan en el IRPF, y en la pestaña Ahorro puedes poner la TAE de tu banco y ver cuánto ganarías. Esto es información general, no la recomendación de un banco concreto."},
@@ -1689,7 +1689,7 @@ $('#openBackup').addEventListener('click',openBackup);
 $('#bkDownload').addEventListener('click',function(){
   var ok=downloadBackup(),m=$('#bkMsg');
   m.className='msg'+(ok?' okmsg':'');
-  m.textContent=ok?'Copia descargada. Guárdala en un sitio seguro.':'No se pudo descargar. Prueba con «Copiar mis datos» en Mi dinero.';
+  m.textContent=ok?'Copia descargada. Guárdala en un sitio seguro.':'No se pudo descargar. Prueba con «Copiar mis datos» en la pestaña Resumen.';
   renderBkLast();
 });
 $('#bkImport').addEventListener('click',function(){$('#bkFile').value='';$('#bkFile').click()});

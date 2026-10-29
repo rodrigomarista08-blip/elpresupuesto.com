@@ -155,7 +155,7 @@ window.GUIA=[
 
   /* ---------- Usar la app ---------- */
   {g:'Usar la app',q:'¿Cómo apunto un gasto?',k:['apuntar un gasto','apunto un gasto','anadir un gasto','como apunto','registrar un gasto','meter un gasto'],
-   a:'Lo más rápido es el botón «＋ Gasto»: eliges la sección y tocas un importe (1, 2, 5 o 10 €) o escribes otro. También puedes usar el formulario «Apuntar un gasto» en Mi dinero, donde además puedes poner un concepto, cambiar la fecha o marcarlo como gasto que se repite cada mes. Si te equivocas, en Movimientos puedes borrarlo.'},
+   a:'Lo más rápido es el botón «＋ Gasto»: eliges la sección y tocas un importe (1, 2, 5 o 10 €) o escribes otro. También puedes usar el formulario «Apuntar un gasto» de la pestaña Resumen, donde además puedes poner un concepto, cambiar la fecha o marcarlo como gasto que se repite cada mes. Si te equivocas, en Movimientos puedes borrarlo.'},
   {g:'Usar la app',q:'¿Qué significa «Puedes gastar esta semana»?',k:['puedes gastar','esta semana','margen semanal','cuanto puedo gastar','cuanto me queda'],
    a:'Es lo que te queda para gastar de lunes a domingo para llegar a fin de mes. Se calcula con lo que te queda en tus secciones (sin contar el ahorro), repartido según los días que faltan. Si una semana gastas menos, lo que sobra pasa a las siguientes.'},
   {g:'Usar la app',q:'¿Cómo creo un objetivo de ahorro?',k:['crear un objetivo','objetivo de ahorro','mis objetivos','como creo un objetivo','anadir ahorro'],
