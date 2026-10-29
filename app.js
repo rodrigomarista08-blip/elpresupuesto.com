@@ -1562,6 +1562,8 @@ function installSteps(){
   if(/SamsungBrowser/.test(UA))return [['Toca el menú (☰) abajo a la derecha.','Elige «Añadir página a» y después «Pantalla de inicio».','Confirma con «Añadir».'],already];
   if(/Firefox/.test(UA)&&android)return [['Abre el menú (⋮) del navegador.','Elige «Instalar» o «Añadir a pantalla de inicio».','Confirma con «Añadir».'],already];
   if(/Firefox/.test(UA))return [['Firefox en el ordenador no permite instalar páginas como apps.','Abre esta página en Chrome o Edge y pulsa ahí el botón 📲 Instalar.'],'También puedes guardarla en marcadores: funciona igual, con tus datos en este navegador.'];
+  if(/OPR\/|Opera/.test(UA)&&android)return [['Abre el menú (⋮) del navegador.','Elige «Añadir a…» y después «Pantalla de inicio».','Confirma con «Añadir».'],already];
+  if(/OPR\/|Opera/.test(UA))return [['Opera y Opera GX en el ordenador no permiten instalar páginas como apps.','Abre esta página en Chrome o Edge y pulsa ahí el botón 📲 Instalar.'],'También puedes guardarla en marcadores o en Speed Dial: funciona igual, con tus datos en este navegador.'];
   if(/Edg\//.test(UA))return [['Abre el menú (⋯) arriba a la derecha.','Ve a «Aplicaciones» y elige «Instalar este sitio como aplicación».','Confirma con «Instalar».'],already];
   if(android)return [['Abre el menú (⋮) arriba a la derecha.','Elige «Instalar aplicación» o «Añadir a pantalla de inicio».','Confirma con «Instalar».'],already];
   if(/Safari\//.test(UA)&&!/Chrome|Chromium/.test(UA))return [['En la barra de menús, abre «Archivo».','Elige «Añadir al Dock».','Confirma con «Añadir». Mi dinero se abrirá como una app.'],'Necesitas macOS Sonoma o posterior. Si no aparece la opción, abre la página en Chrome.'];
